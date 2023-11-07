@@ -42,17 +42,16 @@ public class Board : MonoBehaviour
         {
             Space currentSpace = new Space(GetSpaceName(i), i);
             m_spaceObjects.Add(currentSpace);
-
-            Debug.Log(currentSpace.Description);
         }
     }
 
     // Update is called once per frame
     void Update() { }
 
+    // When user clicks a space
     void OnSpaceClick(int spaceIndex)
     {
-        Debug.Log("Hey! User clicked the " + spaceIndex + " space!");
+        
     }
 
     // Returns the name of the space, based on the name of the grandparent folder
@@ -63,83 +62,4 @@ public class Board : MonoBehaviour
         return grandparentFolder.gameObject.name;
     }
 
-
-    /*
-    private string GetSpaceName(int index)
-    {
-        switch (index)
-        {
-            case 0:
-                return "Go";
-            case 1:
-                return "Mediteranean Avenue";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return ""
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-            case :
-                return "";
-
-            default:
-                return "OUT OF INDEX RANGE";
-        }   
-    
-    }
-    */
 }
