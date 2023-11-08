@@ -7,43 +7,18 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     // Data Members
-    public List<Button> m_spaceButtons = new List<Button>();
-    public List<Space> m_spaceObjects = new List<Space>();
+    public Canvas m_boardCanvas;
+    public Canvas m_screenUICanvas;
+    public Camera m_propertyCamera;
 
+    private List<Space> m_spaces = new List<Space>();
     private int SPACE_NUM = 40; // There are always 40 spaces on the board
-
 
     // Runs when the script is initialized, using this as a constructor
     void Start()
     {
-        // Obtain the space buttons from Unity
-        GameObject canvasObject = transform.parent.Find("Canvas").gameObject;
-        Transform spacesTransform = canvasObject.transform.Find("Spaces");
-        m_spaceButtons.AddRange(spacesTransform.GetComponentsInChildren<Button>());
-
-        // Sort the space buttons
-        m_spaceButtons.Sort((button1, button2) =>
-        {
-            int num1 = int.Parse(button1.gameObject.name);
-            int num2 = int.Parse(button2.gameObject.name);
-            return num1.CompareTo(num2);
-        });
-          
-        // Assign space button functions
-        int index = 0;
-        foreach (Button button in m_spaceButtons)
-        {
-            int buttonIndex = index;
-            button.onClick.AddListener(() => OnSpaceClick(buttonIndex));
-            index++;
-        }
-
-        // Initalize all the space objects
-        for (int i = 0; i < SPACE_NUM; i++)
-        {
-            Space currentSpace = new Space(GetSpaceName(i), i);
-            m_spaceObjects.Add(currentSpace);
-        }
+        // Initialize the spaces
+        InitializeSpaces();
     }
 
     // Update is called once per frame
@@ -52,15 +27,74 @@ public class Board : MonoBehaviour
     // When user clicks a space
     void OnSpaceClick(int spaceIndex)
     {
-        
+        // Display property info of a space
+        UpdatePropertyDetails(spaceIndex);
     }
 
-    // Returns the name of the space, based on the name of the grandparent folder
-    // that the button is stored in 
-    private string GetSpaceName(int spaceIndex) 
+    // Initializes a list of space objects based on data found in Hiararchy window of Unity Project
+    private void InitializeSpaces()
     {
-        Transform grandparentFolder = m_spaceButtons[spaceIndex].transform.parent.parent;
-        return grandparentFolder.gameObject.name;
+        // Find the spaces folder
+        Transform spacesTransform = m_boardCanvas.transform.Find("Spaces");
+
+        // Find all the buttons that represent spaces
+        List<Button> spaceButtons = new List<Button>();
+        spaceButtons.AddRange(spacesTransform.GetComponentsInChildren<Button>());
+
+        // Sort the buttons by position on the board
+        spaceButtons.Sort((button1, button2) =>
+        {
+            int num1 = int.Parse(button1.gameObject.name);
+            int num2 = int.Parse(button2.gameObject.name);
+            return num1.CompareTo(num2);
+        });
+
+        // Assign space button functions
+        int index = 0;
+        foreach (Button button in spaceButtons)
+        {
+            int buttonIndex = index;
+            button.onClick.AddListener(() => OnSpaceClick(buttonIndex));
+            index++;
+        }
+
+        // Obtain the gameobject associated with each space and it's name
+        List<GameObject> spaceGameObjects = new List<GameObject>();
+        List<string> spaceNames = new List<string>();
+        for (int i = 0; i < SPACE_NUM; i++)
+        {
+            // Obtain the space game object, which is the grandparent folder of it's space button
+            Transform grandparentFolder = spaceButtons[i].transform.parent.parent;
+            GameObject spaceGameObject = GameObject.Find(grandparentFolder.name);
+
+            // Add the gameobject to the list and the name of the space
+            spaceGameObjects.Add(spaceGameObject);
+            spaceNames.Add(spaceGameObject.name);
+        }
+
+        // Create all the spaces and add them into the list
+        for (int i = 0; i < SPACE_NUM; i++)
+        {
+            // Create space with all the attributes obtained in this function
+            Space space = new Space(spaceGameObjects[i], spaceButtons[i], spaceNames[i], i);
+
+            // Add the space to the list
+            m_spaces.Add(space);
+        }
+    }
+
+
+    // Updates the propery details window within the screen UI
+    private void UpdatePropertyDetails(int spaceIndex)
+    {
+        Debug.Log(spaceIndex);
+
+        // Move the property camera to the appropriate position 
+        Transform space = m_spaces[spaceIndex].GameObject.transform;
+        m_propertyCamera.transform.position = space.position;
+
+        // WHAT TO FIX! The z direction is set to 0 and needs to not be set to this
+        // only assign the x and y from the space position:)
     }
 
 }
