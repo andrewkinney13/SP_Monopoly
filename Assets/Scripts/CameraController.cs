@@ -8,52 +8,39 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour
 {
     // Data Members
-    private Vector3 m_lastMousePosition; 
     private Camera m_camera;
-    public float m_zoomSpeed = 1.0f;
-    public float m_minZoom = 200.0f;
-    public float m_maxZoom = 630.0f;
-    public float m_cameraSpeed = 50.0f;
+    private Vector3 m_lastMousePosition;
+    private float m_minSize = 100.0f;
+    private float m_maxSize = 620.0f;
 
     private void Start()
     {
         // Initialize camera w/ proper size
         m_camera = Camera.main;
-        m_camera.orthographicSize = m_maxZoom;
+        m_camera.orthographicSize = m_maxSize;
     }
 
     // Runs every frame
     private void Update()
     {
-        // Scrolls if the player scrolled
-        CheckScroll();
+        // Zooms if the player scrolled
+        Zoom();
 
-        // User clicked rmb
-        if (Input.GetMouseButtonDown(1))
-        {
-            m_lastMousePosition = Input.mousePosition;
-        }
-
-        // User holding rmb, move the camera
-        else if (Input.GetMouseButton(1))
-        {
-            Vector3 mouseDelta = Input.mousePosition - m_lastMousePosition;
-            m_lastMousePosition = Input.mousePosition;
-            transform.Translate(-mouseDelta * Time.deltaTime * m_cameraSpeed);
-        }
+        // Moves camera if user clicks + holds rmb
+        Move();
     }
 
     // If the user scrolls this frame, adjust the screen accordingly
-    private void CheckScroll()
+    private void Zoom()
     {
         // Get the scroll direction
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
         // Obtain new size based on the scroll direction
-        float newSize = Camera.main.orthographicSize - scroll * m_minZoom;
+        float newSize = Camera.main.orthographicSize - (scroll * 2) * m_minSize;
 
-        // Assign size if within the max and min
-        newSize = Mathf.Clamp(newSize, m_minZoom, m_maxZoom);
+        // Assign size if within the max and min range
+        newSize = Mathf.Clamp(newSize, m_minSize, m_maxSize);
 
         // Obtain cursor position
         Vector3 cursorPosition = m_camera.ScreenToWorldPoint(Input.mousePosition);
@@ -64,5 +51,31 @@ public class CameraController : MonoBehaviour
         // Apply the offset to zoom towards the cursor position
         m_camera.transform.position += offset * (1.0f - newSize / m_camera.orthographicSize);
         m_camera.orthographicSize = newSize;
+    }
+
+    // Moves the camera according to cursor position
+    public void Move()
+    {
+        // If user clicks rmb, assign initial mouse position
+        if (Input.GetMouseButtonDown(1))
+        {
+            m_lastMousePosition = Input.mousePosition;
+        }
+
+        // Holding rmb, move screen
+        if (Input.GetMouseButton(1))
+        {
+            // Assign current position
+            Vector3 currentMousePosition = Input.mousePosition;
+
+            // Obtain the difference betweem where camera was and now is, based on cursor location
+            Vector3 delta = Camera.main.ScreenToWorldPoint(m_lastMousePosition) - Camera.main.ScreenToWorldPoint(currentMousePosition);
+           
+            // Move camera based on the difference
+            transform.Translate(delta);
+
+            // Reassign the initial mouse position
+            m_lastMousePosition = currentMousePosition;
+        }
     }
 }

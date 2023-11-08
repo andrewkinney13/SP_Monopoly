@@ -1096,10 +1096,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3f4ec90b24ebc4292066625abd48fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zoomSpeed: 1
   m_minZoom: 200
-  m_maxZoom: 630
-  m_cameraSpeed: 50
+  m_maxZoom: 620
 --- !u!1001 &66976295
 PrefabInstance:
   m_ObjectHideFlags: 0

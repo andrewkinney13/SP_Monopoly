@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// Handles the board objects
 public class Board : MonoBehaviour
 {
     // Data Members
