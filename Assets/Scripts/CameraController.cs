@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,9 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour
 {
     // Data Members
+    public Button m_leftRotate;
+    public Button m_rightRotate;
+
     private Camera m_camera;
     private Vector3 m_lastMousePosition;
     private float m_minSize = 100.0f;
@@ -18,6 +22,9 @@ public class CameraController : MonoBehaviour
         // Initialize camera w/ proper size
         m_camera = Camera.main;
         m_camera.orthographicSize = m_maxSize;
+
+        m_leftRotate.onClick.AddListener(LeftRotate);
+        m_rightRotate.onClick.AddListener(RightRotate);
     }
 
     // Runs every frame
@@ -28,6 +35,18 @@ public class CameraController : MonoBehaviour
 
         // Moves camera if user clicks + holds rmb
         Move();
+    }
+
+    // Rotate camera left
+    private void LeftRotate()
+    {
+        m_camera.transform.Rotate(0f, 0f, -90);
+    }
+
+    // Rotate camera right
+    private void RightRotate()
+    {
+        m_camera.transform.Rotate(0f, 0f, 90);
     }
 
     // If the user scrolls this frame, adjust the screen accordingly
@@ -70,7 +89,33 @@ public class CameraController : MonoBehaviour
 
             // Obtain the difference betweem where camera was and now is, based on cursor location
             Vector3 delta = Camera.main.ScreenToWorldPoint(m_lastMousePosition) - Camera.main.ScreenToWorldPoint(currentMousePosition);
-           
+
+            // Adjust delta based on the rotation of the screen
+            int currentRotation = (int)m_camera.transform.eulerAngles.z;
+            switch (currentRotation)
+            {
+                // 90 left, flip x and y, flip x sign
+                case 270:
+                    float y = delta.y;
+                    delta.y = delta.x;
+                    delta.x = -y;
+                    
+                    break;
+
+                // 180 flip, board is upside down, flip x and y signs
+                case 180:
+                    delta.x = -delta.x;
+                    delta.y = -delta.y;
+                    break;
+
+                // 90 right, flip x and y, flip y sign
+                case 90:
+                    float x = delta.x;
+                    delta.x = delta.y;
+                    delta.y = -x;
+                    break;
+            }
+
             // Move camera based on the difference
             transform.Translate(delta);
 
