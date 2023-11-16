@@ -14,8 +14,8 @@ public class CanvasController : MonoBehaviour
     public Camera m_propertyCamera;
 
     private List<Button> m_spaceButtons = new List<Button>();
-    private List<GameObject> m_spaceGameObjects = new List<GameObject>();   
-    private Board m_board = new Board();
+    private List<GameObject> m_spaceGameObjects = new List<GameObject>();
+    private Board m_board;
     private const int SPACE_NUM = 40; // There are always 40 spaces on the board
 
     // Runs when the script is initialized, using this as a constructor
@@ -25,6 +25,8 @@ public class CanvasController : MonoBehaviour
         InitializeObjects();
 
         // Initialize the board
+        List<Player> players = GetPlayers();
+        m_board = new Board(players);
         m_board.InitializeBoard();
     }
 
@@ -68,6 +70,21 @@ public class CanvasController : MonoBehaviour
             // Add the gameobject to the list and the name of the space
             m_spaceGameObjects.Add(spaceGameObject);
         }
+    }
+
+    // Obtains the players
+    public List<Player> GetPlayers()
+    {
+        List<Player> players = new List<Player>();
+        Player andrew = new Player("Andrew");
+        players.Add(andrew);
+        Player kwas = new Player("Kwas");
+        players.Add(kwas);
+        Player max = new Player("Max");
+        players.Add(max);
+        Player bmac = new Player("Bmac");
+        players.Add(bmac);
+        return players;
     }
 
     // When user clicks a space
@@ -117,20 +134,5 @@ public class CanvasController : MonoBehaviour
 
             }
         }
-        
-
-        /*
-        // Move the property camera to the appropriate position 
-        Vector3 spacePosition = m_spaceGameObjects[spaceIndex].transform.position;
-        spacePosition.z = -1;  // Don't set the z to the objects z
-        m_propertyCamera.transform.position = spacePosition;
-
-        // SOMETHING TO ADD:
-        // MAKE THE ROTATION ALWAYS CORRECT, SET IT BASED ON INDEX VALUE!
-        */
-
-
-
     }
-    
 }

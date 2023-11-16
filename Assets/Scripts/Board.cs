@@ -1,14 +1,28 @@
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
 
 public class Board 
 {
     // Data members
     private List<Space> m_spaces = new List<Space>();
     private const int SPACE_NUM = 40; // There are always 40 spaces on the board
+    private Dictionary<string, Player> m_players = new Dictionary<string, Player>(); // {name : player} 
+
+    // Constructor
+    public Board(List<Player> players)
+    { 
+        foreach (Player player in players)
+        {
+            m_players[player.Name] = player;
+        }
+    }
 
     // Creates the spaces 
     public void InitializeBoard()
