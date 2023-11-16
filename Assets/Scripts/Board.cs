@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -21,5 +22,15 @@ public class Board
             Space currentSpace = new Space(names[i], i);
             m_spaces.Add(currentSpace);
         }
+    }
+
+    // Returns space object at a particular index
+    public Space GetSpace(int index)
+    {
+        if (index < 0 && index >= SPACE_NUM)
+        {
+            throw new ArgumentException("Space index out of range");
+        }
+        return m_spaces[index];
     }
 }

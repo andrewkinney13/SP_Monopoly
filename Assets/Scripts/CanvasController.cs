@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -75,10 +77,49 @@ public class CanvasController : MonoBehaviour
         UpdatePropertyDetails(spaceIndex);
     }
 
-
+    
     // Updates the propery details window within the screen UI
     private void UpdatePropertyDetails(int spaceIndex)
     {
+        // Find the Property Details textboxes
+        Transform[] propertyDetailsFolder = m_screenUICanvas.GetComponentsInChildren<Transform>(true);
+
+        // Set each textbox accordingly
+        foreach (Transform child in propertyDetailsFolder) 
+        {
+            // Set the name text box
+            if (child.name == "Name")
+            {
+                TextMeshProUGUI textBox = child.GetComponent<TextMeshProUGUI>();
+                textBox.text = (m_board.GetSpace(spaceIndex).Name).ToUpper();
+            }
+
+            // Set the description text box
+            if (child.name == "Description")
+            {
+                TextMeshProUGUI textBox = child.GetComponent<TextMeshProUGUI>();
+                textBox.text = m_board.GetSpace(spaceIndex).Description;
+            }
+
+            // Set the action button to inactive
+            if (child.name == "Action Button")
+            {
+                Button actionButton = child.GetComponent<Button>();
+                // actionButton.interactable = false;
+
+                //Debug.Log("Should Run Once");
+
+                // For when someone lands on the space!
+                actionButton.onClick.RemoveAllListeners();
+                actionButton.onClick.AddListener(m_board.GetSpace(spaceIndex).Action);
+                TextMeshProUGUI textBox = actionButton.GetComponentInChildren<TextMeshProUGUI>();
+                textBox.text = m_board.GetSpace(spaceIndex).ActionText;
+
+            }
+        }
+        
+
+        /*
         // Move the property camera to the appropriate position 
         Vector3 spacePosition = m_spaceGameObjects[spaceIndex].transform.position;
         spacePosition.z = -1;  // Don't set the z to the objects z
@@ -86,6 +127,10 @@ public class CanvasController : MonoBehaviour
 
         // SOMETHING TO ADD:
         // MAKE THE ROTATION ALWAYS CORRECT, SET IT BASED ON INDEX VALUE!
-    }
+        */
 
+
+
+    }
+    
 }

@@ -10,6 +10,7 @@ public class Space
     private string m_name;
     private int m_index;
     private string m_description;
+    private string m_actionText = "Action!";
 
     // Constructor
     public Space(string name, int index)
@@ -35,6 +36,15 @@ public class Space
         get { return m_description; }
         set { m_description = value; }
     }
+    public string ActionText
+    {
+        get { return m_actionText; }
+        set { m_actionText = value; }
+    }
 
-    // 
+    // Land on space (to inherit)
+    public void Action()
+    {
+        Debug.Log("Action!");
+    }
 }
