@@ -32,7 +32,7 @@ public class MenuController : MonoBehaviour
     // Checks 
     public bool ValidPlayers()
     {
-        return false;
+        return true;
     }
 
     // Starts the game

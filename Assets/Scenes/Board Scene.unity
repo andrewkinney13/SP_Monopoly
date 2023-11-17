@@ -9451,8 +9451,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 31
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -16317,7 +16317,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 902fc977d5ec12e4286af5d8696f907b, type: 2}
+  - {fileID: 2100000, guid: 5982c5ff6f2e32e44ab500d0211cfb88, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -26265,7 +26265,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_boardCanvas: {fileID: 1528194577}
   m_screenUICanvas: {fileID: 644488140}
-  m_propertyCamera: {fileID: 0}
 --- !u!1 &1961866273
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,6 @@ public class CanvasController : MonoBehaviour
     // Data Members
     public Canvas m_boardCanvas;
     public Canvas m_screenUICanvas;
-    public Camera m_propertyCamera;
 
     private List<Button> m_spaceButtons = new List<Button>();
     private List<GameObject> m_spaceGameObjects = new List<GameObject>();
