@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Players>
+  <Player>
+    <Name>Andrew</Name>
+    <Icon>Hat</Icon>
+  </Player>
+  <Player>
+    <Name>Joey</Name>
+    <Icon>Car</Icon>
+  </Player>
+  <Player>
+    <Name>Sal</Name>
+    <Icon>Battleship</Icon>
+  </Player>
+  <Player>
+    <Name>Max</Name>
+    <Icon>Thimble</Icon>
+  </Player>
+  <Player>
+    <Name>Eric</Name>
+    <Icon>Boot</Icon>
+  </Player>
+  <Player>
+    <Name>Bmac</Name>
+    <Icon>Wheel Barrel</Icon>
+  </Player>
+  <Player>
+    <Name>Jared</Name>
+    <Icon>Iron</Icon>
+  </Player>
+  <Player>
+    <Name>Logan</Name>
+    <Icon>Dog</Icon>
+  </Player>
+</Players>
