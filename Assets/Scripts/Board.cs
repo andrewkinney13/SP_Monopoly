@@ -25,8 +25,8 @@ public class Board
     public void InitializeBoard()
     {
         // Obtain names list from file
-        string namesFile = "spaceNames.txt";
-        string[] names = File.ReadAllLines(namesFile);
+        string namesFilePath = Path.Combine(Application.streamingAssetsPath, "spaceNames.txt");
+        string[] names = File.ReadAllLines(namesFilePath);
 
         for (int i = 0; i < SPACE_NUM; i++) 
         {

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Players>
+  <Player>
+    <Name>a</Name>
+    <Icon>Battleship</Icon>
+  </Player>
+  <Player>
+    <Name>ds</Name>
+    <Icon>Thimble</Icon>
+  </Player>
+</Players>

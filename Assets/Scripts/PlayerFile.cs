@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ public class PlayerFile
         {
             Indent = true
         };
+
+        string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
         m_writer = XmlWriter.Create(m_fileName, settings);
 
         // Root element
