@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // Handles the board objects
-public class CanvasController : MonoBehaviour
+public class GameController : MonoBehaviour
 {
     // Data Members
     public Canvas m_boardCanvas;
@@ -25,7 +25,7 @@ public class CanvasController : MonoBehaviour
 
         // Initialize the board
         List<Player> players = GetPlayers();
-        m_board = new Board(players);
+        m_board = new Board();
         m_board.InitializeBoard();
     }
 

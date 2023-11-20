@@ -13,8 +13,8 @@ public class CameraController : MonoBehaviour
 
     private Camera m_camera;
     private Vector3 m_lastMousePosition;
-    private float m_minSize = 100.0f;
-    private float m_maxSize = 620.0f;
+    private float m_minSize = 50.0f;
+    private float m_maxSize = 300.0f;
 
     private void Start()
     {

@@ -16,12 +16,9 @@ public class Board
     private Dictionary<string, Player> m_players = new Dictionary<string, Player>(); // {name : player} 
 
     // Constructor
-    public Board(List<Player> players)
+    public Board()
     { 
-        foreach (Player player in players)
-        {
-            m_players[player.Name] = player;
-        }
+
     }
 
     // Creates the spaces 
@@ -46,5 +43,10 @@ public class Board
             throw new ArgumentException("Space index out of range");
         }
         return m_spaces[index];
+    }
+
+    public void AddPlayer()
+    {
+
     }
 }
