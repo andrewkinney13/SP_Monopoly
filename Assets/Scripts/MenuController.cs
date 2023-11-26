@@ -55,7 +55,7 @@ public class MenuController : MonoBehaviour
         }
 
         // Max of 6 players
-        if (m_playerCount < 8)
+        if (m_playerCount < 6)
         {
             m_enterPlayerButton.interactable = true;
         }
