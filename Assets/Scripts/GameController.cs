@@ -18,7 +18,6 @@ public class GameController : MonoBehaviour
     // Runs when the script is initialized, using this as a constructor
     void Start()
     {
-
         // Assign space button functions
         foreach (Button button in m_spaceButtons)
         {
@@ -26,29 +25,13 @@ public class GameController : MonoBehaviour
         }
         
         // Initialize the board
-        List<Player> players = GetPlayers();
         m_board = new Board();
         m_board.InitializeBoard();
-
     }
 
     // Update is called once per frame
     void Update() { }
 
-    // Obtains the players
-    public List<Player> GetPlayers()
-    {
-        List<Player> players = new List<Player>();
-        Player andrew = new Player("Andrew");
-        players.Add(andrew);
-        Player kwas = new Player("Kwas");
-        players.Add(kwas);
-        Player max = new Player("Max");
-        players.Add(max);
-        Player bmac = new Player("Bmac");
-        players.Add(bmac);
-        return players;
-    }
 
     // When user clicks a space
     void OnSpaceClick(int spaceIndex)

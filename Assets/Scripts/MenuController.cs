@@ -44,8 +44,8 @@ public class MenuController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Game can start w/ 2 players
-        if (m_playerCount >= 2)
+        // Game can start w/ 2 players  // NEEDS TO CHANGE LATER BACK TO >= 2!!!
+        if (m_playerCount >= 0)
         {
             m_startButton.interactable = true;
         }
