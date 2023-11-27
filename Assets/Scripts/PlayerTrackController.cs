@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using TMPro;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +13,11 @@ public class NewBehaviourScript : MonoBehaviour
     // Data Members
     public List<Image> m_playerIcons;
     public Button m_movePlayers;
+    public TMP_InputField m_spaceNumInput;
 
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
-    private int m_spaceIndex = 0;
+    private int m_currentSpace = 0;
+    private float m_iconMovementAnimationDuration = .01f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,12 +26,6 @@ public class NewBehaviourScript : MonoBehaviour
         CreateLanes();
 
         m_movePlayers.onClick.AddListener(MovePlayers);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     // Initializes a list of lanes for each player
@@ -149,23 +148,78 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void MovePlayers()
     {
-        for (int playerNum = 0; playerNum < 6; playerNum++)
-        {
-            // Assign the position
-            RectTransform imageTransform = m_playerIcons[playerNum].rectTransform;
-            imageTransform.anchoredPosition = GetIconPosition(playerNum, m_spaceIndex);
+        int spaceToMoveTo = int.Parse(m_spaceNumInput.text);
 
-            // Assign the rotation
-            Vector3 currentRotation = imageTransform.eulerAngles;
-            if (m_spaceIndex >= 0 && m_spaceIndex < 10)
+        for (int playerNum = 0; playerNum < 6; playerNum++) 
+        {
+            StartCoroutine(MoveIconCoroutine(playerNum, m_currentSpace, spaceToMoveTo));   
+        }
+
+        m_currentSpace = spaceToMoveTo;
+    }
+
+    // Moves icon in an animated fashon to the next space
+    private IEnumerator MoveIconCoroutine(int playerNum, int initialSpace, int destinationSpace)
+    {
+        // Figure out how far the space needs to travel
+        int spaceDifference;
+        if (initialSpace <= destinationSpace)
+        {
+            spaceDifference = destinationSpace - initialSpace;
+        }
+        else
+        {
+            spaceDifference = (40 - initialSpace) + destinationSpace; 
+        }
+        Debug.Log(spaceDifference);
+
+        // Move each space to the next
+        for (int spacesMoved = 0; spacesMoved < spaceDifference; spacesMoved++) 
+        {
+            // Set the current and next space numbers
+
+            int currentSpace = initialSpace + spacesMoved;
+            if (currentSpace > 39)
             {
-                  currentRotation.z = 0;
+                currentSpace -= 40;
             }
-            else if (m_spaceIndex >= 10 && m_spaceIndex < 20)
+            int nextSpace = currentSpace + 1;
+            if (nextSpace == 40)
+            {
+                nextSpace = 0;
+            }
+
+            Debug.Log(currentSpace);
+            Debug.Log(nextSpace);
+           
+
+            // Get the initial and destination locations of this and next space
+            Vector2 initialPosition = GetIconPosition(playerNum, currentSpace);
+            Vector2 destinationPosition = GetIconPosition(playerNum, nextSpace);
+            Image playerIcon = m_playerIcons[playerNum];
+
+            // Moves the icon to that position over time
+            float elapsedTime = 0f;
+            while (elapsedTime < m_iconMovementAnimationDuration)
+            {
+                float t = elapsedTime / m_iconMovementAnimationDuration;
+                playerIcon.rectTransform.anchoredPosition = Vector2.Lerp(initialPosition, destinationPosition, t);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            playerIcon.rectTransform.anchoredPosition = destinationPosition; // Ensure final position is exact
+
+            // Rotate the icon if needed once moved
+            Vector3 currentRotation = playerIcon.rectTransform.eulerAngles;
+            if (nextSpace >= 0 && nextSpace < 10)
+            {
+                currentRotation.z = 0;
+            }
+            else if (nextSpace >= 10 && nextSpace < 20)
             {
                 currentRotation.z = 270;
             }
-            else if (m_spaceIndex >= 20 && m_spaceIndex < 30)
+            else if (nextSpace >= 20 && nextSpace < 30)
             {
                 currentRotation.z = 180;
             }
@@ -173,8 +227,7 @@ public class NewBehaviourScript : MonoBehaviour
             {
                 currentRotation.z = 90;
             }
-            imageTransform.eulerAngles = currentRotation;
+            playerIcon.rectTransform.eulerAngles = currentRotation;
         }
-        m_spaceIndex++;
     }
 }
