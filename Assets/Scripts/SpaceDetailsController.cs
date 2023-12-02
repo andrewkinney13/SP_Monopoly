@@ -9,9 +9,7 @@ public class SpaceDetailsController : MonoBehaviour
     // Data memebers
     public TMP_Text m_name;
     public TMP_Text m_details;
-    public Button m_actionButton;
-    public TMP_Text m_actionText;
-    
+    public GameObject m_window; 
 
     // Start is called before the first frame update
     void Start() { }
@@ -19,14 +17,26 @@ public class SpaceDetailsController : MonoBehaviour
     // Update is called once per frame
     void Update() { }
 
-    // Updates the propery details window within the screen UI
-    public void SetSpaceDetailsWindow(string propertyName, string propertyDetails, 
-        UnityEngine.Events.UnityAction actionFunction, string actionText)
+    // Creates a propery details window within the screen UI, where the user clicked the propery
+    public void CreateSpaceDetailsWindow(string propertyName, string propertyDetails, Vector2 cursorLocation)
     {
+        // Set up the name and details
         m_name.text = propertyName;
         m_details.text = propertyDetails;
-        m_actionButton.onClick.AddListener(actionFunction);
-        m_actionText.text = actionText;
+        
+        // Assign location (corner of cursor)
+        RectTransform windowTransform = m_window.GetComponent<RectTransform>();
+        cursorLocation.y += windowTransform.rect.height / 2;
+        windowTransform.position = cursorLocation;
+
+        // Enable the window
+        m_window.SetActive(true);
+    }
+
+    // Closes the window 
+    public void CloseSpaceDetailsWindow()
+    {
+        m_window.SetActive(false);
     }
 }
 

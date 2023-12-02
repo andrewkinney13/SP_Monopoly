@@ -9,11 +9,10 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     // Data Members
-    public Canvas m_boardCanvas;
-    public Canvas m_screenUICanvas;
-    public List<Button> m_spaceButtons;
-    public SpaceDetailsController m_spaceDetailsWindow;
     private Board m_board;
+
+    public List<Button> m_spaceButtons;
+    public SpaceDetailsController m_spaceDetailsController;    
     
     // Runs when the script is initialized, using this as a constructor
     void Start()
@@ -30,7 +29,14 @@ public class GameController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update() { }
+    void Update() 
+    {
+        // Erase the space details window if user clicks
+        if (Input.GetMouseButtonDown(0))
+        {
+            m_spaceDetailsController.CloseSpaceDetailsWindow();
+        }
+    }
 
 
     // When user clicks a space
@@ -39,10 +45,12 @@ public class GameController : MonoBehaviour
         // Get the space info
         string spaceName = m_board.GetSpace(spaceIndex).Name;
         string spaceDescription = m_board.GetSpace(spaceIndex).Description;
-        string spaceActionText = m_board.GetSpace(spaceIndex).ActionText;
 
-        // Display it in the space details window
-        m_spaceDetailsWindow.SetSpaceDetailsWindow(spaceName, spaceDescription, 
-            m_board.GetSpace(spaceIndex).Action, spaceActionText);
+        // Obtain the cursor location
+        Vector2 mousePosition = Input.mousePosition;
+        Debug.Log(mousePosition);
+
+        // Display it in the space details window, where the user clicked
+        m_spaceDetailsController.CreateSpaceDetailsWindow(spaceName, spaceDescription, mousePosition);
     }
 }

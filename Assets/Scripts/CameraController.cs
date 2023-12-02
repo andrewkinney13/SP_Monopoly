@@ -14,14 +14,21 @@ public class CameraController : MonoBehaviour
     private Camera m_camera;
     private Vector3 m_lastMousePosition;
     private float m_minSize = 50.0f;
-    private float m_maxSize = 300.0f;
+    private float m_maxSize = 325.0f;
+    private float m_maxY;
+    private float m_minY;
+    private float m_maxX;
+    private float m_minX;
+
 
     private void Start()
     {
         // Initialize camera w/ proper size
         m_camera = Camera.main;
-        m_camera.orthographicSize = m_maxSize;
 
+        m_camera.orthographicSize = m_maxSize - 25f;
+
+        // Assign the rotate function buttons
         m_leftRotate.onClick.AddListener(LeftRotate);
         m_rightRotate.onClick.AddListener(RightRotate);
     }

@@ -12,20 +12,16 @@ public class NewBehaviourScript : MonoBehaviour
 {
     // Data Members
     public List<Image> m_playerIcons;
-    public Button m_movePlayers;
-    public TMP_InputField m_spaceNumInput;
 
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     private int m_currentSpace = 0;
-    private float m_iconMovementAnimationDuration = .01f;
+    private float m_iconMovementAnimationDuration = .25f;
 
     // Start is called before the first frame update
     void Start()
     {
         // Create the player lanes
         CreateLanes();
-
-        m_movePlayers.onClick.AddListener(MovePlayers);
     }
 
     // Initializes a list of lanes for each player
@@ -146,20 +142,9 @@ public class NewBehaviourScript : MonoBehaviour
         return lane[spaceNum];
     }
 
-    private void MovePlayers()
-    {
-        int spaceToMoveTo = int.Parse(m_spaceNumInput.text);
 
-        for (int playerNum = 0; playerNum < 6; playerNum++) 
-        {
-            StartCoroutine(MoveIconCoroutine(playerNum, m_currentSpace, spaceToMoveTo));   
-        }
-
-        m_currentSpace = spaceToMoveTo;
-    }
-
-    // Moves icon in an animated fashon to the next space
-    private IEnumerator MoveIconCoroutine(int playerNum, int initialSpace, int destinationSpace)
+    // Moves player icon in an animated fashion to specified location
+    private IEnumerator MovePlayer(int playerNum, int initialSpace, int destinationSpace)
     {
         // Figure out how far the space needs to travel
         int spaceDifference;

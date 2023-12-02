@@ -7,6 +7,7 @@ public class Player
     private string m_name;
     private string m_icon;
     private float m_cash;
+    private int m_currentSpace;
     private List<Property> m_properties = new List<Property>();
 
     // Constructor
@@ -32,5 +33,20 @@ public class Player
     {
         get { return m_cash; }
         set { m_cash = value; }
+    }
+    public int CurrentSpace
+    {
+        get { return m_currentSpace; }
+        set
+        {
+            if (value < 0 && value > 39)
+            {
+                m_currentSpace = value;
+            }
+            else
+            {
+                throw new System.Exception("Space index out of range...");
+            }
+        }
     }
 }

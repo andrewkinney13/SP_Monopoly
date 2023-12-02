@@ -17,7 +17,7 @@ public class Space
     {
         Name = name;
         Index = index;
-        Description = Name + ", at index: " + Index;
+        Description = "Owner: \nCost:\nHouses:\nHotels:\n";
     }
 
     // Getters and Setters
