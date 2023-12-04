@@ -9,7 +9,7 @@
     <Icon>Car</Icon>
   </Player>
   <Player>
-    <Name>Sal</Name>
+    <Name>Kwas</Name>
     <Icon>Battleship</Icon>
   </Player>
   <Player>
@@ -23,13 +23,5 @@
   <Player>
     <Name>Bmac</Name>
     <Icon>Wheel Barrel</Icon>
-  </Player>
-  <Player>
-    <Name>Jared</Name>
-    <Icon>Iron</Icon>
-  </Player>
-  <Player>
-    <Name>Logan</Name>
-    <Icon>Dog</Icon>
   </Player>
 </Players>

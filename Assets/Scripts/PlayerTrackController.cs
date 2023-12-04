@@ -1,32 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using TMPro;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class PlayerTrackController : MonoBehaviour
 {
     // Data Members
-    public List<Image> m_playerIcons;
+    public List<Button> m_playerIcons;
 
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
-    private int m_currentSpace = 0;
     private float m_iconMovementAnimationDuration = .25f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Create the player lanes
-        CreateLanes();
-    }
+    void Start() { }
 
     // Initializes a list of lanes for each player
     // lane = list of positions a player can go to for the spaces on the board
-    private void CreateLanes()
+    public void CreateLanes()
     {
         // Create offsets for each player (so no direct overlap)
         Vector2[] offsets = new Vector2[]
@@ -142,9 +132,8 @@ public class NewBehaviourScript : MonoBehaviour
         return lane[spaceNum];
     }
 
-
     // Moves player icon in an animated fashion to specified location
-    private IEnumerator MovePlayer(int playerNum, int initialSpace, int destinationSpace)
+    public IEnumerator MovePlayer(int playerNum, int initialSpace, int destinationSpace)
     {
         // Figure out how far the space needs to travel
         int spaceDifference;
@@ -156,7 +145,6 @@ public class NewBehaviourScript : MonoBehaviour
         {
             spaceDifference = (40 - initialSpace) + destinationSpace; 
         }
-        Debug.Log(spaceDifference);
 
         // Move each space to the next
         for (int spacesMoved = 0; spacesMoved < spaceDifference; spacesMoved++) 
@@ -174,14 +162,10 @@ public class NewBehaviourScript : MonoBehaviour
                 nextSpace = 0;
             }
 
-            Debug.Log(currentSpace);
-            Debug.Log(nextSpace);
-           
-
             // Get the initial and destination locations of this and next space
             Vector2 initialPosition = GetIconPosition(playerNum, currentSpace);
             Vector2 destinationPosition = GetIconPosition(playerNum, nextSpace);
-            Image playerIcon = m_playerIcons[playerNum];
+            Image playerIcon = m_playerIcons[playerNum].GetComponent<Image>();
 
             // Moves the icon to that position over time
             float elapsedTime = 0f;

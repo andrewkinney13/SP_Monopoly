@@ -14,7 +14,7 @@ public class Board
     // Data members
     private List<Space> m_spaces = new List<Space>();
     private const int SPACE_NUM = 40; // There are always 40 spaces on the board
-    private Dictionary<string, Player> m_players = new Dictionary<string, Player>(); // {name : player} 
+    private List<Player> m_players = new List<Player>();
 
     // Constructor
     public Board()
@@ -61,7 +61,7 @@ public class Board
         foreach (string name in tempPlayers.Keys)
         {
             Player currentPlayer = new Player(name, tempPlayers[name]);
-            m_players[name] = currentPlayer;
+            m_players.Add(currentPlayer);
         }
     }
 
@@ -73,5 +73,11 @@ public class Board
             throw new ArgumentException("Space index out of range");
         }
         return m_spaces[index];
+    }
+
+    // Returns list of the players
+    public List<Player> Players()
+    {
+        return m_players;
     }
 }

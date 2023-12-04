@@ -24,12 +24,4 @@
     <Name>Bmac</Name>
     <Icon>Wheel Barrel</Icon>
   </Player>
-  <Player>
-    <Name>Chris</Name>
-    <Icon>Iron</Icon>
-  </Player>
-  <Player>
-    <Name>Sal</Name>
-    <Icon>Dog</Icon>
-  </Player>
 </Players>
