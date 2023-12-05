@@ -58,10 +58,12 @@ public class Board
         tempPlayers = playerFile.ReadPlayersFromFile();
 
         // Add them to the players list
+        int playerNum = 0;
         foreach (string name in tempPlayers.Keys)
         {
-            Player currentPlayer = new Player(name, tempPlayers[name]);
+            Player currentPlayer = new Player(name, tempPlayers[name], playerNum);
             m_players.Add(currentPlayer);
+            playerNum++;
         }
     }
 
@@ -76,8 +78,8 @@ public class Board
     }
 
     // Returns list of the players
-    public List<Player> Players()
+    public List<Player> Players
     {
-        return m_players;
+        get { return m_players; }
     }
 }

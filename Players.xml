@@ -1,2 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Players />
+<Players>
+  <Player>
+    <Name>andrew</Name>
+    <Icon>Hat</Icon>
+  </Player>
+  <Player>
+    <Name>kwas</Name>
+    <Icon>Thimble</Icon>
+  </Player>
+  <Player>
+    <Name>maxie</Name>
+    <Icon>Dog</Icon>
+  </Player>
+</Players>

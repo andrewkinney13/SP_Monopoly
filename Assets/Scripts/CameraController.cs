@@ -15,11 +15,6 @@ public class CameraController : MonoBehaviour
     private Vector3 m_lastMousePosition;
     private float m_minSize = 50.0f;
     private float m_maxSize = 325.0f;
-    private float m_maxY;
-    private float m_minY;
-    private float m_maxX;
-    private float m_minX;
-
 
     private void Start()
     {
@@ -29,8 +24,8 @@ public class CameraController : MonoBehaviour
         m_camera.orthographicSize = m_maxSize - 25f;
 
         // Assign the rotate function buttons
-        m_leftRotate.onClick.AddListener(LeftRotate);
-        m_rightRotate.onClick.AddListener(RightRotate);
+        m_leftRotate.onClick.AddListener(() => RotateCamera(-90));
+        m_rightRotate.onClick.AddListener(() => RotateCamera(90));
     }
 
     // Runs every frame
@@ -43,16 +38,36 @@ public class CameraController : MonoBehaviour
         Move();
     }
 
-    // Rotate camera left
-    private void LeftRotate()
+    // Rotate camera 
+    private void RotateCamera(int angle)
     {
-        m_camera.transform.Rotate(0f, 0f, -90);
-    }
+        // Rotate camera
+        m_camera.transform.Rotate(0f, 0f, angle);
 
-    // Rotate camera right
-    private void RightRotate()
-    {
-        m_camera.transform.Rotate(0f, 0f, 90);
+        /*
+        // Account for negative x offset and fix the positioning
+        float x = m_camera.transform.position.x;
+        float y = m_camera.transform.position.y;
+        float z = m_camera.transform.position.z;
+        Debug.Log(m_camera.transform.eulerAngles.z);
+        switch ((int)m_camera.transform.eulerAngles.z)
+        {
+            case 270:
+                Debug.Log("hey!");
+                x -= x / 2;
+                y -= y / 2;
+                break;
+            case 180:
+                x -= x;
+                break;
+            case 90:
+                x -= x;
+                y += y;
+                break;
+        }
+
+        m_camera.transform.position = new Vector3(x, y, z);
+        */
     }
 
     // If the user scrolls this frame, adjust the screen accordingly

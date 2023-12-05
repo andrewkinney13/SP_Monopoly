@@ -13,13 +13,6 @@ public class PlayerFile
     private XmlReader m_reader;
     private string m_fileName = "Players.xml";
 
-
-    // Constructor
-    public PlayerFile()
-    {
-        
-    }
-
     // Creates "players.xml" file to save player data 
     public void CreatePlayerFile()
     {

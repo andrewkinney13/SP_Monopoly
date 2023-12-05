@@ -8,13 +8,15 @@ public class Player
     private string m_icon;
     private float m_cash;
     private int m_currentSpace;
-    private List<Property> m_properties = new List<Property>();
+    private int m_playerNum;
 
     // Constructor
-    public Player(string name, string icon) 
+    public Player(string name, string icon, int playerNum) 
     {
         Name = name;
         Icon = icon;
+        PlayerNum = playerNum;
+
         m_cash = 1500.0f;
     }
 
@@ -34,6 +36,11 @@ public class Player
         get { return m_cash; }
         set { m_cash = value; }
     }
+    public int PlayerNum
+    {
+        get { return m_playerNum; } 
+        set { m_playerNum = value; }
+    }
     public int CurrentSpace
     {
         get { return m_currentSpace; }
@@ -49,4 +56,5 @@ public class Player
             }
         }
     }
+    
 }

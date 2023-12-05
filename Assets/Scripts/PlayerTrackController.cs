@@ -12,7 +12,11 @@ public class PlayerTrackController : MonoBehaviour
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     private float m_iconMovementAnimationDuration = .25f;
 
-    void Start() { }
+    // Sets the player icon buttons with the correct order assigned by GameController
+    public void SetIcons(List<Button> icons)
+    {
+        m_playerIcons = icons;
+    }
 
     // Initializes a list of lanes for each player
     // lane = list of positions a player can go to for the spaces on the board

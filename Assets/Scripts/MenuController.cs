@@ -86,9 +86,6 @@ public class MenuController : MonoBehaviour
         m_selectedIcon = selectedIconButton.name;
     }
 
-
-    
-
     // Starts the game
     private void StartGame()
     {
