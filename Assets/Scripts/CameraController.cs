@@ -1,4 +1,5 @@
 
+using System.Diagnostics.Contracts;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class CameraController : MonoBehaviour
     // Data Members
     public Button m_leftRotate;
     public Button m_rightRotate;
+    public GameObject m_cameraPivot;
 
     private Camera m_camera;
     private Vector3 m_lastMousePosition;
@@ -42,32 +44,7 @@ public class CameraController : MonoBehaviour
     private void RotateCamera(int angle)
     {
         // Rotate camera
-        m_camera.transform.Rotate(0f, 0f, angle);
-
-        /*
-        // Account for negative x offset and fix the positioning
-        float x = m_camera.transform.position.x;
-        float y = m_camera.transform.position.y;
-        float z = m_camera.transform.position.z;
-        Debug.Log(m_camera.transform.eulerAngles.z);
-        switch ((int)m_camera.transform.eulerAngles.z)
-        {
-            case 270:
-                Debug.Log("hey!");
-                x -= x / 2;
-                y -= y / 2;
-                break;
-            case 180:
-                x -= x;
-                break;
-            case 90:
-                x -= x;
-                y += y;
-                break;
-        }
-
-        m_camera.transform.position = new Vector3(x, y, z);
-        */
+        m_cameraPivot.transform.Rotate(0f, 0f, angle);
     }
 
     // If the user scrolls this frame, adjust the screen accordingly

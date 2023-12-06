@@ -1288,11 +1288,11 @@ Transform:
   m_GameObject: {fileID: 65182659}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -800, y: 0, z: -1}
+  m_LocalPosition: {x: 200, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 235536431}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &65182664
 MonoBehaviour:
@@ -1308,6 +1308,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_leftRotate: {fileID: 410438988}
   m_rightRotate: {fileID: 42134270}
+  m_cameraPivot: {fileID: 235536430}
 --- !u!1001 &66976295
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4361,6 +4362,38 @@ Transform:
   - {fileID: 1933021207}
   m_Father: {fileID: 2133029377}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &235536430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 235536431}
+  m_Layer: 0
+  m_Name: Camera Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &235536431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235536430}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1200, y: 0, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 65182663}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &251427744
 GameObject:
   m_ObjectHideFlags: 0
@@ -5205,7 +5238,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.065714285, y: 0.5}
   m_AnchorMax: {x: 0.95000005, y: 0.8751693}
-  m_AnchoredPosition: {x: 0.000030517578, y: -0.000038146973}
+  m_AnchoredPosition: {x: 0.000030517578, y: -0.000030517578}
   m_SizeDelta: {x: -5, y: -0.000015259}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &282806224
@@ -12918,7 +12951,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.813426}
-  m_AnchoredPosition: {x: -0.00015258789, y: 0.000030517578}
+  m_AnchoredPosition: {x: -0.00015258789, y: 0}
   m_SizeDelta: {x: 0.000061035, y: 0.000061035}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &872188794
@@ -12988,7 +13021,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.000015258789}
+  m_AnchoredPosition: {x: 0.000061035156, y: 0}
   m_SizeDelta: {x: 0, y: 0.000030518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &877017303
@@ -17488,7 +17521,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.3, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &1091386739
@@ -22206,7 +22239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.19857144, y: 0.117000006}
   m_AnchorMax: {x: 0.8042859, y: 0.5}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.000045776367}
+  m_AnchoredPosition: {x: 0.000061035156, y: -0.000030517578}
   m_SizeDelta: {x: -0.00042725, y: -0.000045776}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1486170648
@@ -22735,7 +22768,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1000, y: 0}
+  m_AnchoredPosition: {x: -1200, y: 0}
   m_SizeDelta: {x: 11.93, y: 11.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1528194575
@@ -31141,7 +31174,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 65182663}
+  - {fileID: 235536431}
   - {fileID: 579919076}
   - {fileID: 1571150923}
   - {fileID: 1528194574}
