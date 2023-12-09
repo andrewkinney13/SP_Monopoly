@@ -41,7 +41,7 @@ public class PopupController : MonoBehaviour
         }
         else
         {
-            m_title.color = Color.black;
+            m_title.color = Color.white;
         }
 
         // Set the popup window as active

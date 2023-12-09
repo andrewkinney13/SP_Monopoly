@@ -12,7 +12,10 @@ public class GameController : MonoBehaviour
     private Board m_board;
     private int m_turnNum;    
     private bool m_turnCompleted = false;       
-    private bool m_panelUpdateNeeded = false; 
+    private bool m_panelUpdateNeeded = false;
+
+    // Popup window
+    public PopupController m_popupController;
 
     // Buttons the user can click to get info about stuff
     public List<Button> m_spaceButtons;
@@ -70,6 +73,9 @@ public class GameController : MonoBehaviour
 
         // Need to set the panel initially 
         m_panelUpdateNeeded = true;
+
+        // Close popup window
+        m_popupController.ClosePopupWindow();
     }
 
     // Update is called once per frame
@@ -185,6 +191,12 @@ public class GameController : MonoBehaviour
     // Returns what action needs to be taken by the current player
     public Actions DetermineAction()
     {
+        // Check to see if player needs their turn initialized
+        if (!m_board.Players[m_turnNum].TurnInitialized)
+        {
+            return Actions.DetermineOrder;
+        }
+
         // Check if the turn order has been determined
         return Actions.EndTurn;
     }
@@ -210,12 +222,12 @@ public class GameController : MonoBehaviour
             case Actions.DetermineOrder:
             
                 // Obtain the dice buttons
-                Button die1 = GameObject.Find("Die 1").GetComponent<Button>();
-                Button die2 = GameObject.Find("Die 2").GetComponent<Button>();
+                Button dice = GameObject.Find("Dice Button").GetComponent<Button>();
+                Image die1 = GameObject.Find("Die 1").GetComponent<Image>();
+                Image die2 = GameObject.Find("Die 2").GetComponent<Image>();
 
                 // Assign determine order function
-                die1.onClick.AddListener(() => DetermineOrder(die1, die2));
-                die2.onClick.AddListener(() => DetermineOrder(die1, die2));
+                dice.onClick.AddListener(() => DetermineOrder(die1, die2));
 
                 break;
             
@@ -228,9 +240,43 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void DetermineOrder(Button die1, Button die2)
+    // All players roll dice, players go in order of the result of their dice roll
+    void DetermineOrder(Image die1, Image die2)
     {
-        int diceRoll = Random.Range(2, 12);
+        // They roll the dice
+        m_board.Players[m_turnNum].CurrentSpace = Random.Range(2, 12);
+
+        // Update their turn initialization status
+        m_board.Players[m_turnNum].TurnInitialized = true;
+
+        // If all players have rolled to determine their order, we can now set the actual turn orders
+        if (m_turnNum == m_board.Players.Count - 1)
+        {
+            // Sort players
+            m_board.Players.Sort(SortPlayers);
+
+            // Create a pop up to tell the users that the order of players has been determined
+            m_popupController.CreatePopupWindow("Test", "Test");
+        }
+
+        m_panelUpdateNeeded = true;
+    }
+
+    // Sorts players based on their current space, as determined by a dice roll
+    static int SortPlayers(Player player1, Player player2)
+    {
+        if (player1.CurrentSpace < player2.CurrentSpace) 
+        {
+            return -1;
+        }
+        else if (player1.CurrentSpace > player2.CurrentSpace)
+        {
+            return 1;
+        }
+        else 
+        { 
+            return 0; 
+        }
     }
 
     void EndTurn()

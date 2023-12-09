@@ -24,7 +24,7 @@ public class DetailsPopupController : MonoBehaviour
 
             // Render the space details window
             RectTransform windowTransform = m_window.GetComponent<RectTransform>();
-            mousePosition.y += windowTransform.rect.height / 2;
+            mousePosition.y += windowTransform.rect.height / 4;
             windowTransform.position = mousePosition;
         }
     }

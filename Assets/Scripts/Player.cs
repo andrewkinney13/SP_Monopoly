@@ -9,6 +9,7 @@ public class Player
     private float m_cash;
     private int m_currentSpace;
     private int m_playerNum;
+    private bool m_turnInitialized;
 
     // Constructor
     public Player(string name, string icon, int playerNum) 
@@ -16,6 +17,7 @@ public class Player
         Name = name;
         Icon = icon;
         PlayerNum = playerNum;
+        TurnInitialized = false;
 
         m_cash = 1500.0f;
     }
@@ -46,7 +48,7 @@ public class Player
         get { return m_currentSpace; }
         set
         {
-            if (value < 0 && value > 39)
+            if (value >= 0 && value <= 39)
             {
                 m_currentSpace = value;
             }
@@ -55,5 +57,10 @@ public class Player
                 throw new System.Exception("Space index out of range...");
             }
         }
+    }
+    public bool TurnInitialized
+    { 
+        get { return m_turnInitialized; }
+        set { m_turnInitialized = value; }
     }
 }
