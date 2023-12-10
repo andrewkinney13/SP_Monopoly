@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player
 {
+    // Data members
     private string m_name;
+    private string m_description;
     private string m_icon;
     private float m_cash;
     private int m_currentSpace;
-    private int m_playerNum;
+    private int m_playerNum; 
+
     private bool m_turnInitialized;
+    private bool m_rolledDice;
 
     // Constructor
     public Player(string name, string icon, int playerNum) 
@@ -27,6 +32,13 @@ public class Player
     {
         get { return m_name; }
         set { m_name = value; }
+    }
+    public string Description
+    {
+        get 
+        {
+            return "Cash: " + m_cash + "\n"; 
+        }
     }
     public string Icon
     {
@@ -62,5 +74,10 @@ public class Player
     { 
         get { return m_turnInitialized; }
         set { m_turnInitialized = value; }
+    }
+    public bool RolledDice
+    {
+        get { return m_rolledDice; }
+        set { m_rolledDice = value; }
     }
 }

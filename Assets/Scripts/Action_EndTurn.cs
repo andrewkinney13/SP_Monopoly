@@ -20,5 +20,6 @@ public class Action_EndTurn : Action
     {
         m_gameController.TurnCompleted = true;
     }
+    public override void ResetWindow() { }
 
 }

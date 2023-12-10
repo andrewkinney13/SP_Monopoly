@@ -18,17 +18,20 @@ public class CameraController : MonoBehaviour
     private Vector3 m_lastMousePosition;
     private float m_minSize = 50.0f;
     private float m_maxSize = 325.0f;
+    private bool m_zoomEnabled;
 
     private void Start()
     {
         // Initialize camera w/ proper size
         m_camera = Camera.main;
-
         m_camera.orthographicSize = m_maxSize - 25f;
 
         // Assign the rotate function buttons
         m_leftRotate.onClick.AddListener(() => RotateCamera(-90));
         m_rightRotate.onClick.AddListener(() => RotateCamera(90));
+
+        // Enable zooming
+        m_zoomEnabled = true;
     }
 
     // Runs every frame
@@ -48,9 +51,33 @@ public class CameraController : MonoBehaviour
         m_cameraPivot.transform.Rotate(0f, 0f, angle);
     }
 
+    // So other classes with scroll bars can disable zoom
+    public void SetZooming(bool zoomState)
+    {
+        m_zoomEnabled = zoomState;
+    }
+
+    // Resets camera's position and orientation 
+    public void ResetCamera()
+    {
+        // Reorient the camera pivot
+        int currentRotation = (int)m_cameraPivot.transform.eulerAngles.z;
+        RotateCamera(-1 * (currentRotation));
+
+        // Reset size and position within the pivot
+        m_camera.orthographicSize = m_maxSize - 25f;
+        m_camera.transform.position = new Vector3(-1000f, 0f, -1f);
+    }
+
     // If the user scrolls this frame, adjust the screen accordingly
     private void Zoom()
     {
+        // Do nothing if zooming disabled
+        if (!m_zoomEnabled) 
+        { 
+           return;
+        }
+
         // Get the scroll direction
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 

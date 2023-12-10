@@ -9,4 +9,5 @@ public abstract class Action : MonoBehaviour
 
     // Pure virtual functions to implement
     public abstract void SendToGame();
+    public abstract void ResetWindow();
 }

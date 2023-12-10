@@ -22,12 +22,11 @@ public class GameController : MonoBehaviour
     public List<Button> m_spaceButtons;
     public List<Button> m_playerButtons;
 
-    // Controller classes for buttons above
+    // Controller classes
     public DetailsPopupController m_spaceDetailsController;
     public DetailsPopupController m_playerDetailsController;
-
-    // Controller class for player icon movememnt
     public PlayerTrackController m_playerTrackController;
+    public CameraController m_cameraController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -38,9 +37,6 @@ public class GameController : MonoBehaviour
     public TMP_Text m_panelCash;
     public List<GameObject> m_actionWindows;
     public RectTransform m_propertiesContent;
-
-    // Action classes
-    public Action_DetermineOrder m_determineOrderController;
 
     // Possible actions a player may have to take during their turn
     public enum Actions
@@ -119,6 +115,9 @@ public class GameController : MonoBehaviour
             }
             m_turnCompleted = false;
             m_updateMade = true;
+
+            // Reset the camera 
+            m_cameraController.ResetCamera();
         }
 
         // Erase the space details window if user clicks
@@ -177,6 +176,12 @@ public class GameController : MonoBehaviour
             return Actions.DetermineOrder;
         }
 
+        /*// 
+        if (!m_board.Players[m_turnNum].RolledDice)
+        {
+            return Actions.RollDice;
+        }*/
+
         // Check if the turn order has been determined
         return Actions.EndTurn;
     }
@@ -201,9 +206,10 @@ public class GameController : MonoBehaviour
             {
                 // Reinit player num w/ new order
                 player.PlayerNum = playerNum;
+                
 
                 // Append output for popup
-                popUpMessage += (playerNum + 1) + ": " + player.Name + ", rolled a " + player.CurrentSpace + "\n";
+                popUpMessage += (playerNum + 1) + ": " + player.Name + ", rolled " + player.CurrentSpace + "\n";
 
                 // Reset their space to Go
                 player.CurrentSpace = 0;
@@ -228,11 +234,11 @@ public class GameController : MonoBehaviour
     {
         if (player1.CurrentSpace < player2.CurrentSpace) 
         {
-            return -1;
+            return 1;
         }
         else if (player1.CurrentSpace > player2.CurrentSpace)
         {
-            return 1;
+            return -1;
         }
         else 
         { 
@@ -254,11 +260,8 @@ public class GameController : MonoBehaviour
     // When user clicks a player
     void OnPlayerClick(int playerNum)
     {
-        // Get the space info
-        string spaceDescription = "Hey this is a player!";
-
         // Display it in the space details window, where the user clicked
-        m_playerDetailsController.CreateDetailsWindow(playerNum.ToString(), spaceDescription);
+        m_playerDetailsController.CreateDetailsWindow(m_board.Players[playerNum].Name, m_board.Players[playerNum].Description);
     }
 
     // Initializes the player lanes and icons 
@@ -274,7 +277,7 @@ public class GameController : MonoBehaviour
             m_playerButtons[player.PlayerNum].image.sprite = GetIconSprite(player.Icon);
 
             // Move the player to space 0
-            StartCoroutine(m_playerTrackController.MovePlayer(player.PlayerNum, 0, 0));
+            StartCoroutine(m_playerTrackController.MovePlayer(player.PlayerNum, 39, 0));
         }
     }
 
@@ -290,7 +293,6 @@ public class GameController : MonoBehaviour
         }
         return null;
     }
-
 }
 
 

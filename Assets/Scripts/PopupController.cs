@@ -12,7 +12,8 @@ public class PopupController : MonoBehaviour
     public Button m_popupCloseButton;
     public TMP_Text m_title;
     public TMP_Text m_message;
-    
+    public CameraController m_cameraController;
+
     public void Start()
     {
         m_popupCloseButton.onClick.AddListener(ClosePopupWindow);
@@ -21,6 +22,14 @@ public class PopupController : MonoBehaviour
     // Closes the popup window
     public void ClosePopupWindow()
     {
+        // Enable zooming for camera if a controller class is defined
+        try
+        {
+            m_cameraController.SetZooming(true);
+        }
+        catch { }
+
+        // Disable the window
         m_popupWindow.SetActive(false);
     }
 
@@ -44,6 +53,14 @@ public class PopupController : MonoBehaviour
         {
             m_title.color = Color.white;
         }
+
+        // Disable zooming if a camera controller is defined
+        try
+        {
+            m_cameraController.SetZooming(false);
+        }
+        catch { }
+        
 
         // Set the popup window as active
         m_popupWindow.SetActive(true);
