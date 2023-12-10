@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PopupController : MonoBehaviour
 {
+    // Unity Data Members
     public GameObject m_popupWindow;
     public Button m_popupCloseButton;
     public TMP_Text m_title;

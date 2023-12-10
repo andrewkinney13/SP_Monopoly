@@ -8,11 +8,12 @@ using UnityEngine.UI;
 // Handles zooming and moving around while looking at the board
 public class CameraController : MonoBehaviour
 {
-    // Data Members
+    // Unity data members
     public Button m_leftRotate;
     public Button m_rightRotate;
     public GameObject m_cameraPivot;
 
+    // Private Data Members
     private Camera m_camera;
     private Vector3 m_lastMousePosition;
     private float m_minSize = 50.0f;

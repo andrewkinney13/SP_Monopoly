@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -12,7 +13,7 @@ public class GameController : MonoBehaviour
     private Board m_board;
     private int m_turnNum;    
     private bool m_turnCompleted = false;       
-    private bool m_panelUpdateNeeded = false;
+    private bool m_updateMade = false;
 
     // Popup window
     public PopupController m_popupController;
@@ -37,6 +38,9 @@ public class GameController : MonoBehaviour
     public TMP_Text m_panelCash;
     public List<GameObject> m_actionWindows;
     public RectTransform m_propertiesContent;
+
+    // Action classes
+    public Action_DetermineOrder m_determineOrderController;
 
     // Possible actions a player may have to take during their turn
     public enum Actions
@@ -72,7 +76,7 @@ public class GameController : MonoBehaviour
         m_turnNum = 0;
 
         // Need to set the panel initially 
-        m_panelUpdateNeeded = true;
+        m_updateMade = true;
 
         // Close popup window
         m_popupController.ClosePopupWindow();
@@ -81,8 +85,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // If attributes of the player change, redraw the player panel
-        if (m_panelUpdateNeeded)
+        // Check if anything has been updated
+        if (m_updateMade)
         {
             // Obtain current player data
             string name = m_board.Players[m_turnNum].Name;
@@ -98,10 +102,10 @@ public class GameController : MonoBehaviour
             CreatePlayerPanel(icon, name, cash, action);
 
             // Set bool to false now that update has been made
-            m_panelUpdateNeeded = false;
+            m_updateMade = false;
         }
 
-        // Check to see if the turn num
+        // Update whose turn it is if turn completed
         if (m_turnCompleted)
         {
             // Update whose turn is is
@@ -114,7 +118,7 @@ public class GameController : MonoBehaviour
                 m_turnNum = 0;
             }
             m_turnCompleted = false;
-            m_panelUpdateNeeded = true;
+            m_updateMade = true;
         }
 
         // Erase the space details window if user clicks
@@ -125,6 +129,23 @@ public class GameController : MonoBehaviour
         }
     }
 
+    // Getters and setters 
+    public bool TurnCompleted
+    {
+        get { return m_turnCompleted; }
+        set { m_turnCompleted = value; }
+    }
+    public bool UpdateMade
+    {
+        get { return m_updateMade; }
+        set { m_updateMade = value; }
+    }
+    public Player CurrentPlayer
+    {
+        get { return m_board.Players[m_turnNum]; }
+    }
+
+
     // Creates the player panel for the player to do actions during their turn
     public void CreatePlayerPanel(Sprite icon, string name, float cash, Actions action)
     {
@@ -133,8 +154,90 @@ public class GameController : MonoBehaviour
         m_panelTitle.text = name + "'s Turn";
         m_panelCash.text = "Cash: $" + cash;
 
-        // Assign action window
-        AssignActionWindow(action);
+        // Deactivate any other action windows
+        foreach (GameObject actionWindow in m_actionWindows)
+        {
+            actionWindow.SetActive(false);
+        }
+
+        // Get the proper window
+        GameObject currentActionWindow = m_actionWindows[(int)action];
+
+        // Set the window as active
+        currentActionWindow.gameObject.SetActive(true);
+    }
+
+    
+    // Returns what action needs to be taken by the current player
+    public Actions DetermineAction()
+    {
+        // Check to see if player needs their turn initialized
+        if (!m_board.Players[m_turnNum].TurnInitialized)
+        {
+            return Actions.DetermineOrder;
+        }
+
+        // Check if the turn order has been determined
+        return Actions.EndTurn;
+    }
+
+    // Called by determine order action
+    public void Action_OrderDetermined(int diceResult)
+    {
+        // Mark the player has having their turn initialized
+        CurrentPlayer.CurrentSpace = diceResult;
+        CurrentPlayer.TurnInitialized = true;
+
+        // If this was the last player, all players were initialized
+        if (CurrentPlayer.PlayerNum == m_board.Players.Count - 1)
+        {
+            // Sort the players 
+            m_board.Players.Sort(SortPlayers);
+
+            // Iterate through the players to update their properties and create output message
+            string popUpMessage = "";
+            int playerNum = 0;
+            foreach (Player player in m_board.Players)
+            {
+                // Reinit player num w/ new order
+                player.PlayerNum = playerNum;
+
+                // Append output for popup
+                popUpMessage += (playerNum + 1) + ": " + player.Name + ", rolled a " + player.CurrentSpace + "\n";
+
+                // Reset their space to Go
+                player.CurrentSpace = 0;
+
+                // Append what player we're on
+                playerNum++;
+            }
+
+            // Initialize the icons now with proper order 
+            InitializePlayerIcons();
+
+            // Show a popup that players have been intialized
+            m_popupController.CreatePopupWindow("Order Determined!", popUpMessage);
+        }
+
+        // Mark update was made
+        m_updateMade = true;
+    }
+
+    // Sorts players based on their current space, as determined by a dice roll
+    static int SortPlayers(Player player1, Player player2)
+    {
+        if (player1.CurrentSpace < player2.CurrentSpace) 
+        {
+            return -1;
+        }
+        else if (player1.CurrentSpace > player2.CurrentSpace)
+        {
+            return 1;
+        }
+        else 
+        { 
+            return 0; 
+        }
     }
 
     // When user clicks a space
@@ -186,102 +289,6 @@ public class GameController : MonoBehaviour
             }
         }
         return null;
-    }
-
-    // Returns what action needs to be taken by the current player
-    public Actions DetermineAction()
-    {
-        // Check to see if player needs their turn initialized
-        if (!m_board.Players[m_turnNum].TurnInitialized)
-        {
-            return Actions.DetermineOrder;
-        }
-
-        // Check if the turn order has been determined
-        return Actions.EndTurn;
-    }
-
-    // Assigns the game action window according to what action the user needs to complete
-    public void AssignActionWindow(Actions action)
-    {
-        // Deactivate any other action windows
-        foreach (GameObject actionWindow in m_actionWindows)
-        {
-            actionWindow.SetActive(false);
-        }
-
-        // Get the window
-        GameObject currentActionWindow = m_actionWindows[(int)action];
-
-        // Set the window as active
-        currentActionWindow.gameObject.SetActive(true);
-
-        // Assign attributes of window depending on action
-        switch (action)
-        {
-            case Actions.DetermineOrder:
-            
-                // Obtain the dice buttons
-                Button dice = GameObject.Find("Dice Button").GetComponent<Button>();
-                Image die1 = GameObject.Find("Die 1").GetComponent<Image>();
-                Image die2 = GameObject.Find("Die 2").GetComponent<Image>();
-
-                // Assign determine order function
-                dice.onClick.AddListener(() => DetermineOrder(die1, die2));
-
-                break;
-            
-            case Actions.EndTurn:
-            
-                // Assign end button function
-                Button endTurn = GameObject.Find("End Turn Button").GetComponent<Button>();
-                endTurn.onClick.AddListener(EndTurn);
-                break;
-        }
-    }
-
-    // All players roll dice, players go in order of the result of their dice roll
-    void DetermineOrder(Image die1, Image die2)
-    {
-        // They roll the dice
-        m_board.Players[m_turnNum].CurrentSpace = Random.Range(2, 12);
-
-        // Update their turn initialization status
-        m_board.Players[m_turnNum].TurnInitialized = true;
-
-        // If all players have rolled to determine their order, we can now set the actual turn orders
-        if (m_turnNum == m_board.Players.Count - 1)
-        {
-            // Sort players
-            m_board.Players.Sort(SortPlayers);
-
-            // Create a pop up to tell the users that the order of players has been determined
-            m_popupController.CreatePopupWindow("Test", "Test");
-        }
-
-        m_panelUpdateNeeded = true;
-    }
-
-    // Sorts players based on their current space, as determined by a dice roll
-    static int SortPlayers(Player player1, Player player2)
-    {
-        if (player1.CurrentSpace < player2.CurrentSpace) 
-        {
-            return -1;
-        }
-        else if (player1.CurrentSpace > player2.CurrentSpace)
-        {
-            return 1;
-        }
-        else 
-        { 
-            return 0; 
-        }
-    }
-
-    void EndTurn()
-    {
-        m_turnCompleted = true;
     }
 
 }

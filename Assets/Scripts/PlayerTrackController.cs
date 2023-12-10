@@ -6,9 +6,10 @@ using UnityEngine.UI;
 
 public class PlayerTrackController : MonoBehaviour
 {
-    // Data Members
+    // Unity data members
     public List<Button> m_playerIcons;
 
+    // Private data members
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     private float m_iconMovementAnimationDuration = .25f;
 
@@ -154,7 +155,6 @@ public class PlayerTrackController : MonoBehaviour
         for (int spacesMoved = 0; spacesMoved < spaceDifference; spacesMoved++) 
         {
             // Set the current and next space numbers
-
             int currentSpace = initialSpace + spacesMoved;
             if (currentSpace > 39)
             {

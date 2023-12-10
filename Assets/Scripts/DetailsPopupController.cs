@@ -4,9 +4,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class DetailsPopupController : MonoBehaviour
 {
-    // Data memebers
+    // Unity data members
     public TMP_Text m_name;
     public TMP_Text m_details;
     public GameObject m_window; 

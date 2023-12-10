@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
-    // Data Members
+    // Unity data members
     public Canvas m_menuCanvas;
     public Button m_startButton;
     public Button m_enterPlayerButton;
@@ -15,9 +15,10 @@ public class MenuController : MonoBehaviour
     public List<Button> m_iconButtons;
     public PopupController m_popupContoller;
 
+    // Private data members
     private int m_playerCount = 0;
     private string m_selectedIcon;
-    private UnityEngine.Color m_selectedColor;
+    private Color m_selectedColor;
     private PlayerFile m_playerFile = new PlayerFile();
 
     // Start is called before the first frame update
@@ -78,7 +79,7 @@ public class MenuController : MonoBehaviour
             }
             else
             {
-                buttonImage.color = UnityEngine.Color.white;
+                buttonImage.color = Color.white;
             }
         }
 

@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
+// Class to handle the board and basically the entire game's C# logic at a high level
 public class Board 
 {
     // Data members
