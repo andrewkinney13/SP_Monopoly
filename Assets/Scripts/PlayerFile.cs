@@ -23,7 +23,7 @@ public class PlayerFile
         };
 
         string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
-        m_writer = XmlWriter.Create(m_fileName, settings);
+        m_writer = XmlWriter.Create(filePath, settings);
 
         // Root element
         m_writer.WriteStartDocument();
@@ -52,7 +52,7 @@ public class PlayerFile
     public Dictionary<string, string> ReadPlayersFromFile()
     {
         // Obtain file path THIS NEEDS TO BE CHANGED LATER AFTER TESTING DONE!
-        string filePath = Path.Combine(Application.streamingAssetsPath, "PlayersCopy.xml");
+        string filePath = Path.Combine(Application.streamingAssetsPath, "Players.xml");
 
         // Setup the players dict
         Dictionary<string, string> players = new Dictionary<string, string>();

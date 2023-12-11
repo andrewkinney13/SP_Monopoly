@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor.Tilemaps;
 
 
-public class Action_DetermineOrder : Action
+public class Action_RollDice : Action
 {
     // Unity data members
     public Image m_die1;
@@ -15,23 +14,34 @@ public class Action_DetermineOrder : Action
     public Button m_continueButton;
     public TMP_Text m_continueText;
     public List<Sprite> m_diceSprites;
+    public TMP_Text m_title;
 
-    // Private Data Members
+    // Private data members
+    private bool m_orderDetermined;
     private int m_diceResult;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_diceButton.onClick.AddListener(DetermineOrder);
+        // Initialize listeners
+        m_diceButton.onClick.AddListener(StartRoll);
         m_continueButton.onClick.AddListener(SendToGame);
+        m_orderDetermined = false;
 
         // Set the window
         ResetWindow();
     }
 
-    // All players roll dice, players go in order of the result of their dice roll
-    void DetermineOrder()
+    // Getters and setters
+    public bool OrderDetermined
     {
+        get { return m_orderDetermined; }
+        set { m_orderDetermined = value;}
+    }
+
+    // All players roll dice, players go in order of the result of their dice roll
+    void StartRoll()
+    {        
         // They roll the dice
         StartCoroutine(RollDice(m_die1, m_die2));
     }
@@ -58,12 +68,22 @@ public class Action_DetermineOrder : Action
         }
 
         m_diceResult = die1Val + die2Val;
+        m_title.text = "You Rolled a " + m_diceResult + "!";
         m_continueText.color = Color.green;
         m_continueButton.interactable = true;
     }
-
     public override void ResetWindow()
     {
+        // Set title accordingly 
+        if (!m_orderDetermined)
+        {
+            m_title.text = "Roll Dice to Determine Order...";
+        }
+        else
+        {
+            m_title.text = "Roll Dice";
+        }
+
         m_continueButton.interactable = false;
         m_continueText.color = Color.red;
         m_diceButton.interactable = true;
@@ -73,10 +93,18 @@ public class Action_DetermineOrder : Action
 
     public override void SendToGame()
     {
+        // Alert game controller that action occured
+        if (!m_orderDetermined)
+        {
+            m_gameController.Action_OrderDetermined(m_diceResult);
+
+        }
+        else
+        {
+            m_gameController.Action_DiceRolled(m_diceResult);
+        }
+
         // Reset the window
         ResetWindow();
-
-        // Alert game controller that action occured
-        m_gameController.Action_OrderDetermined(m_diceResult);
     }
 }

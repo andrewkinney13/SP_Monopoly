@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -27,6 +28,7 @@ public class GameController : MonoBehaviour
     public DetailsPopupController m_playerDetailsController;
     public PlayerTrackController m_playerTrackController;
     public CameraController m_cameraController;
+    public Action_RollDice m_diceRollController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -104,6 +106,9 @@ public class GameController : MonoBehaviour
         // Update whose turn it is if turn completed
         if (m_turnCompleted)
         {
+            // Reset the rolled dice bool
+            CurrentPlayer.RolledDice = false;
+
             // Update whose turn is is
             if (m_turnNum < m_board.Players.Count - 1)
             {
@@ -159,8 +164,20 @@ public class GameController : MonoBehaviour
             actionWindow.SetActive(false);
         }
 
-        // Get the proper window
-        GameObject currentActionWindow = m_actionWindows[(int)action];
+        // Set the proper action window
+        GameObject currentActionWindow;
+        switch (action)
+        {
+            case Actions.DetermineOrder:
+            case Actions.RollDice:
+                currentActionWindow = m_actionWindows[1];
+                break;
+            case Actions.EndTurn:
+                currentActionWindow = m_actionWindows[0];
+                break;
+            default:
+                throw new System.Exception("No window set for action...");
+        }
 
         // Set the window as active
         currentActionWindow.gameObject.SetActive(true);
@@ -170,20 +187,23 @@ public class GameController : MonoBehaviour
     // Returns what action needs to be taken by the current player
     public Actions DetermineAction()
     {
+        
         // Check to see if player needs their turn initialized
-        if (!m_board.Players[m_turnNum].TurnInitialized)
+        if (!CurrentPlayer.TurnInitialized)
         {
             return Actions.DetermineOrder;
         }
 
-        /*// 
-        if (!m_board.Players[m_turnNum].RolledDice)
+        else if (!CurrentPlayer.RolledDice)
         {
             return Actions.RollDice;
-        }*/
+        }
 
         // Check if the turn order has been determined
-        return Actions.EndTurn;
+        else
+        {
+            return Actions.EndTurn;
+        }
     }
 
     // Called by determine order action
@@ -196,6 +216,9 @@ public class GameController : MonoBehaviour
         // If this was the last player, all players were initialized
         if (CurrentPlayer.PlayerNum == m_board.Players.Count - 1)
         {
+            // Update the dice rolling script
+            m_diceRollController.OrderDetermined = true;
+
             // Sort the players 
             m_board.Players.Sort(SortPlayers);
 
@@ -222,10 +245,29 @@ public class GameController : MonoBehaviour
             InitializePlayerIcons();
 
             // Show a popup that players have been intialized
-            m_popupController.CreatePopupWindow("Order Determined!", popUpMessage);
+            m_popupController.CreatePopupWindow("Order Determined!", popUpMessage, 'G');
         }
 
-        // Mark update was made
+        // End the turn
+        m_turnCompleted = true;
+    }
+
+    // Player rolled the dice
+    public void Action_DiceRolled(int diceResult)
+    {
+        // Obtain where the player needs to go
+        int destination = CurrentPlayer.CurrentSpace + diceResult;
+        if (destination > 39) 
+        {
+            destination -= 39;
+        }
+
+        // Move the player there
+        StartCoroutine(m_playerTrackController.MovePlayer(CurrentPlayer.PlayerNum, CurrentPlayer.CurrentSpace, destination));
+        
+        // Update the player's details
+        CurrentPlayer.RolledDice = true;
+        CurrentPlayer.CurrentSpace = destination;
         m_updateMade = true;
     }
 
@@ -249,6 +291,16 @@ public class GameController : MonoBehaviour
     // When user clicks a space
     void OnSpaceClick(int spaceIndex)
     {
+        // Account for extra chance and community chest
+        if (spaceIndex == 40) 
+        {
+            spaceIndex = 2;
+        }
+        if (spaceIndex == 41)
+        {
+            spaceIndex = 8;
+        }
+
         // Get the space info
         string spaceName = m_board.GetSpace(spaceIndex).Name;
         string spaceDescription = m_board.GetSpace(spaceIndex).Description;

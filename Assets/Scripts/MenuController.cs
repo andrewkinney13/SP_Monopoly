@@ -46,7 +46,7 @@ public class MenuController : MonoBehaviour
     void Update()
     {
         // Game can start w/ 2 players  // NEEDS TO CHANGE LATER BACK TO >= 2!!!
-        if (m_playerCount >= 0)
+        if (m_playerCount >= 2)
         {
             m_startButton.interactable = true;
         }
@@ -133,6 +133,9 @@ public class MenuController : MonoBehaviour
 
         // Clear the name textbox
         m_nameInputField.text = "";
+
+        // Reset the icon to null
+        m_selectedIcon = string.Empty;
 
         // Show popup confirming the player was added
         m_popupContoller.CreatePopupWindow("Success",
