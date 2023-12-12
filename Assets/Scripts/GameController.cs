@@ -11,9 +11,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     // Data Members
-    private Board m_board;
-    private int m_turnNum;    
-    private bool m_turnCompleted = false;       
+    private Board m_board;     
     private bool m_updateMade = false;
 
     // Popup window
@@ -40,23 +38,6 @@ public class GameController : MonoBehaviour
     public List<GameObject> m_actionWindows;
     public RectTransform m_propertiesContent;
 
-    // Possible actions a player may have to take during their turn
-    public enum Actions
-    {
-        EndTurn = 0,
-        DetermineOrder = 1,
-        RollDice = 2,
-        UnownedProperty = 3,
-        OwnedColorProperty = 4,
-        OwnedUtility = 5,
-        OwnedRailroad = 6,
-        ChanceOrCommunityChest = 7,
-        VisitingJail = 8,
-        FreeParking = 9,
-        GoToJail = 10,
-        Tax = 11
-    }
-
     // Runs when the script is initialized, using this as a constructor
     void Start()
     {
@@ -69,9 +50,6 @@ public class GameController : MonoBehaviour
         // Initialize the board
         m_board = new Board();
         m_board.InitializeBoard();
-
-        // Set the turn for first person in list (for now)
-        m_turnNum = 0;
 
         // Need to set the panel initially 
         m_updateMade = true;
@@ -86,39 +64,20 @@ public class GameController : MonoBehaviour
         // Check if anything has been updated
         if (m_updateMade)
         {
-            // Obtain current player data
-            string name = m_board.Players[m_turnNum].Name;
-            float cash = m_board.Players[m_turnNum].Cash;
-
-            // Determine action needed this turn
-            Actions action = DetermineAction();
-
-            // Obtain arguements to pass to panel creator
-            Sprite icon = GetIconSprite(m_board.Players[m_turnNum].Icon);
-
             // Create the player panel so player can do their turn
-            CreatePlayerPanel(icon, name, cash, action);
+            CreatePlayerPanel();
 
             // Set bool to false now that update has been made
             m_updateMade = false;
         }
 
         // Update whose turn it is if turn completed
-        if (m_turnCompleted)
+        if (m_board.CurrentPlayer.TurnCompleted)
         {
-            // Reset the rolled dice bool
-            CurrentPlayer.RolledDice = false;
+            // Update the turn in board
+            m_board.UpdateTurn(); 
 
-            // Update whose turn is is
-            if (m_turnNum < m_board.Players.Count - 1)
-            {
-                m_turnNum++;
-            }
-            else
-            {
-                m_turnNum = 0;
-            }
-            m_turnCompleted = false;
+            // Alert ourselves that an update was made to panel
             m_updateMade = true;
 
             // Reset the camera 
@@ -133,30 +92,24 @@ public class GameController : MonoBehaviour
         }
     }
 
-    // Getters and setters 
-    public bool TurnCompleted
-    {
-        get { return m_turnCompleted; }
-        set { m_turnCompleted = value; }
-    }
+    // Getters and setters
     public bool UpdateMade
     {
         get { return m_updateMade; }
         set { m_updateMade = value; }
     }
-    public Player CurrentPlayer
-    {
-        get { return m_board.Players[m_turnNum]; }
-    }
 
 
     // Creates the player panel for the player to do actions during their turn
-    public void CreatePlayerPanel(Sprite icon, string name, float cash, Actions action)
+    public void CreatePlayerPanel()
     {
+        // Determine action needed this turn
+        Board.Actions action = m_board.DetermineAction();
+
         // Assign basic attributes
-        m_panelIcon.sprite = icon;
-        m_panelTitle.text = name + "'s Turn";
-        m_panelCash.text = "Cash: $" + cash;
+        m_panelIcon.sprite = GetIconSprite(m_board.CurrentPlayer.Icon);
+        m_panelTitle.text = m_board.CurrentPlayer.Name + "'s Turn";
+        m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash;
 
         // Deactivate any other action windows
         foreach (GameObject actionWindow in m_actionWindows)
@@ -168,11 +121,11 @@ public class GameController : MonoBehaviour
         GameObject currentActionWindow;
         switch (action)
         {
-            case Actions.DetermineOrder:
-            case Actions.RollDice:
+            case Board.Actions.DetermineOrder:
+            case Board.Actions.RollDice:
                 currentActionWindow = m_actionWindows[1];
                 break;
-            case Actions.EndTurn:
+            case Board.Actions.EndTurn:
                 currentActionWindow = m_actionWindows[0];
                 break;
             default:
@@ -183,109 +136,55 @@ public class GameController : MonoBehaviour
         currentActionWindow.gameObject.SetActive(true);
     }
 
-    
-    // Returns what action needs to be taken by the current player
-    public Actions DetermineAction()
+    // Player ended their turn
+    public void Action_EndTurn()
     {
-        
-        // Check to see if player needs their turn initialized
-        if (!CurrentPlayer.TurnInitialized)
-        {
-            return Actions.DetermineOrder;
-        }
-
-        else if (!CurrentPlayer.RolledDice)
-        {
-            return Actions.RollDice;
-        }
-
-        // Check if the turn order has been determined
-        else
-        {
-            return Actions.EndTurn;
-        }
+        // End the current players turn
+        m_board.CurrentPlayer.TurnCompleted = true;
     }
 
-    // Called by determine order action
+    // Player rolled dice to determine their action
     public void Action_OrderDetermined(int diceResult)
     {
-        // Mark the player has having their turn initialized
-        CurrentPlayer.CurrentSpace = diceResult;
-        CurrentPlayer.TurnInitialized = true;
+        // Update the players attributes
+        m_board.OrderDetermined(diceResult);
 
-        // If this was the last player, all players were initialized
-        if (CurrentPlayer.PlayerNum == m_board.Players.Count - 1)
+        // If all players are initialized, we can sort them and finish this action
+        if (m_board.AllPlayersInitialized())
         {
             // Update the dice rolling script
             m_diceRollController.OrderDetermined = true;
 
             // Sort the players 
-            m_board.Players.Sort(SortPlayers);
-
-            // Iterate through the players to update their properties and create output message
-            string popUpMessage = "";
-            int playerNum = 0;
-            foreach (Player player in m_board.Players)
-            {
-                // Reinit player num w/ new order
-                player.PlayerNum = playerNum;
-                
-
-                // Append output for popup
-                popUpMessage += (playerNum + 1) + ": " + player.Name + ", rolled " + player.CurrentSpace + "\n";
-
-                // Reset their space to Go
-                player.CurrentSpace = 0;
-
-                // Append what player we're on
-                playerNum++;
-            }
+            m_board.InitializePlayerOrder();
 
             // Initialize the icons now with proper order 
             InitializePlayerIcons();
 
             // Show a popup that players have been intialized
-            m_popupController.CreatePopupWindow("Order Determined!", popUpMessage, 'G');
+            m_popupController.CreatePopupWindow("Order Determined!", m_board.GetOrderDeterminedMessage(), 'G');
         }
 
-        // End the turn
-        m_turnCompleted = true;
+        // Mark the current player as having their turn completed
+        m_board.CurrentPlayer.TurnCompleted = true;
     }
 
     // Player rolled the dice
-    public void Action_DiceRolled(int diceResult)
+    public void Action_DiceRolled(int diceResult, bool wereDoubles)
     {
-        // Obtain where the player needs to go
-        int destination = CurrentPlayer.CurrentSpace + diceResult;
-        if (destination > 39) 
-        {
-            destination -= 39;
-        }
+        // Update board
+        int currentSpace = m_board.CurrentPlayer.CurrentSpace;
+        m_board.DiceRolled(diceResult, wereDoubles);
+        int destinationSpace = m_board.CurrentPlayer.CurrentSpace;
 
-        // Move the player there
-        StartCoroutine(m_playerTrackController.MovePlayer(CurrentPlayer.PlayerNum, CurrentPlayer.CurrentSpace, destination));
-        
-        // Update the player's details
-        CurrentPlayer.RolledDice = true;
-        CurrentPlayer.CurrentSpace = destination;
-        m_updateMade = true;
-    }
+        Debug.Log(m_board.CurrentPlayer.Name);
+        Debug.Log(m_board.CurrentPlayer.PlayerNum);
 
-    // Sorts players based on their current space, as determined by a dice roll
-    static int SortPlayers(Player player1, Player player2)
-    {
-        if (player1.CurrentSpace < player2.CurrentSpace) 
-        {
-            return 1;
-        }
-        else if (player1.CurrentSpace > player2.CurrentSpace)
-        {
-            return -1;
-        }
-        else 
-        { 
-            return 0; 
-        }
+        // Move the player icon
+        StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, currentSpace, destinationSpace));
+
+        // Update was made
+        UpdateMade = true;
     }
 
     // When user clicks a space
@@ -313,7 +212,7 @@ public class GameController : MonoBehaviour
     void OnPlayerClick(int playerNum)
     {
         // Display it in the space details window, where the user clicked
-        m_playerDetailsController.CreateDetailsWindow(m_board.Players[playerNum].Name, m_board.Players[playerNum].Description);
+        m_playerDetailsController.CreateDetailsWindow(m_board.GetPlayerName(playerNum), m_board.GetPlayerDescription(playerNum));
     }
 
     // Initializes the player lanes and icons 
@@ -321,15 +220,19 @@ public class GameController : MonoBehaviour
     {
         m_playerTrackController.CreateLanes();
         m_playerTrackController.SetIcons(m_playerButtons);
-        foreach (Player player in m_board.Players)
+        for (int playerNum = 0; playerNum < m_board.PlayerCount; playerNum++) 
         {
-            m_playerButtons[player.PlayerNum].onClick.AddListener(() => OnPlayerClick(player.PlayerNum));
+            // Create local player num
+            int localPlayerNum = playerNum;
+
+            // Add the onClick function
+            m_playerButtons[playerNum].onClick.AddListener(() => OnPlayerClick(localPlayerNum));
 
             // Assign the icon
-            m_playerButtons[player.PlayerNum].image.sprite = GetIconSprite(player.Icon);
+            m_playerButtons[playerNum].image.sprite = GetIconSprite(m_board.GetPlayerIconName(playerNum));
 
             // Move the player to space 0
-            StartCoroutine(m_playerTrackController.MovePlayer(player.PlayerNum, 39, 0));
+            StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 39, 0));
         }
     }
 

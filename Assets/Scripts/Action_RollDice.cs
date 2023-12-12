@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using Unity.VisualScripting;
 
 public class Action_RollDice : Action
 {
@@ -19,6 +19,7 @@ public class Action_RollDice : Action
     // Private data members
     private bool m_orderDetermined;
     private int m_diceResult;
+    private bool m_wereDoubles;
 
     // Start is called before the first frame update
     void Start()
@@ -67,7 +68,17 @@ public class Action_RollDice : Action
             yield return null;
         }
 
+        // Assign dice result
         m_diceResult = die1Val + die2Val;
+
+        // Assign if doubles or not
+        m_wereDoubles = false;
+        if (die1Val == die2Val)
+        {
+            m_wereDoubles = true;
+        }
+
+        // Update the window
         m_title.text = "You Rolled a " + m_diceResult + "!";
         m_continueText.color = Color.green;
         m_continueButton.interactable = true;
@@ -101,7 +112,7 @@ public class Action_RollDice : Action
         }
         else
         {
-            m_gameController.Action_DiceRolled(m_diceResult);
+            m_gameController.Action_DiceRolled(m_diceResult, m_wereDoubles);
         }
 
         // Reset the window

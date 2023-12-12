@@ -18,7 +18,7 @@ public class Action_EndTurn : Action
     // Tells game controller that the turn is over
     public override void SendToGame()
     {
-        m_gameController.TurnCompleted = true;
+        m_gameController.Action_EndTurn();
     }
     public override void ResetWindow() { }
 

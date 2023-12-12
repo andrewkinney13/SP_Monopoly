@@ -52,7 +52,7 @@ public class PlayerFile
     public Dictionary<string, string> ReadPlayersFromFile()
     {
         // Obtain file path THIS NEEDS TO BE CHANGED LATER AFTER TESTING DONE!
-        string filePath = Path.Combine(Application.streamingAssetsPath, "Players.xml");
+        string filePath = Path.Combine(Application.streamingAssetsPath, "PlayersCopy.xml");
 
         // Setup the players dict
         Dictionary<string, string> players = new Dictionary<string, string>();

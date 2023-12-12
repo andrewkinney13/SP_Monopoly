@@ -7,14 +7,16 @@ public class Player
 {
     // Data members
     private string m_name;
-    private string m_description;
     private string m_icon;
     private float m_cash;
+    private int m_playerNum;
     private int m_currentSpace;
-    private int m_playerNum; 
-
+    private int m_diceRollResult;
+    private int m_orderDeterminingDiceResult;
     private bool m_turnInitialized;
     private bool m_rolledDice;
+    private bool m_rolledDoubles;
+    private bool m_turnCompleted;
 
     // Constructor
     public Player(string name, string icon, int playerNum) 
@@ -70,6 +72,17 @@ public class Player
             }
         }
     }
+    public int DiceRollResult
+    {
+        get { return m_diceRollResult; }
+        set { m_diceRollResult = value; }
+    }
+    public int OrderDeterminingDiceResult
+    {
+        get { return m_orderDeterminingDiceResult; }
+        set { m_orderDeterminingDiceResult = value; }
+    }
+
     public bool TurnInitialized
     { 
         get { return m_turnInitialized; }
@@ -79,5 +92,16 @@ public class Player
     {
         get { return m_rolledDice; }
         set { m_rolledDice = value; }
+    }
+    public bool RolledDoubles
+    {
+        get { return m_rolledDoubles; }
+        set { m_rolledDoubles = value; }
+    }
+
+    public bool TurnCompleted
+    {
+        get { return m_turnCompleted; }
+        set { m_turnCompleted = value; }
     }
 }

@@ -12,16 +12,4 @@
     <Name>Kwas</Name>
     <Icon>Battleship</Icon>
   </Player>
-  <Player>
-    <Name>Max</Name>
-    <Icon>Thimble</Icon>
-  </Player>
-  <Player>
-    <Name>Eric</Name>
-    <Icon>Boot</Icon>
-  </Player>
-  <Player>
-    <Name>Bmac</Name>
-    <Icon>Wheel Barrel</Icon>
-  </Player>
 </Players>
