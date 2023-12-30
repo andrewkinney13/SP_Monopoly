@@ -11,13 +11,15 @@ public class Space
     private int m_index;
     private string m_description;
     private string m_actionText = "Action!";
+    private Board.Actions m_actionType;
 
     // Constructor
-    public Space(string name, int index)
+    public Space(string name, int index, Board.Actions action)
     {
         Name = name;
         Index = index;
         Description = "Owner: \nCost:\nHouses:\nHotels:\n";
+        ActionType = action;
     }
 
     // Getters and Setters
@@ -40,6 +42,11 @@ public class Space
     {
         get { return m_actionText; }
         set { m_actionText = value; }
+    }
+    public Board.Actions ActionType
+    {
+        get { return m_actionType;  }
+        set { m_actionType = value; }
     }
 
     // Land on space (to inherit)

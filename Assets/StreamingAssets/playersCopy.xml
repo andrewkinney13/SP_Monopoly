@@ -8,8 +8,4 @@
     <Name>Joey</Name>
     <Icon>Car</Icon>
   </Player>
-  <Player>
-    <Name>Kwas</Name>
-    <Icon>Battleship</Icon>
-  </Player>
 </Players>

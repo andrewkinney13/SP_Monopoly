@@ -1,0 +1,40 @@
+Go, Go
+Mediterranean Avenue,UnownedProperty
+Community Chest,ChanceOrCommunityChest
+Baltic Avenue,UnownedProperty
+Income Tax,Tax
+Reading Railroad,UnownedProperty
+Oriental Avenue,UnownedProperty
+Vermont Avenue,UnownedProperty
+Chance,ChanceOrCommunityChest
+Connecticut Avenue,UnownedProperty
+Just Visiting,VisitingJail
+St. Charles Place,UnownedProperty
+Electric Company,UnownedProperty
+States Avenue,UnownedProperty
+Virginia Avenue,UnownedProperty
+Pennsylvania Railroad,UnownedProperty
+St. James Place,UnownedProperty
+Tennessee Avenue,UnownedProperty
+Community Chest,ChanceOrCommunityChest
+New York Avenue,UnownedProperty
+Free Parking,FreeParking
+Kentucky Avenue,UnownedProperty
+Chance,ChanceOrCommunityChest
+Indiana Avenue,UnownedProperty
+Illinois Avenue,UnownedProperty
+B. & O. Railroad,UnownedProperty
+Atlantic Avenue,UnownedProperty
+Ventnor Avenue,UnownedProperty
+Water Works,UnownedProperty
+Marvin Gardens,UnownedProperty
+Go To Jail	, GoToJail
+Pacific Avenue,UnownedProperty
+Community Chest,ChanceOrCommunityChest
+North Carolina Avenue, UnownedProperty
+Pennsylvania Avenue,UnownedProperty
+Short Line,UnownedProperty
+Chance,ChanceOrCommunityChest
+Park Plac,UnownedPropertye
+Luxury Tax,Tax
+Boardwalk,UnownedProperty

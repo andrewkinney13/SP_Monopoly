@@ -10,7 +10,7 @@ public class Property : Space
     private Player m_owner;
 
     // Constructor
-    public Property(string name, int index) : base(name, index) 
+    public Property(string name, int index, Board.Actions action) : base(name, index, action) 
     { 
 
     }

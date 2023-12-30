@@ -16,7 +16,9 @@ public class Player
     private bool m_turnInitialized;
     private bool m_rolledDice;
     private bool m_rolledDoubles;
+    private bool m_spaceActionCompleted;
     private bool m_turnCompleted;
+    private List<Space> m_properties = new List<Space>(); 
 
     // Constructor
     public Player(string name, string icon, int playerNum) 
@@ -82,7 +84,6 @@ public class Player
         get { return m_orderDeterminingDiceResult; }
         set { m_orderDeterminingDiceResult = value; }
     }
-
     public bool TurnInitialized
     { 
         get { return m_turnInitialized; }
@@ -98,10 +99,20 @@ public class Player
         get { return m_rolledDoubles; }
         set { m_rolledDoubles = value; }
     }
-
+    public bool SpaceActionCompleted
+    {
+        get { return m_spaceActionCompleted; }
+        set { m_spaceActionCompleted = value; }
+    }
     public bool TurnCompleted
     {
         get { return m_turnCompleted; }
         set { m_turnCompleted = value; }
     }
+    public List<Space> Properties
+    {   
+        get { return m_properties; } 
+    }
+    
+
 }

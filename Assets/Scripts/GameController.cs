@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     public PlayerTrackController m_playerTrackController;
     public CameraController m_cameraController;
     public Action_RollDice m_diceRollController;
+    public Action_LO_UnownedProperty m_LO_unownedPropertyController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -36,7 +37,8 @@ public class GameController : MonoBehaviour
     public TMP_Text m_panelTitle;
     public TMP_Text m_panelCash;
     public List<GameObject> m_actionWindows;
-    public RectTransform m_propertiesContent;
+    public RectTransform m_propertyCardContent;
+    public List<RenderTexture> m_propertyRenderTextures;
 
     // Runs when the script is initialized, using this as a constructor
     void Start()
@@ -101,7 +103,7 @@ public class GameController : MonoBehaviour
 
 
     // Creates the player panel for the player to do actions during their turn
-    public void CreatePlayerPanel()
+    private void CreatePlayerPanel()
     {
         // Determine action needed this turn
         Board.Actions action = m_board.DetermineAction();
@@ -125,15 +127,95 @@ public class GameController : MonoBehaviour
             case Board.Actions.RollDice:
                 currentActionWindow = m_actionWindows[1];
                 break;
+            case Board.Actions.LandedOn_UnownedProperty:
+                m_LO_unownedPropertyController.Title = m_board.GetLandedOnTitle();
+                currentActionWindow = m_actionWindows[2];
+                break;
             case Board.Actions.EndTurn:
                 currentActionWindow = m_actionWindows[0];
                 break;
             default:
-                throw new System.Exception("No window set for action...");
+                currentActionWindow = m_actionWindows[0];
+                Debug.Log("Determine action did not find action for this move...");
+                break;
         }
 
         // Set the window as active
         currentActionWindow.gameObject.SetActive(true);
+
+        // Display the properties owned by the player in the properties and cards section
+        ClearPropertyCardView();
+        CreatePropertyCardView();
+    }
+
+    // Clears all the property and card view contents and resets the size
+    private void ClearPropertyCardView()
+    {
+        // Obtain all the property views
+        RawImage[] propertyViews = m_propertyCardContent.GetComponentsInChildren<RawImage>();
+
+        // Destroy them
+        foreach (RawImage propertyView in propertyViews) 
+        {
+            Destroy(propertyView.gameObject);
+        }
+    }
+
+    // Adds a new property to the properties and cards section
+    private void CreatePropertyCardView()
+    {
+        // Set the size
+        float propertyWidth = 224f;
+        float propertyHeight = 300f;
+        float startX = -2656;
+
+        // Loop through owned properties
+        int propertyNum = 0;
+        foreach (Space property in  m_board.CurrentPlayer.Properties) 
+        {
+            // Create object with viewer as child of properties content
+            GameObject newPropertyImage = new GameObject("RawImage");
+            newPropertyImage.transform.SetParent(m_propertyCardContent.transform);
+            RawImage newViewer = newPropertyImage.AddComponent<RawImage>();
+            newViewer.transform.localScale = new Vector2(1,1);
+
+            // Set size and position
+            RectTransform newViewerRect = newPropertyImage.GetComponent<RectTransform>();
+            newViewerRect.sizeDelta = new Vector2(propertyWidth, propertyHeight);
+            float xOffset = startX + 20 + propertyWidth * propertyNum + 20 * propertyNum;
+            newViewerRect.anchoredPosition = new Vector2(xOffset, 0);
+
+            // Assign property render texture to the viewer
+            newViewer.texture = FindPropertyTexture(property.Index);
+            
+            // Increment property
+            propertyNum++;
+        }
+    }
+
+    // Finds a particular render texture for a given property 
+    private RenderTexture FindPropertyTexture(int spaceIndex)
+    {
+        // Use the name of the render texture to find the correct texture for a space index
+        foreach (RenderTexture texture in m_propertyRenderTextures)
+        {
+            // Obtain the name without 'RT'
+            string name = texture.name;
+            name = name.Substring(0, name.Length - 2);
+
+            // Cast to int
+            int index = -1;
+            int.TryParse(name, out index);
+
+            // Return if its the matching texture
+            if (index == spaceIndex)
+            {
+                return texture;
+            }
+        }
+
+        // No space found, FREAK OUT!
+        throw new System.Exception("No texture found for specified property! Index: " + spaceIndex);
     }
 
     // Player ended their turn
@@ -177,14 +259,27 @@ public class GameController : MonoBehaviour
         m_board.DiceRolled(diceResult, wereDoubles);
         int destinationSpace = m_board.CurrentPlayer.CurrentSpace;
 
-        Debug.Log(m_board.CurrentPlayer.Name);
-        Debug.Log(m_board.CurrentPlayer.PlayerNum);
-
         // Move the player icon
         StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, currentSpace, destinationSpace));
 
         // Update was made
         UpdateMade = true;
+    }
+
+    // Player buying property
+    public void Action_BuyingProperty(bool buying)
+    {
+        // Call Board function
+        if (buying)
+        {
+            m_board.PropertyPurchase();
+        }
+
+        // Completed space action
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+
+        // Update made to game state
+        m_updateMade = true;
     }
 
     // When user clicks a space
