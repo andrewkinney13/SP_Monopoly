@@ -187,6 +187,10 @@ public class GameController : MonoBehaviour
 
             // Assign property render texture to the viewer
             newViewer.texture = FindPropertyTexture(property.Index);
+
+            // Add button and listener for the space
+            Button viewerButton = newViewer.AddComponent<Button>();
+            viewerButton.onClick.AddListener(() => OnSpaceClick(property.Index)); 
             
             // Increment property
             propertyNum++;

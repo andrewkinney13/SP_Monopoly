@@ -35,6 +35,6 @@ North Carolina Avenue, UnownedProperty
 Pennsylvania Avenue,UnownedProperty
 Short Line,UnownedProperty
 Chance,ChanceOrCommunityChest
-Park Plac,UnownedPropertye
+Park Place,UnownedPropertye
 Luxury Tax,Tax
 Boardwalk,UnownedProperty
