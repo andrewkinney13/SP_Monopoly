@@ -39,6 +39,7 @@ public class GameController : MonoBehaviour
     public List<GameObject> m_actionWindows;
     public RectTransform m_propertyCardContent;
     public List<RenderTexture> m_propertyRenderTextures;
+    public Scrollbar m_propertyCardScrollbar;
 
     // Runs when the script is initialized, using this as a constructor
     void Start()
@@ -164,10 +165,13 @@ public class GameController : MonoBehaviour
     // Adds a new property to the properties and cards section
     private void CreatePropertyCardView()
     {
-        // Set the size
+        // Reset horizontal scroller 
+        m_propertyCardScrollbar.value = 0f;
+
+        // Set the sizes
         float propertyWidth = 224f;
         float propertyHeight = 300f;
-        float startX = -2656;
+        float startX = -2590f;
 
         // Loop through owned properties
         int propertyNum = 0;

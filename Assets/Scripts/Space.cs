@@ -9,17 +9,17 @@ public class Space
     // Data Members
     private string m_name;
     private int m_index;
-    private string m_description;
     private string m_actionText = "Action!";
     private Board.Actions m_actionType;
+    private string m_description;
 
     // Constructor
-    public Space(string name, int index, Board.Actions action)
+    public Space(string name, int index, Board.Actions action, string description)
     {
         Name = name;
         Index = index;
-        Description = "Owner: \nCost:\nHouses:\nHotels:\n";
         ActionType = action;
+        Description = description;
     }
 
     // Getters and Setters
@@ -33,10 +33,10 @@ public class Space
         get { return m_index; }
         set { m_index = value; }
     }
-    public string Description
+    public virtual string Description
     {
         get { return m_description; }
-        set { m_description = value; }
+        set { m_description = value; }  
     }
     public string ActionText
     {

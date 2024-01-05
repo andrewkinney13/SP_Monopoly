@@ -61,25 +61,59 @@ public class Board
         string[] lines = File.ReadAllLines(spacesFilePath);
 
         // Obtain space details from the data
-        List<string> names = new List<string>();
-        List<Actions> actions = new List<Actions>();
+        // Data has several columns, space name, action type, space type, and if relevent,
+        // purchase price, morgage price, and land on prices for each number of houses
+        int spaceNum = 0;
         foreach (string line in lines)
         {
+            UnityEngine.Debug.Log(line);
             // Split the string
             string[] vals = line.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             // Obtain the name from first index
-            names.Add(vals[0]);
+            string name = vals[0];
 
             // Translate second index from string to action
-            actions.Add(CastActionString(vals[1]));
-        }
+            Actions action = CastActionString(vals[1]);
 
-        // Add data to the list of spaces
-        for (int i = 0; i < SPACE_NUM; i++)
-        {
-            Space currentSpace = new Space(names[i], i, actions[i]);
+            // Create the space based on it's specified type in the file
+            Space currentSpace = null;
+            switch (vals[2]) 
+            {
+                // Default space
+                case "Space":
+                case "Card":
+                    currentSpace = new Space(name, spaceNum, action, GetSpaceDescription(name));
+                    break;
+
+                // Color property
+                case "ColorProperty":
+
+                    // Obtain prices
+                    int purchasePrice = int.Parse(vals[3]);
+                    int houseCost = int.Parse(vals[4]);
+                    List<int> landOnPrices = new List<int>();
+                    for (int i = 5; i < 10; i++)
+                    {
+                        landOnPrices.Add(int.Parse(vals[i]));
+                    }
+                    
+                    // Create object
+                    currentSpace = new ColorProperty(name, spaceNum, action, purchasePrice, houseCost, landOnPrices, string.Empty);
+                    break;
+
+                // Railroad
+
+                // Case not found, error
+                default:
+                    currentSpace = new Space(name, spaceNum, action, "Unimplemented inherited class");
+                    // ^ Change this to throw new Exception("Space data error at space: " + spaceNum);
+                    break;
+            }
+
+            // Add space to list of spaces and move to next space index
             m_spaces.Add(currentSpace);
+            spaceNum++;
         }
     }
 
@@ -321,39 +355,52 @@ public class Board
     }
 
     // Casts a string version of an action into the enum type
-    public Actions CastActionString(string str)
+    private Actions CastActionString(string str)
     {
         // Match string with action
         switch (str)
         {
-            case "EndTurn":
-                return Actions.EndTurn;
-            case "DetermineOrder":
-                return Actions.DetermineOrder;
-            case "RollDice":
-                return Actions.RollDice;
-            case "UnownedProperty":
+            // Actions
+            case "LandedOn_UnownedProperty":
                 return Actions.LandedOn_UnownedProperty;
-            case "OwnedColorProperty":
-                return Actions.LandedOn_OwnedColorProperty;
-            case "OwnedUtility":
-                return Actions.LandedOn_OwnedUtility;
-            case "OwnedRailroad":
-                return Actions.LandedOn_OwnedRailroad;
-            case "ChanceOrCommunityChest":
+            case "LandedOn_ChanceOrCommunityChest":
                 return Actions.LandedOn_ChanceOrCommunityChest;
-            case "VisitingJail":
+            case "LandedOn_VisitingJail":
                 return Actions.LandedOn_VisitingJail;
-            case "FreParking":
+            case "LandedOn_FreeParking":
                 return Actions.LandedOn_FreeParking;
-            case "GoToJail":
+            case "LandedOn_GoToJail":
                 return Actions.LandedOn_GoToJail;
-            case "Tax":
+            case "LandedOn_Tax":
                 return Actions.LandedOn_Tax;
-            case "Go":
+            case "LandedOn_Go":
                 return Actions.LandedOn_Go;
             default:
                 return Actions.ERROR;
+        }
+    }
+
+    // Returns a description for a space depending on it's action type
+    private string GetSpaceDescription(string name)
+    {
+        switch (name)
+        {
+            case "Go":
+                return "Passing Go gives the player $200!";
+            case "Income Tax":
+            case "Luxury Tax":
+                return "Landing on this space means you owe the bank money...";
+            case "Just Visiting":
+                return "Space where inmates live, and players can visit them";
+            case "Free Parking":
+                return "Nothing happens when you land on this space!";
+            case "Go to Jail":
+                return "Landing on this space means you lose your turn, go to the In Jail space, and have to pay $75 on your next turn to get out...";
+            case "Chance":
+            case "Community Chest":
+                return "Pick up a card that will decide your fate!";
+            default:
+                throw new Exception ("Error determining space description for space: " + name);
         }
     }
 }
