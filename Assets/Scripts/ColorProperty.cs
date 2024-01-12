@@ -5,27 +5,72 @@ using UnityEngine;
 public class ColorProperty : Property
 {
     // Data members   
-    List<int> m_landOnPrices = new List<int>();
     int m_houseCost;
+    int m_numHouses = 0;
 
     // Constructor
-    public ColorProperty(string name, int index, Board.Actions action, int purchasePrice, int houseCost, List<int> landOnPrices, string description) 
+    public ColorProperty(string name, int index, Board.Actions action, int purchasePrice, int houseCost, List<int> rentPrices, string description) 
         : base (name, index, action, purchasePrice, description)
     {
         m_houseCost = houseCost;
-        m_landOnPrices = landOnPrices;
+        m_rentPrices = rentPrices;
     }
 
-    public int LandOnPrice(int houseNum)
+    public override int RentPrice(int houseNum)
     {
-        return m_landOnPrices[houseNum]; 
+        return m_rentPrices[houseNum];
     }
     public int HouseCost
     {
-        get { return m_houseCost; } 
+        get { return m_houseCost; }
     }
+    public int Houses
+    {
+        get { return m_numHouses; }
+        set { m_numHouses = value; }
+    }
+
+    // Description
     public override string Description
     {
-        get { return "Cost: " + PurchasePrice; }
+        get 
+        {
+            string retString = "Owner: ";
+            if (IsPurchased)
+            {
+                retString += Owner.Name;
+            }
+            else
+            {
+                retString += "No one";
+            }
+            retString += "\nHouses: " + Houses + "\n";
+            retString += "Purchase cost: $" + PurchasePrice + "\n" +
+                "RENT: $" + RentPrice(0) + "\n" +
+                "With 1 House: $" + RentPrice(1) + "\n" +
+                "With 2 Houses: $" + RentPrice(2) + "\n" +
+                "With 3 Houses: $" + RentPrice(3) + "\n" +
+                "With 4 Houses: $" + RentPrice(4) + "\n" +
+                "With HOTEL: $" + RentPrice(5) + "\n" +
+                "Mortgage Value: $" + MortgageValue + "\n" +
+                "Houses cost $" + HouseCost + " each\n" +
+                "Hotels, $" + HouseCost + " each, plus 4 houses";
+
+            return retString;
+        }
+    }
+
+
+    // Updating the action type 
+    public override void UpdateActionType()
+    {
+        if (IsMortgaged)
+        {
+            ActionType = Board.Actions.LandedOn_MortgagedProperty;
+        }
+        else
+        {
+            ActionType = Board.Actions.LandedOn_OwnedColorProperty;
+        }   
     }
 }

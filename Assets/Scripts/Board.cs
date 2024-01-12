@@ -33,6 +33,7 @@ public class Board
         LandedOn_GoToJail = 10,
         LandedOn_Tax = 11,
         LandedOn_Go = 12,
+        LandedOn_MortgagedProperty = 13,
         ERROR = 999
     }
 
@@ -66,7 +67,6 @@ public class Board
         int spaceNum = 0;
         foreach (string line in lines)
         {
-            UnityEngine.Debug.Log(line);
             // Split the string
             string[] vals = line.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -78,6 +78,7 @@ public class Board
 
             // Create the space based on it's specified type in the file
             Space currentSpace = null;
+            int purchasePrice;
             switch (vals[2]) 
             {
                 // Default space
@@ -86,14 +87,20 @@ public class Board
                     currentSpace = new Space(name, spaceNum, action, GetSpaceDescription(name));
                     break;
 
+                // Utility
+                case "Utility":
+                    purchasePrice = int.Parse(vals[3]);
+                    currentSpace = new Property(name, spaceNum, action, purchasePrice, string.Empty);
+                    break;
+
                 // Color property
                 case "ColorProperty":
 
                     // Obtain prices
-                    int purchasePrice = int.Parse(vals[3]);
+                    purchasePrice = int.Parse(vals[3]);
                     int houseCost = int.Parse(vals[4]);
                     List<int> landOnPrices = new List<int>();
-                    for (int i = 5; i < 10; i++)
+                    for (int i = 5; i < 11; i++)
                     {
                         landOnPrices.Add(int.Parse(vals[i]));
                     }
@@ -103,6 +110,12 @@ public class Board
                     break;
 
                 // Railroad
+                case "Railroad":
+
+                    // Create object (all railroad prices are the same)
+                    currentSpace = new Railroad(name, spaceNum, action, 200, 25, string.Empty);
+                    break;
+
 
                 // Case not found, error
                 default:
@@ -224,13 +237,24 @@ public class Board
     // Current player purchases the current space they're on
     public void PropertyPurchase()
     {
-        CurrentPlayer.Properties.Add(m_spaces[CurrentPlayer.CurrentSpace]);
+        Property currentSpace = (Property) m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Add property to player
+        CurrentPlayer.Properties.Add(currentSpace);
+
+        // Mark space as purchased and add owner to space
+        currentSpace.Owner = CurrentPlayer;
+        currentSpace.IsPurchased = true;
+
+        // Update action type of the space
+        currentSpace.UpdateActionType();
     }
 
     // Returns an appropriate title for the current landed on action
-    public string GetLandedOnTitle()
+    public string GetLandedOnUnownedPropertyTitle()
     {
-        return "Would you like to buy " + m_spaces[CurrentPlayer.CurrentSpace].Name + " for $COST_TBD?";
+        Property purchaseProperty = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+        return "Would you like to buy " + purchaseProperty.Name + " for $" + purchaseProperty.PurchasePrice + "?";
     }
 
     // Updates whose turn it is
@@ -352,6 +376,41 @@ public class Board
 
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
+    }
+
+    // Player is mortgaging a property
+    public void MortgageProperty(int propertyIndex) 
+    {
+        // Obtain property
+        Property property = (Property)GetSpace(propertyIndex);
+
+        // Add mortgage value to player's cash
+        CurrentPlayer.Cash += property.MortgageValue;
+
+        // Mark it as mortgaged
+        property.IsMortgaged = true;
+    }
+
+    // Determines whether or not a player can buy a house on a given property
+    public bool HouseAvailible(Player player, ColorProperty property)
+    {
+        // Total number of houses full, property is mortgaged, or not enough cash
+        if (property.Houses >= 4 || property.HouseCost > player.Cash || property.IsMortgaged)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    // Determines whether or not a player can buy a hotel on a given property
+    public bool HotelAvailible(Player player, ColorProperty property)
+    {
+        // House value is not 4, property is mortgaged, or not enough cash
+        if (property.Houses != 4 || property.HouseCost > player.Cash || property.IsMortgaged)
+        {
+            return false;
+        }
+        return true;
     }
 
     // Casts a string version of an action into the enum type

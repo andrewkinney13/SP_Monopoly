@@ -8,7 +8,7 @@ public class Player
     // Data members
     private string m_name;
     private string m_icon;
-    private float m_cash;
+    private int m_cash;
     private int m_playerNum;
     private int m_currentSpace;
     private int m_diceRollResult;
@@ -28,7 +28,7 @@ public class Player
         PlayerNum = playerNum;
         TurnInitialized = false;
 
-        m_cash = 1500.0f;
+        m_cash = 1500;
     }
 
     // Getters and setters
@@ -49,7 +49,7 @@ public class Player
         get { return m_icon; }
         set { m_icon = value; }
     }
-    public float Cash
+    public int Cash
     {
         get { return m_cash; }
         set { m_cash = value; }

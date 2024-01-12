@@ -4,14 +4,20 @@ using System.Collections.Generic;
 public class Property : Space
 {
     // Data members
-    private int m_purchasePrice;
-    private Player m_owner;
+    protected int m_purchasePrice;
+    protected Player m_owner = null;
+    protected bool m_purchased = false;
+    protected bool m_mortgaged = false;
+    protected List<int> m_rentPrices = new List<int>();
 
     // Constructor
     public Property(string name, int index, Board.Actions action, int purchasePrice, string description) : base(name, index, action, description)
     {
         PurchasePrice = purchasePrice;
     }
+
+    // Virtual rent price calculator to be implemented by inherited classes
+    public virtual int RentPrice(int factor) { throw new System.Exception("Virtual base class rent price function being called"); }
 
     // Getters and setters
     public int PurchasePrice
@@ -23,4 +29,22 @@ public class Property : Space
     {
         get { return m_purchasePrice / 2 ; }
     }
+    public Player Owner
+    {
+        get { return m_owner; }
+        set { m_owner = value; }
+    }
+    public bool IsPurchased
+    { 
+        get { return m_purchased; } 
+        set { m_purchased = value; }
+    }
+    public bool IsMortgaged
+    {
+        get { return m_mortgaged; }
+        set { m_mortgaged = true; }
+    }
+
+    // Updates the action type of a space, depending on it's status
+    public virtual void UpdateActionType() { }
 }

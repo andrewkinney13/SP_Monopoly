@@ -1,0 +1,114 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PropertyManager : MonoBehaviour
+{
+    // Data memebrs
+    public GameController m_gameController;
+
+    // Unity data members
+    public TMP_Text m_title;
+    public Button m_buyHouseOrHotelButton;
+    public TMP_Text m_buyHouseOrHotelButtonText;
+    public Button m_sellHouseOrHotelButton;
+    public TMP_Text m_sellHouseOrHotelButtonText;
+    public Button m_mortgageButton;
+    public TMP_Text m_mortgageButtonText;
+    public Button m_backButton;
+    public TMP_Text m_description;
+    public GameObject m_window;
+    
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // Set window to be inactive to start
+        m_window.SetActive(false);
+        m_backButton.onClick.AddListener(ClosePropertyManger);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, bool mortgageAvailible, int propertyIndex)
+    {
+        // Reset all listeners
+        m_buyHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_BuyHouse(propertyIndex));
+        m_sellHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_SellHouse(propertyIndex));
+        m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_MortgageProperty(propertyIndex));
+
+        // Set text of titles
+        m_title.text = propertyName;
+        m_description.text = propertyDescription;
+
+        // Buying 
+        m_buyHouseOrHotelButton.interactable = true;
+        if (buyHouseAvailible)
+        {
+            m_buyHouseOrHotelButtonText.text = "Buy House ($-" + houseCost + ")";
+        }
+        else if (buyHotelAvailible)
+        {
+            m_buyHouseOrHotelButtonText.text = "Buy Hotel ($-" + houseCost + ")";
+        }
+        else
+        {
+            m_buyHouseOrHotelButtonText.text = "Buying Unavailible";
+            m_buyHouseOrHotelButton.interactable = false;
+        }
+
+        // Selling
+        m_sellHouseOrHotelButton.interactable = true;   
+        if (sellHouseAvailible)
+        {
+            m_sellHouseOrHotelButtonText.text = "Sell House ($+" + houseCost + ")";
+        }
+        else if (sellHotelAvailible)
+        {
+            m_sellHouseOrHotelButtonText.text = "Sell Hotel ($+" + houseCost + ")";
+        }
+        else
+        {
+            m_sellHouseOrHotelButtonText.text = "Selling unavailible";
+            m_sellHouseOrHotelButton.interactable = false;
+        }
+
+        // Mortgage
+        if (mortgageAvailible)
+        {
+            m_mortgageButtonText.text = "Mortgage (+$" + mortgageValue + ")";
+            m_mortgageButton.interactable = true;
+        }
+        else
+        {
+            m_mortgageButtonText.text = "Mortgage unavailible";
+            m_mortgageButton.interactable = false;
+        }
+
+        // Activate the window
+        m_window.SetActive(true);
+    }
+
+    // Closes property window
+    public void ClosePropertyManger()
+    {
+        // Hide window
+        m_window.SetActive(false);
+    }
+
+    // Resets button listenerts
+    public void ResetWindow()
+    {
+        // Reset all listeners
+        m_buyHouseOrHotelButton.onClick.RemoveAllListeners();
+        m_sellHouseOrHotelButton.onClick.RemoveAllListeners();
+        m_mortgageButton.onClick.RemoveAllListeners();
+    }
+
+}

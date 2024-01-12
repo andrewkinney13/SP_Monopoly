@@ -7,11 +7,11 @@ using UnityEngine.UI;
 public class Space
 {
     // Data Members
-    private string m_name;
-    private int m_index;
-    private string m_actionText = "Action!";
-    private Board.Actions m_actionType;
-    private string m_description;
+    protected string m_name;
+    protected int m_index;
+    protected string m_actionText = "Action!";
+    protected Board.Actions m_actionType;
+    protected string m_description;
 
     // Constructor
     public Space(string name, int index, Board.Actions action, string description)

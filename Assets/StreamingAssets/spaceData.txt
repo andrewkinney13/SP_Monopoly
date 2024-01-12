@@ -10,7 +10,7 @@ Chance,LandedOn_ChanceOrCommunityChest,Card
 Connecticut Avenue,LandedOn_UnownedProperty,ColorProperty,120,50,8,40,100,300,450,600
 Just Visiting,LandedOn_VisitingJail,Space
 St. Charles Place,LandedOn_UnownedProperty,ColorProperty,140,100,10,50,150,450,625,750
-Electric Company,LandedOn_UnownedProperty,Utility
+Electric Company,LandedOn_UnownedProperty,Utility,150
 States Avenue,LandedOn_UnownedProperty,ColorProperty,140,100,10,50,150,450,625,750
 Virginia Avenue,LandedOn_UnownedProperty,ColorProperty,160,100,12,60,180,500,700,900
 Pennsylvania Railroad,LandedOn_UnownedProperty,Railroad
@@ -26,12 +26,12 @@ Illinois Avenue,LandedOn_UnownedProperty,ColorProperty,240,150,20,100,300,750,92
 B. & O. Railroad,LandedOn_UnownedProperty,Railroad
 Atlantic Avenue,LandedOn_UnownedProperty,ColorProperty,260,150,22,110,330,800,975,1150
 Ventnor Avenue,LandedOn_UnownedProperty,ColorProperty,260,150,22,110,330,800,975,1150
-Water Works,LandedOn_UnownedProperty,Utility
+Water Works,LandedOn_UnownedProperty,Utility,150
 Marvin Gardens,LandedOn_UnownedProperty,ColorProperty,280,150,24,120,360,850,1025,1200
 Go to Jail,LandedOn_GoToJail,Space
 Pacific Avenue,LandedOn_UnownedProperty,ColorProperty,300,200,26,130,390,900,1100,1275
-Community Chest,LandedOn_ChanceOrCommunityChest,Card
 North Carolina Avenue,LandedOn_UnownedProperty,ColorProperty,300,200,26,130,390,900,1100,1275
+Community Chest,LandedOn_ChanceOrCommunityChest,Card
 Pennsylvania Avenue,LandedOn_UnownedProperty,ColorProperty,320,200,28,150,450,1000,1200,1400
 Short Line,LandedOn_UnownedProperty,Railroad
 Chance,LandedOn_ChanceOrCommunityChest,Card

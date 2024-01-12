@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -40,6 +41,7 @@ public class GameController : MonoBehaviour
     public RectTransform m_propertyCardContent;
     public List<RenderTexture> m_propertyRenderTextures;
     public Scrollbar m_propertyCardScrollbar;
+    public PropertyManager m_propertyManager;
 
     // Runs when the script is initialized, using this as a constructor
     void Start()
@@ -93,7 +95,15 @@ public class GameController : MonoBehaviour
             m_spaceDetailsController.CloseDetailsWindow();
             m_playerDetailsController.CloseDetailsWindow();
         }
+
     }
+
+    // Updates cash display
+    void UpdatePanelCash()
+    {
+        m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash.ToString();
+    }
+    
 
     // Getters and setters
     public bool UpdateMade
@@ -129,7 +139,7 @@ public class GameController : MonoBehaviour
                 currentActionWindow = m_actionWindows[1];
                 break;
             case Board.Actions.LandedOn_UnownedProperty:
-                m_LO_unownedPropertyController.Title = m_board.GetLandedOnTitle();
+                m_LO_unownedPropertyController.Title = m_board.GetLandedOnUnownedPropertyTitle();
                 currentActionWindow = m_actionWindows[2];
                 break;
             case Board.Actions.EndTurn:
@@ -194,36 +204,11 @@ public class GameController : MonoBehaviour
 
             // Add button and listener for the space
             Button viewerButton = newViewer.AddComponent<Button>();
-            viewerButton.onClick.AddListener(() => OnSpaceClick(property.Index)); 
+            viewerButton.onClick.AddListener(() => OnPropertyClick(property.Index)); 
             
             // Increment property
             propertyNum++;
         }
-    }
-
-    // Finds a particular render texture for a given property 
-    private RenderTexture FindPropertyTexture(int spaceIndex)
-    {
-        // Use the name of the render texture to find the correct texture for a space index
-        foreach (RenderTexture texture in m_propertyRenderTextures)
-        {
-            // Obtain the name without 'RT'
-            string name = texture.name;
-            name = name.Substring(0, name.Length - 2);
-
-            // Cast to int
-            int index = -1;
-            int.TryParse(name, out index);
-
-            // Return if its the matching texture
-            if (index == spaceIndex)
-            {
-                return texture;
-            }
-        }
-
-        // No space found, FREAK OUT!
-        throw new System.Exception("No texture found for specified property! Index: " + spaceIndex);
     }
 
     // Player ended their turn
@@ -311,6 +296,81 @@ public class GameController : MonoBehaviour
         m_spaceDetailsController.CreateDetailsWindow(spaceName, spaceDescription);
     }
 
+    // Player clicks on property they own in the properties and cards panel
+    void OnPropertyClick(int spaceIndex)
+    {
+        // Reset the window 
+        m_propertyManager.ResetWindow();
+
+        // Get the property
+        Property property = (Property)m_board.GetSpace(spaceIndex);
+
+        // Feed in all parameters if a color property
+        if (m_board.GetSpace(spaceIndex).ActionType == Board.Actions.LandedOn_OwnedColorProperty)
+        {
+            // Cast to inherited type so we can obtain color property specific values
+            ColorProperty colorProperty = (ColorProperty)property;
+
+            // Determine if player can purchase and sell houses or hotels
+            Player player = m_board.CurrentPlayer;
+            bool houseAvailible = m_board.HouseAvailible(player, colorProperty);
+            bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
+            bool sellHouseAvailible = colorProperty.Houses > 0;
+            bool sellHotelAvailible = colorProperty.Houses == 5;
+
+            if (!property.IsMortgaged)
+            {
+                Debug.Log("Property Mortgageable");
+            }
+            else
+            {
+                Debug.Log("Property not Mortgageable");
+            }
+
+            m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
+                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, colorProperty.Index);
+        }
+
+        // Feed in limited paramaters if a utility or a railroad (no houses, hotels)
+        else
+        {
+            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, 0);
+        }
+
+    }
+
+    // Player is buying a house / hotel for their color property
+    public void PropertyManager_BuyHouse(int propertyIndex)
+    {
+        OnPropertyClick(propertyIndex);
+        // Adjust money, redraw the property manager
+        Debug.Log("Current player bought a house!");
+    }
+    public void PropertyManager_SellHouse(int propertyIndex)
+    {
+        OnPropertyClick(propertyIndex);
+        // Adjust money, redraw the property manager
+        Debug.Log("Current player sold a house!");
+    }
+    public void PropertyManager_MortgageProperty(int propertyIndex)
+    {
+        // Mortgage the property
+        m_board.MortgageProperty(propertyIndex);
+
+        // Update cash of the player
+        UpdatePanelCash();
+
+        // Redraw the window
+        OnPropertyClick(propertyIndex);
+
+        Debug.Log("Current player mortgaged a property!");
+    }
+    public void PropertyManager_StoppedManaging()
+    {
+        m_propertyManager.ClosePropertyManger();
+    }
+
+
     // When user clicks a player
     void OnPlayerClick(int playerNum)
     {
@@ -350,6 +410,31 @@ public class GameController : MonoBehaviour
             }
         }
         return null;
+    }
+
+    // Finds a particular render texture for a given property 
+    private RenderTexture FindPropertyTexture(int spaceIndex)
+    {
+        // Use the name of the render texture to find the correct texture for a space index
+        foreach (RenderTexture texture in m_propertyRenderTextures)
+        {
+            // Obtain the name without 'RT'
+            string name = texture.name;
+            name = name.Substring(0, name.Length - 2);
+
+            // Cast to int
+            int index = -1;
+            int.TryParse(name, out index);
+
+            // Return if its the matching texture
+            if (index == spaceIndex)
+            {
+                return texture;
+            }
+        }
+
+        // No space found, FREAK OUT!
+        throw new System.Exception("No texture found for specified property! Index: " + spaceIndex);
     }
 }
 
