@@ -44,6 +44,15 @@ public class ColorProperty : Property
             {
                 retString += "No one";
             }
+            retString += "\nMortgaged: ";
+            if (IsMortgaged)
+            {
+                retString += "Yes";
+            }
+            else
+            {
+                retString += "No";
+            }
             retString += "\nHouses: " + Houses + "\n";
             retString += "Purchase cost: $" + PurchasePrice + "\n" +
                 "RENT: $" + RentPrice(0) + "\n" +

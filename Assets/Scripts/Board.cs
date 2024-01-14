@@ -90,7 +90,7 @@ public class Board
                 // Utility
                 case "Utility":
                     purchasePrice = int.Parse(vals[3]);
-                    currentSpace = new Property(name, spaceNum, action, purchasePrice, string.Empty);
+                    currentSpace = new Utility(name, spaceNum, action, purchasePrice, 4, string.Empty);
                     break;
 
                 // Color property
@@ -378,6 +378,28 @@ public class Board
         CurrentPlayer.RolledDice = true;
     }
 
+    // Player is buying a house
+    public void BuyHouse(int propertyIndex)
+    {
+        // Obtain property
+        ColorProperty property = (ColorProperty)GetSpace(propertyIndex);
+
+        // Update it's properties
+        CurrentPlayer.Cash -= property.HouseCost;
+        property.Houses++;
+    }
+
+    // Player is selling a house
+    public void SellHouse(int propertyIndex)
+    {
+        // Obtain property
+        ColorProperty property = (ColorProperty)GetSpace(propertyIndex);
+
+        // Update it's properties
+        CurrentPlayer.Cash += property.HouseCost;
+        property.Houses--;
+    }
+
     // Player is mortgaging a property
     public void MortgageProperty(int propertyIndex) 
     {
@@ -389,6 +411,19 @@ public class Board
 
         // Mark it as mortgaged
         property.IsMortgaged = true;
+    }
+
+    // Player is unmortgaging their property
+    public void UnmortgageProperty(int propertyIndex)
+    {
+        // Obtain the property 
+        Property property = (Property)GetSpace(propertyIndex);
+
+        // Add mortgage value to player's cash
+        CurrentPlayer.Cash -= property.MortgageValue;
+
+        // Mark it as not mortgaged
+        property.IsMortgaged = false;
     }
 
     // Determines whether or not a player can buy a house on a given property
@@ -411,6 +446,17 @@ public class Board
             return false;
         }
         return true;
+    }
+
+    // Determines whether or not a player can unmortgage their property
+    public bool UnmortgageAvailible(Player player, Property property)
+    {
+        // Property is mortgaged, and player can afford to buy it
+        if (property.IsMortgaged && property.MortgageValue < player.Cash)
+        {
+            return true;
+        }
+        return false;
     }
 
     // Casts a string version of an action into the enum type

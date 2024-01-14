@@ -8,10 +8,17 @@ public class PlayerTrackController : MonoBehaviour
 {
     // Unity data members
     public List<Button> m_playerIcons;
+    public GameObject m_movingPlayerMessageWindow;
 
     // Private data members
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     private float m_iconMovementAnimationDuration = .25f;
+
+    // Set the player moving message to inactive
+    private void Start()
+    {
+        m_movingPlayerMessageWindow.SetActive(false);
+    }
 
     // Sets the player icon buttons with the correct order assigned by GameController
     public void SetIcons(List<Button> icons)
@@ -140,6 +147,22 @@ public class PlayerTrackController : MonoBehaviour
     // Moves player icon in an animated fashion to specified location
     public IEnumerator MovePlayer(int playerNum, int initialSpace, int destinationSpace)
     {
+        // Check for 0,0 (initialize call)
+        if (initialSpace == 0 && destinationSpace == 0) 
+        {
+            // Get icon of player and position to move player to
+            Vector2 destinationPosition = GetIconPosition(playerNum, 0);
+            Image playerIcon = m_playerIcons[playerNum].GetComponent<Image>();
+
+            // Assign position to that icon
+            playerIcon.rectTransform.anchoredPosition = destinationPosition;
+
+            yield break;
+        }
+
+        // Cover the current action window
+        m_movingPlayerMessageWindow.SetActive(true);
+
         // Figure out how far the space needs to travel
         int spaceDifference;
         if (initialSpace <= destinationSpace)
@@ -202,5 +225,8 @@ public class PlayerTrackController : MonoBehaviour
             }
             playerIcon.rectTransform.eulerAngles = currentRotation;
         }
+
+        // Uncover action window
+        m_movingPlayerMessageWindow.SetActive(false);
     }
 }

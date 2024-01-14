@@ -36,12 +36,13 @@ public class PropertyManager : MonoBehaviour
         
     }
 
-    public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, bool mortgageAvailible, int propertyIndex)
+    public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, 
+        bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, 
+        bool mortgageAvailible, bool unmortgageAvailible, int propertyIndex)
     {
-        // Reset all listeners
+        // Add all listeners
         m_buyHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_BuyHouse(propertyIndex));
         m_sellHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_SellHouse(propertyIndex));
-        m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_MortgageProperty(propertyIndex));
 
         // Set text of titles
         m_title.text = propertyName;
@@ -83,11 +84,18 @@ public class PropertyManager : MonoBehaviour
         if (mortgageAvailible)
         {
             m_mortgageButtonText.text = "Mortgage (+$" + mortgageValue + ")";
+            m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_MortgageProperty(propertyIndex));
+            m_mortgageButton.interactable = true;
+        }
+        else if (unmortgageAvailible)
+        {
+            m_mortgageButtonText.text = "Buy back (-$" + mortgageValue + ")";
+            m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_UnmortgageProperty(propertyIndex));
             m_mortgageButton.interactable = true;
         }
         else
         {
-            m_mortgageButtonText.text = "Mortgage unavailible";
+            m_mortgageButtonText.text = "Mortgaging Unavailible";
             m_mortgageButton.interactable = false;
         }
 

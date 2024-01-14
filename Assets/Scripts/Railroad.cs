@@ -41,11 +41,20 @@ public class Railroad : Property
             {
                 retString += "No one";
             }
-            retString += "RENT: $" + RentPrice(1) + "\n" +
+            retString += "\nMortgaged: ";
+            if (IsMortgaged) 
+            {
+                retString += "Yes";
+            }
+            else
+            {
+                retString += "No";
+            }
+            retString += "\nRENT: $" + RentPrice(1) + "\n" +
                 "If 2 Railroads are owned: $" + RentPrice(2) + "\n" +
                 "If 3 Railroads are owned: $" + RentPrice(3) + "\n" +
                 "If 4 Railroads are owned: $" + RentPrice(4) + "\n" +
-                "Mortgage Value: $" + MortgageValue + "\n";
+                "Mortgage Value: $" + MortgageValue;
 
             return retString;
         }

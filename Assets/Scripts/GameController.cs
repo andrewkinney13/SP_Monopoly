@@ -87,6 +87,12 @@ public class GameController : MonoBehaviour
 
             // Reset the camera 
             m_cameraController.ResetCamera();
+
+            // Reset scrollbar in the property card view
+            m_propertyCardScrollbar.value = 0f;
+
+            // Close the properties and cards window if it's open
+            m_propertyManager.ClosePropertyManger();
         }
 
         // Erase the space details window if user clicks
@@ -175,9 +181,6 @@ public class GameController : MonoBehaviour
     // Adds a new property to the properties and cards section
     private void CreatePropertyCardView()
     {
-        // Reset horizontal scroller 
-        m_propertyCardScrollbar.value = 0f;
-
         // Set the sizes
         float propertyWidth = 224f;
         float propertyHeight = 300f;
@@ -317,40 +320,43 @@ public class GameController : MonoBehaviour
             bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
             bool sellHouseAvailible = colorProperty.Houses > 0;
             bool sellHotelAvailible = colorProperty.Houses == 5;
-
-            if (!property.IsMortgaged)
-            {
-                Debug.Log("Property Mortgageable");
-            }
-            else
-            {
-                Debug.Log("Property not Mortgageable");
-            }
+            bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
 
             m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
-                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, colorProperty.Index);
+                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, unmortgageAvailible, colorProperty.Index);
         }
 
         // Feed in limited paramaters if a utility or a railroad (no houses, hotels)
         else
         {
-            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, 0);
+            bool unmortgageAvailible = m_board.UnmortgageAvailible(m_board.CurrentPlayer, property);
+            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, unmortgageAvailible, 0);
         }
 
     }
 
-    // Player is buying a house / hotel for their color property
+    // Property manager button functions
     public void PropertyManager_BuyHouse(int propertyIndex)
     {
+        // Buy the house
+        m_board.BuyHouse(propertyIndex);
+
+        // Update cash of the player
+        UpdatePanelCash();
+
+        // Redraw the window
         OnPropertyClick(propertyIndex);
-        // Adjust money, redraw the property manager
-        Debug.Log("Current player bought a house!");
     }
     public void PropertyManager_SellHouse(int propertyIndex)
     {
+        // Sell the house
+        m_board.SellHouse(propertyIndex);
+
+        // Update cash of the player
+        UpdatePanelCash();
+
+        // Redraw the window
         OnPropertyClick(propertyIndex);
-        // Adjust money, redraw the property manager
-        Debug.Log("Current player sold a house!");
     }
     public void PropertyManager_MortgageProperty(int propertyIndex)
     {
@@ -362,8 +368,17 @@ public class GameController : MonoBehaviour
 
         // Redraw the window
         OnPropertyClick(propertyIndex);
+    }
+    public void PropertyManager_UnmortgageProperty(int propertyIndex)
+    {
+        // Buy back the property
+        m_board.UnmortgageProperty(propertyIndex);
 
-        Debug.Log("Current player mortgaged a property!");
+        // Update cash of the player
+        UpdatePanelCash();
+
+        // Redraw the window
+        OnPropertyClick(propertyIndex);
     }
     public void PropertyManager_StoppedManaging()
     {
@@ -395,7 +410,7 @@ public class GameController : MonoBehaviour
             m_playerButtons[playerNum].image.sprite = GetIconSprite(m_board.GetPlayerIconName(playerNum));
 
             // Move the player to space 0
-            StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 39, 0));
+            StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 0, 0));
         }
     }
 

@@ -42,7 +42,7 @@ public class Property : Space
     public bool IsMortgaged
     {
         get { return m_mortgaged; }
-        set { m_mortgaged = true; }
+        set { m_mortgaged = value; }
     }
 
     // Updates the action type of a space, depending on it's status

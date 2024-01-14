@@ -13,10 +13,12 @@ public class PopupController : MonoBehaviour
     public TMP_Text m_title;
     public TMP_Text m_message;
     public CameraController m_cameraController;
+    public GameObject m_blocker;
 
     public void Start()
     {
         m_popupCloseButton.onClick.AddListener(ClosePopupWindow);
+        m_blocker.SetActive(false); 
     }
 
     // Closes the popup window
@@ -25,12 +27,13 @@ public class PopupController : MonoBehaviour
         // Enable zooming for camera if a controller class is defined
         try
         {
-            m_cameraController.SetZooming(true);
+            m_cameraController.ZoomEnabled = true;
         }
         catch { }
 
         // Disable the window
         m_popupWindow.SetActive(false);
+        m_blocker.SetActive(false);
     }
 
     // Creates a popup window
@@ -57,12 +60,13 @@ public class PopupController : MonoBehaviour
         // Disable zooming if a camera controller is defined
         try
         {
-            m_cameraController.SetZooming(false);
+            m_cameraController.ZoomEnabled = false;
         }
         catch { }
         
 
         // Set the popup window as active
         m_popupWindow.SetActive(true);
+        m_blocker.SetActive(true);
     }
 }

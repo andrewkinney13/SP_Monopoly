@@ -12,6 +12,7 @@ public class CameraController : MonoBehaviour
     public Button m_leftRotate;
     public Button m_rightRotate;
     public GameObject m_cameraPivot;
+    public RectTransform m_screenBorder;
 
     // Private Data Members
     private Camera m_camera;
@@ -19,6 +20,7 @@ public class CameraController : MonoBehaviour
     private float m_minSize = 50.0f;
     private float m_maxSize = 325.0f;
     private bool m_zoomEnabled;
+    private bool m_moveEnabled;
 
     private void Start()
     {
@@ -52,9 +54,17 @@ public class CameraController : MonoBehaviour
     }
 
     // So other classes with scroll bars can disable zoom
-    public void SetZooming(bool zoomState)
+    public bool ZoomEnabled
     {
-        m_zoomEnabled = zoomState;
+        set { m_zoomEnabled = value; }
+        get { return m_zoomEnabled; }
+    }
+
+    // So that when player is modifying the player panel, they don't affect the board size
+    public bool MoveEnabled
+    {
+        set { m_moveEnabled = value; }
+        get { return m_moveEnabled; }
     }
 
     // Resets camera's position and orientation 
@@ -73,7 +83,7 @@ public class CameraController : MonoBehaviour
     private void Zoom()
     {
         // Do nothing if zooming disabled
-        if (!m_zoomEnabled) 
+        if (!ZoomEnabled || !MouseInBounds()) 
         { 
            return;
         }
@@ -101,6 +111,12 @@ public class CameraController : MonoBehaviour
     // Moves the camera according to cursor position
     public void Move()
     {
+        // Check that mouse is over the board screen
+        if (!MouseInBounds())
+        {
+            return;
+        }
+
         // If user clicks rmb, assign initial mouse position
         if (Input.GetMouseButtonDown(1))
         {
@@ -148,5 +164,20 @@ public class CameraController : MonoBehaviour
             // Reassign the initial mouse position
             m_lastMousePosition = currentMousePosition;
         }
+    }
+
+    // Checks if the player cursor is over the board, or player panel
+    public bool MouseInBounds()
+    {
+        // Obtain relative cursor position
+        Vector3 cursorScreenPosition = Input.mousePosition;
+        Vector3 cursorWorldPosition = m_camera.ScreenToViewportPoint(cursorScreenPosition);
+
+        // Check if within board screen
+        if ((1 - cursorWorldPosition.x) >= (700f / 1920f))
+        {
+            return true;
+        }
+        return false;
     }
 }
