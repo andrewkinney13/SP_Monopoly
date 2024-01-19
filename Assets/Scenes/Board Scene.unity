@@ -3660,7 +3660,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.00857143, y: 0.03272333}
   m_AnchorMax: {x: 0.27714285, y: 0.37500003}
-  m_AnchoredPosition: {x: 1.6900024, y: -0.49502563}
+  m_AnchoredPosition: {x: 1.6900024, y: -0.49505615}
   m_SizeDelta: {x: 4.1399994, y: 2.4490051}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &172701594
@@ -23492,7 +23492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00012207031, y: -0.0002746582}
+  m_AnchoredPosition: {x: 0.00012207031, y: -0.00024414062}
   m_SizeDelta: {x: 0, y: 0.00042725}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1261309707
@@ -32085,6 +32085,7 @@ MonoBehaviour:
   - {fileID: 408168229}
   - {fileID: 388934578}
   m_movingPlayerMessageWindow: {fileID: 1261309705}
+  m_movingPlayerMessage: {fileID: 1884763013}
 --- !u!1 &1750718139
 GameObject:
   m_ObjectHideFlags: 0
@@ -33693,7 +33694,7 @@ MonoBehaviour:
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 5
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535

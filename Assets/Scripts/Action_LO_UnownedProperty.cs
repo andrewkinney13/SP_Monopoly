@@ -17,8 +17,6 @@ public class Action_LO_UnownedProperty : Action
         // Buy the property
         m_yesButton.onClick.AddListener(() => m_gameController.Action_BuyingProperty(true));
         m_noButton.onClick.AddListener(() => m_gameController.Action_BuyingProperty(false));
-
-        // Reset the window
     }
 
     // Assign the title of the window

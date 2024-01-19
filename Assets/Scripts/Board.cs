@@ -237,7 +237,11 @@ public class Board
     // Current player purchases the current space they're on
     public void PropertyPurchase()
     {
+        // Obtain the property
         Property currentSpace = (Property) m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Subtract cash from player
+        CurrentPlayer.Cash -= currentSpace.PurchasePrice;
 
         // Add property to player
         CurrentPlayer.Properties.Add(currentSpace);
@@ -377,6 +381,7 @@ public class Board
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
     }
+
 
     // Player is buying a house
     public void BuyHouse(int propertyIndex)

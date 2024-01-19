@@ -52,11 +52,11 @@ public class PropertyManager : MonoBehaviour
         m_buyHouseOrHotelButton.interactable = true;
         if (buyHouseAvailible)
         {
-            m_buyHouseOrHotelButtonText.text = "Buy House ($-" + houseCost + ")";
+            m_buyHouseOrHotelButtonText.text = "Buy\nHouse\n($-" + houseCost + ")";
         }
         else if (buyHotelAvailible)
         {
-            m_buyHouseOrHotelButtonText.text = "Buy Hotel ($-" + houseCost + ")";
+            m_buyHouseOrHotelButtonText.text = "Buy\nHotel\n($-" + houseCost + ")";
         }
         else
         {
@@ -68,11 +68,11 @@ public class PropertyManager : MonoBehaviour
         m_sellHouseOrHotelButton.interactable = true;   
         if (sellHouseAvailible)
         {
-            m_sellHouseOrHotelButtonText.text = "Sell House ($+" + houseCost + ")";
+            m_sellHouseOrHotelButtonText.text = "Sell\nHouse\n($+" + houseCost + ")";
         }
         else if (sellHotelAvailible)
         {
-            m_sellHouseOrHotelButtonText.text = "Sell Hotel ($+" + houseCost + ")";
+            m_sellHouseOrHotelButtonText.text = "Sell\nHotel\n($+" + houseCost + ")";
         }
         else
         {
@@ -83,13 +83,13 @@ public class PropertyManager : MonoBehaviour
         // Mortgage
         if (mortgageAvailible)
         {
-            m_mortgageButtonText.text = "Mortgage (+$" + mortgageValue + ")";
+            m_mortgageButtonText.text = "Mortgage\n(+$" + mortgageValue + ")";
             m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_MortgageProperty(propertyIndex));
             m_mortgageButton.interactable = true;
         }
         else if (unmortgageAvailible)
         {
-            m_mortgageButtonText.text = "Buy back (-$" + mortgageValue + ")";
+            m_mortgageButtonText.text = "Buy back\n(-$" + mortgageValue + ")";
             m_mortgageButton.onClick.AddListener(() => m_gameController.PropertyManager_UnmortgageProperty(propertyIndex));
             m_mortgageButton.interactable = true;
         }

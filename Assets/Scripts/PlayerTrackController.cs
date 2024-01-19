@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerTrackController : MonoBehaviour
 {
     // Unity data members
     public List<Button> m_playerIcons;
     public GameObject m_movingPlayerMessageWindow;
+    public TMP_Text m_movingPlayerMessage;
 
     // Private data members
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
@@ -198,12 +200,21 @@ public class PlayerTrackController : MonoBehaviour
             float elapsedTime = 0f;
             while (elapsedTime < m_iconMovementAnimationDuration)
             {
+                // Obtain the current time, move that distance, incrememnt passed time
                 float t = elapsedTime / m_iconMovementAnimationDuration;
                 playerIcon.rectTransform.anchoredPosition = Vector2.Lerp(initialPosition, destinationPosition, t);
                 elapsedTime += Time.deltaTime;
+
+                // Animate the color of the message text
+                float hue = (m_movingPlayerMessage.color.r + 0.01f) % 1.0f;
+                Color newColor = Color.HSVToRGB(hue, 1f, 1f);
+                m_movingPlayerMessage.color = newColor;
+
                 yield return null;
             }
-            playerIcon.rectTransform.anchoredPosition = destinationPosition; // Ensure final position is exact
+
+            // Ensure final position is exact
+            playerIcon.rectTransform.anchoredPosition = destinationPosition;
 
             // Rotate the icon if needed once moved
             Vector3 currentRotation = playerIcon.rectTransform.eulerAngles;
@@ -224,6 +235,8 @@ public class PlayerTrackController : MonoBehaviour
                 currentRotation.z = 90;
             }
             playerIcon.rectTransform.eulerAngles = currentRotation;
+
+            
         }
 
         // Uncover action window
