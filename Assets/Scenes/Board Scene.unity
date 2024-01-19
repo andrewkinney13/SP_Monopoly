@@ -3619,11 +3619,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165912429}
   m_CullTransparentMesh: 1
---- !u!4 &166189078 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 916538448571071402, guid: 3f04e9d7ef293104aa7ad19eaa2f3cd0, type: 3}
-  m_PrefabInstance: {fileID: 1462202784}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &172701592
 GameObject:
   m_ObjectHideFlags: 0
@@ -12967,7 +12962,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 51.4
+  m_fontSize: 56
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -18707,7 +18702,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1495417497}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.52230626
+  m_Size: 0.5647779
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18895,7 +18890,7 @@ GameObject:
   - component: {fileID: 990559958}
   - component: {fileID: 990559957}
   m_Layer: 5
-  m_Name: 32
+  m_Name: 33
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27862,8 +27857,8 @@ MonoBehaviour:
   - {fileID: 382125168}
   - {fileID: 1427813369}
   - {fileID: 114389980}
-  - {fileID: 990559957}
   - {fileID: 89024331}
+  - {fileID: 990559957}
   - {fileID: 1360607478456275307}
   - {fileID: 1961879041}
   - {fileID: 777374091}
@@ -31108,7 +31103,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 166189078}
+  - {fileID: 916538447818623498}
   - {fileID: 181105651}
   - {fileID: 257007882}
   m_Father: {fileID: 349332349}
@@ -32086,6 +32081,8 @@ MonoBehaviour:
   - {fileID: 388934578}
   m_movingPlayerMessageWindow: {fileID: 1261309705}
   m_movingPlayerMessage: {fileID: 1884763013}
+  m_houseIcon: {fileID: 0}
+  m_hotelIcon: {fileID: 0}
 --- !u!1 &1750718139
 GameObject:
   m_ObjectHideFlags: 0
@@ -33688,7 +33685,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 34.55
+  m_fontSize: 38
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -37837,7 +37834,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.8
+  m_fontSize: 36.2
   m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -38879,6 +38876,11 @@ Transform:
   - {fileID: 5952710415788802180}
   m_Father: {fileID: 1299839238853789640}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &916538447818623498 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 916538448571071402, guid: 3f04e9d7ef293104aa7ad19eaa2f3cd0, type: 3}
+  m_PrefabInstance: {fileID: 1462202784}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1101885704498812722
 GameObject:
   m_ObjectHideFlags: 0

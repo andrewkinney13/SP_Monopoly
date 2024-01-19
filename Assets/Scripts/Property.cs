@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 // Class for spaces that are purchasable by the player
 public class Property : Space

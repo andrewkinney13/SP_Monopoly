@@ -53,6 +53,8 @@ public class PlayerFile
     {
         // Obtain file path THIS NEEDS TO BE CHANGED LATER AFTER TESTING DONE!
         string filePath = Path.Combine(Application.streamingAssetsPath, "PlayersCopy.xml");
+        // string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
+
 
         // Setup the players dict
         Dictionary<string, string> players = new Dictionary<string, string>();

@@ -162,6 +162,27 @@ public class Board
         return m_spaces[index];
     }
 
+    // Returns how many houses are on a space
+    public int GetPropertyHouses(int propertyIndex)
+    {
+        try
+        {
+            ColorProperty property = (ColorProperty)m_spaces[propertyIndex];
+            return property.Houses;
+        }
+        catch
+        {
+            throw new Exception("Trying to find number of houses of a property which cannot " +
+                "have houses on it! (non- ColorProperty type");
+        }
+    }
+
+    // Returns the name of a property 
+    public string GetPropertyName(int propertyIndex)
+    {
+        return m_spaces[propertyIndex].Name;
+    }
+
     // Returns the current player
     public Player CurrentPlayer
     {

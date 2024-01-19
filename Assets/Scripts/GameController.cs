@@ -61,6 +61,9 @@ public class GameController : MonoBehaviour
 
         // Close popup window
         m_popupController.ClosePopupWindow();
+
+        // Erase all the houses to start
+        EraseAllHousesAndHotels();
     }
 
     // Update is called once per frame
@@ -305,7 +308,7 @@ public class GameController : MonoBehaviour
         // Reset the window 
         m_propertyManager.ResetWindow();
 
-        // Get the property
+        // Obtain the property
         Property property = (Property)m_board.GetSpace(spaceIndex);
 
         // Feed in all parameters if a color property
@@ -318,7 +321,7 @@ public class GameController : MonoBehaviour
             Player player = m_board.CurrentPlayer;
             bool houseAvailible = m_board.HouseAvailible(player, colorProperty);
             bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
-            bool sellHouseAvailible = colorProperty.Houses > 0;
+            bool sellHouseAvailible = colorProperty.Houses > 0 && colorProperty.Houses < 5;
             bool sellHotelAvailible = colorProperty.Houses == 5;
             bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
 
@@ -344,12 +347,39 @@ public class GameController : MonoBehaviour
         // Update cash of the player
         UpdatePanelCash();
 
+        // Draw the house/hotel on the board
+        int houseNum = m_board.GetPropertyHouses(propertyIndex);
+
+        // If hotel, remove all houses first
+        if (houseNum == 5)
+        {
+            for (int i = 0; i < houseNum; i++) 
+            {
+                FindHouseOrHotelIcon(propertyIndex, i + 1).SetActive(false);
+            }
+        }
+        FindHouseOrHotelIcon(propertyIndex, houseNum).SetActive(true);
+
         // Redraw the window
         OnPropertyClick(propertyIndex);
     }
     public void PropertyManager_SellHouse(int propertyIndex)
     {
-        // Sell the house
+        // If hotel, add back houses
+        int houseNum = m_board.GetPropertyHouses(propertyIndex);
+        if (houseNum == 5)
+        {
+
+            for (int i = 0; i < houseNum; i++)
+            {
+                FindHouseOrHotelIcon(propertyIndex, i + 1).SetActive(true);
+            }
+        }
+
+        // Remove the hotel icon
+        FindHouseOrHotelIcon(propertyIndex, houseNum).SetActive(false);
+        
+        // Sell the house/hotel
         m_board.SellHouse(propertyIndex);
 
         // Update cash of the player
@@ -450,6 +480,73 @@ public class GameController : MonoBehaviour
 
         // No space found, FREAK OUT!
         throw new System.Exception("No texture found for specified property! Index: " + spaceIndex);
+    }
+
+    // Deactivates all houses (for game start)
+    private void EraseAllHousesAndHotels()
+    {
+        // Each space
+        foreach (Button spaceButton in m_spaceButtons)
+        {
+            // Check it's a color property 
+            int spaceNum = int.Parse(spaceButton.name);
+            try 
+            {
+                // Try casting to color property
+                ColorProperty property = (ColorProperty)m_board.GetSpace(spaceNum);
+            }
+            catch
+            {
+                // Ignore if doesn't work
+                Debug.Log(spaceNum);
+                continue;
+            }
+
+            // Each house
+            for (int i = 0; i < 5; i++) 
+            {
+                // Deactivate the icon
+                FindHouseOrHotelIcon(spaceNum, i + 1).SetActive(false);
+            }
+        }    
+    }
+
+    // Returns house/hotel icon given the property num and house num
+    private GameObject FindHouseOrHotelIcon(int propertyNum, int houseNum)
+    {
+        // Determine icon name based on num
+        string houseName = "house" + houseNum;
+        if (houseNum == 5)
+        {
+            houseName = "hotel";
+        }
+
+        // Find the parent transform (property object in the scene)
+        Transform propertyTransform = FindSpaceButtonParent(m_spaceButtons[propertyNum]);
+
+        // Find the house object 
+        Transform houseTransform = FindChildByName(propertyTransform, houseName);
+        return houseTransform.gameObject;
+    }
+
+    // Returns the property parent object of a given space button
+    private Transform FindSpaceButtonParent(Button spaceButton)
+    {
+        // Find the house game object by traversing the hierarchy structure, starting w/ the space button
+        Transform UITranform = spaceButton.transform.parent;
+        return UITranform.parent;
+    }
+
+    // Returns the appropriate child from a parent
+    Transform FindChildByName(Transform parent, string childName)
+    {
+        Transform[] allChildren = parent.GetComponentsInChildren<Transform>(true);
+        foreach (Transform child in allChildren)
+        {
+            if (child.name == childName)
+                return child;
+        }
+        throw new System.Exception("Child not found by name!");
     }
 }
 

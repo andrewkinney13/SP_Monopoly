@@ -11,6 +11,8 @@ public class PlayerTrackController : MonoBehaviour
     public List<Button> m_playerIcons;
     public GameObject m_movingPlayerMessageWindow;
     public TMP_Text m_movingPlayerMessage;
+    public Image m_houseIcon;
+    public Image m_hotelIcon;
 
     // Private data members
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
@@ -81,8 +83,7 @@ public class PlayerTrackController : MonoBehaviour
                     // Assign x and y
                     spaceX = -1 * (GetHorizontalPositon(spaceNum - 20) + offsets[playerNum].x);
                     spaceY = -1 * (-5.25f + offsets[playerNum].y);
-                    if (spaceNum % 10 == 0)
-                        spaceX -= offsets[playerNum].x / 2;
+                    if (spaceNum % 10 == 0)                        spaceX -= offsets[playerNum].x / 2;
                 }
 
                 // Fourth lane

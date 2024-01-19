@@ -35,6 +35,7 @@ public class ColorProperty : Property
     {
         get 
         {
+            // Owned or not
             string retString = "Owner: ";
             if (IsPurchased)
             {
@@ -44,6 +45,8 @@ public class ColorProperty : Property
             {
                 retString += "No one";
             }
+
+            // Mortgaged or not
             retString += "\nMortgaged: ";
             if (IsMortgaged)
             {
@@ -53,7 +56,17 @@ public class ColorProperty : Property
             {
                 retString += "No";
             }
-            retString += "\nHouses: " + Houses + "\n";
+
+            // Houses
+            if (Houses == 5)
+            {
+                retString += "\nHotels: 1\n";
+            }
+            else
+            {
+                retString += "\nHouses: " + Houses + "\n";
+            }
+            
             retString += "Purchase cost: $" + PurchasePrice + "\n" +
                 "RENT: $" + RentPrice(0) + "\n" +
                 "With 1 House: $" + RentPrice(1) + "\n" +

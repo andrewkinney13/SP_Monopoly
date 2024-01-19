@@ -50,6 +50,9 @@ TagManager:
   - name: Space Layer
     uniqueID: 4239862201
     locked: 0
+  - name: House Layer
+    uniqueID: 4174160037
+    locked: 0
   - name: UI Layer
     uniqueID: 793759753
     locked: 0
