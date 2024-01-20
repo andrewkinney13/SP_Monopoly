@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class Railroad : Property
 {
-    // Data members
-
     // Constructor
     public Railroad(string name, int index, Board.Actions action, int purchasePrice, int rentPrice, string description)
         : base (name, index, action, purchasePrice, description)
@@ -21,10 +19,31 @@ public class Railroad : Property
 
     }
 
+
     // Returns land on price for how many railroads owned
-    public override int RentPrice(int railroadsNum)
+    public override int RentPrice
     {
-        return m_rentPrices[railroadsNum - 1];
+        get
+        {
+            return m_rentPrices[AlliedRailroads - 1];
+        }
+    }
+
+    // What action a player must do, landing on this property
+    public override Board.Actions ActionType
+    {
+        get
+        {
+            if (IsPurchased)
+            {
+                return Board.Actions.LandedOn_OwnedRailroad;
+            }
+            if (IsMortgaged)
+            {
+                return Board.Actions.LandedOn_MortgagedProperty;
+            }
+            return Board.Actions.LandedOn_UnownedProperty;
+        }
     }
 
     // Description 
@@ -50,26 +69,32 @@ public class Railroad : Property
             {
                 retString += "No";
             }
-            retString += "\nRENT: $" + RentPrice(1) + "\n" +
-                "If 2 Railroads are owned: $" + RentPrice(2) + "\n" +
-                "If 3 Railroads are owned: $" + RentPrice(3) + "\n" +
-                "If 4 Railroads are owned: $" + RentPrice(4) + "\n" +
+            retString += "\nRENT: $" + m_rentPrices[0] + "\n" +
+                "If 2 Railroads are owned: $" + m_rentPrices[1] + "\n" +
+                "If 3 Railroads are owned: $" + m_rentPrices[2] + "\n" +
+                "If 4 Railroads are owned: $" + m_rentPrices[3] + "\n" +
                 "Mortgage Value: $" + MortgageValue;
 
             return retString;
         }
     }
 
-    // Updating the action type 
-    public override void UpdateActionType()
+    // How many railroads are also owned
+    public int AlliedRailroads
     {
-        if (IsMortgaged)
+        get
         {
-            ActionType = Board.Actions.LandedOn_MortgagedProperty;
-        }
-        else
-        {
-            ActionType = Board.Actions.LandedOn_OwnedRailroad;
+            // Parse every property and find out how many are railroads
+            int railroadCount = 0;
+            foreach (Property property in Owner.Properties)
+            {
+                // Only count if of type railroad
+                if (property is Railroad)
+                {
+                    railroadCount++;
+                }
+            }
+            return railroadCount;
         }
     }
 }

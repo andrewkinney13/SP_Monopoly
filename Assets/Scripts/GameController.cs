@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
     public CameraController m_cameraController;
     public Action_RollDice m_diceRollController;
     public Action_LO_UnownedProperty m_LO_unownedPropertyController;
+    public Action_LO_OwnedProperty m_LO_ownedPropertyController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -143,14 +144,34 @@ public class GameController : MonoBehaviour
         GameObject currentActionWindow;
         switch (action)
         {
+            // Dice rolling
             case Board.Actions.DetermineOrder:
             case Board.Actions.RollDice:
                 currentActionWindow = m_actionWindows[1];
                 break;
+
+            // Property stuff
+            case Board.Actions.DetermineUtilityCost:
+                m_diceRollController.UtilityCostRoll = true;
+                m_diceRollController.ResetWindow();
+                currentActionWindow = m_actionWindows[1];
+                break;
+
             case Board.Actions.LandedOn_UnownedProperty:
                 m_LO_unownedPropertyController.Title = m_board.GetLandedOnUnownedPropertyTitle();
                 currentActionWindow = m_actionWindows[2];
                 break;
+
+            
+            case Board.Actions.LandedOn_OwnedColorProperty:
+            case Board.Actions.LandedOn_OwnedRailroad:
+            case Board.Actions.LandedOn_OwnedUtility:
+                m_LO_ownedPropertyController.Title = m_board.GetLandedOnOwnedPropertyTitle();
+                m_LO_ownedPropertyController.ContinueButtonText = m_board.GetLandedOnOwnedPropertyRent();
+                currentActionWindow = m_actionWindows[3];
+                break;
+
+            // Ending turn / default (error)
             case Board.Actions.EndTurn:
                 currentActionWindow = m_actionWindows[0];
                 break;
@@ -250,6 +271,17 @@ public class GameController : MonoBehaviour
         m_board.CurrentPlayer.TurnCompleted = true;
     }
 
+    // Player rolled dice to determine the cost of landing on a utility
+    public void Action_UtilityCostDetermined(int diceRoll)
+    {
+        // Update flags and properties on space and controller
+        m_diceRollController.UtilityCostRoll = false;
+        m_board.UtilityCostDetermined(diceRoll);
+
+        // Mark update made
+        UpdateMade = true;
+    }
+
     // Player rolled the dice
     public void Action_DiceRolled(int diceResult, bool wereDoubles)
     {
@@ -273,6 +305,17 @@ public class GameController : MonoBehaviour
         {
             m_board.PropertyPurchase();
         }
+
+        // Completed space action
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade = true;
+    }
+
+    // Player paying rent for a color property
+    public void Action_PayingRent()
+    {
+        // Subtract the cash from player
+        m_board.PayRent();
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;
@@ -321,7 +364,7 @@ public class GameController : MonoBehaviour
             Player player = m_board.CurrentPlayer;
             bool houseAvailible = m_board.HouseAvailible(player, colorProperty);
             bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
-            bool sellHouseAvailible = colorProperty.Houses > 0 && colorProperty.Houses < 5;
+            bool sellHouseAvailible = m_board.SellHouseAvailible(player, colorProperty);
             bool sellHotelAvailible = colorProperty.Houses == 5;
             bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
 
@@ -498,7 +541,6 @@ public class GameController : MonoBehaviour
             catch
             {
                 // Ignore if doesn't work
-                Debug.Log(spaceNum);
                 continue;
             }
 

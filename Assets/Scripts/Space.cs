@@ -38,20 +38,23 @@ public class Space
         get { return m_description; }
         set { m_description = value; }  
     }
+    public virtual bool IsMortgaged
+    {
+        get { return false; }
+        set { throw new System.Exception("Attempting to mortgage a non-property type!"); }
+    }
+
     public string ActionText
     {
         get { return m_actionText; }
         set { m_actionText = value; }
     }
-    public Board.Actions ActionType
+
+    // What action a player must do, landing on this property
+    public virtual Board.Actions ActionType
     {
-        get { return m_actionType;  }
+        get { return m_actionType; }
         set { m_actionType = value; }
     }
 
-    // Land on space (to inherit)
-    public void Action()
-    {
-        Debug.Log("Action!");
-    }
 }

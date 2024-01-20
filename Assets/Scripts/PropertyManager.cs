@@ -68,11 +68,11 @@ public class PropertyManager : MonoBehaviour
         m_sellHouseOrHotelButton.interactable = true;   
         if (sellHouseAvailible)
         {
-            m_sellHouseOrHotelButtonText.text = "Sell\nHouse\n($+" + houseCost + ")";
+            m_sellHouseOrHotelButtonText.text = "Sell\nHouse\n($+" + houseCost / 2 + ")";
         }
         else if (sellHotelAvailible)
         {
-            m_sellHouseOrHotelButtonText.text = "Sell\nHotel\n($+" + houseCost + ")";
+            m_sellHouseOrHotelButtonText.text = "Sell\nHotel\n($+" + houseCost / 2+ ")";
         }
         else
         {

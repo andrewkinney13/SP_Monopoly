@@ -1,15 +1,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq.Expressions;
+using System.Runtime.ExceptionServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // Class to handle the board and basically the entire game's C# logic at a high level
-public class Board 
+public class Board
 {
     // Data members
     private List<Space> m_spaces = new List<Space>();
@@ -34,12 +36,13 @@ public class Board
         LandedOn_Tax = 11,
         LandedOn_Go = 12,
         LandedOn_MortgagedProperty = 13,
+        DetermineUtilityCost = 14,
         ERROR = 999
     }
 
     // Constructor
     public Board()
-    { 
+    {
 
     }
 
@@ -52,6 +55,36 @@ public class Board
 
         // Set the turn num to 0
         m_turnNum = 0;
+
+        // ======================= TESTING ===============================
+        TestBuy(0, 1);
+        TestBuy(0, 3);
+        TestBuy(0, 5);
+        TestBuy(0, 7);
+        TestBuy(0, 9);
+        TestBuy(0, 11);
+        TestBuy(0, 12);
+        TestBuy(0, 13);
+        TestBuy(0, 14);
+
+        TestBuy(1, 16);
+        TestBuy(1, 17);
+        TestBuy(1, 19);
+        TestBuy(1, 21);
+        TestBuy(1, 23);
+        TestBuy(1, 24);
+        TestBuy(1, 25);
+        TestBuy(1, 26);
+        m_players[0].CurrentSpace = 0;
+        m_players[1].CurrentSpace = 0;
+
+    }
+
+    void TestBuy(int playerNum, int propertyNum)
+    {
+        m_turnNum = playerNum;
+        CurrentPlayer.CurrentSpace = propertyNum;
+        PropertyPurchase();
     }
 
     // Obtains spaces from text file
@@ -79,7 +112,7 @@ public class Board
             // Create the space based on it's specified type in the file
             Space currentSpace = null;
             int purchasePrice;
-            switch (vals[2]) 
+            switch (vals[2])
             {
                 // Default space
                 case "Space":
@@ -104,9 +137,12 @@ public class Board
                     {
                         landOnPrices.Add(int.Parse(vals[i]));
                     }
-                    
+
+                    // Obtain color
+                    string color = vals[11];
+
                     // Create object
-                    currentSpace = new ColorProperty(name, spaceNum, action, purchasePrice, houseCost, landOnPrices, string.Empty);
+                    currentSpace = new ColorProperty(name, spaceNum, action, purchasePrice, houseCost, landOnPrices, string.Empty, color);
                     break;
 
                 // Railroad
@@ -177,12 +213,6 @@ public class Board
         }
     }
 
-    // Returns the name of a property 
-    public string GetPropertyName(int propertyIndex)
-    {
-        return m_spaces[propertyIndex].Name;
-    }
-
     // Returns the current player
     public Player CurrentPlayer
     {
@@ -190,11 +220,11 @@ public class Board
     }
 
     // Returns the amount of players in the game
-    public int PlayerCount 
-    { 
-        get { return m_players.Count; } 
+    public int PlayerCount
+    {
+        get { return m_players.Count; }
     }
-    
+
     // Throws an exception if index out of bounds
     public void CheckPlayerNum(int playerNum)
     {
@@ -234,53 +264,55 @@ public class Board
         return m_players[playerNum].Description;
     }
 
+    // Changes utility flag that the player is currently on, indicates they rolled dice to determine cost
+    public void UtilityCostDetermined(int diceRoll)
+    {
+        Utility utility = (Utility)m_spaces[CurrentPlayer.CurrentSpace];
+        utility.DiceRolled = true;
+        utility.CurrentDiceRoll = diceRoll;
+    }
+
     // Determines what action the current player must make depending on the state of their turn
     public Actions DetermineAction()
     {
+        // Roll dice to determine turn
         if (!CurrentPlayer.TurnInitialized)
         {
             return Actions.DetermineOrder;
         }
+
+        // Roll dice to move
         if (!CurrentPlayer.RolledDice)
         {
             return Actions.RollDice;
         }
+
+        // Landed on a space and hasn't acted yet
         if (!CurrentPlayer.SpaceActionCompleted)
         {
+            // Check if player is on their owned space
+            if (CurrentPlayer.OnOwnedProperty)
+            {
+                return Actions.EndTurn;
+            }
+
+            // Check if player is on a mortgaged space
+            if (m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged)
+            {
+                return Actions.EndTurn;
+            }
+
+            // Otherwise do the space activity
             return m_spaces[CurrentPlayer.CurrentSpace].ActionType;
         }
+
+        // Nothing to do, end turn
         else
         {
             return Actions.EndTurn;
         }
     }
 
-    // Current player purchases the current space they're on
-    public void PropertyPurchase()
-    {
-        // Obtain the property
-        Property currentSpace = (Property) m_spaces[CurrentPlayer.CurrentSpace];
-
-        // Subtract cash from player
-        CurrentPlayer.Cash -= currentSpace.PurchasePrice;
-
-        // Add property to player
-        CurrentPlayer.Properties.Add(currentSpace);
-
-        // Mark space as purchased and add owner to space
-        currentSpace.Owner = CurrentPlayer;
-        currentSpace.IsPurchased = true;
-
-        // Update action type of the space
-        currentSpace.UpdateActionType();
-    }
-
-    // Returns an appropriate title for the current landed on action
-    public string GetLandedOnUnownedPropertyTitle()
-    {
-        Property purchaseProperty = (Property)m_spaces[CurrentPlayer.CurrentSpace];
-        return "Would you like to buy " + purchaseProperty.Name + " for $" + purchaseProperty.PurchasePrice + "?";
-    }
 
     // Updates whose turn it is
     public void UpdateTurn()
@@ -321,7 +353,7 @@ public class Board
     public bool AllPlayersInitialized()
     {
         // Check each player to see if they were not initialized
-        foreach (Player player in m_players) 
+        foreach (Player player in m_players)
         {
             if (!player.TurnInitialized)
             {
@@ -385,6 +417,85 @@ public class Board
         return message;
     }
 
+    // Returns an appropriate title for landing on unowned property
+    public string GetLandedOnUnownedPropertyTitle()
+    {
+        Property purchaseProperty = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+        return "Would you like to buy " + purchaseProperty.Name + " for $" + purchaseProperty.PurchasePrice + "?";
+    }
+
+    // Returns a title for landing on an owned property
+    public string GetLandedOnOwnedPropertyTitle()
+    {
+        // Cast to property 
+        Property property = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Obtain basic attribs
+        string retString = "You landed on " + property.Name + ", owned by " + property.Owner.Name + ". ";
+
+        // Space is a color property, with houses influencing price
+        if (property is ColorProperty)
+        {
+            ColorProperty colorProperty = (ColorProperty)property;
+            retString += "It has ";
+            if (colorProperty.Houses == 0)
+            {
+                retString += "0 houses";
+                if (colorProperty.ColorSetOwned)
+                {
+                    retString += " but, color set is owned (rent doubled)";
+                }
+            }
+            else if (colorProperty.Houses >= 1 && colorProperty.Houses <= 4)
+            {
+                retString += colorProperty.Houses + " house(s)";
+            }
+            else
+            {
+                retString += "1 hotel";
+            }
+            return retString;
+        }
+
+        // Space is a railroad, with allied railroads influencing price
+        else if (property is Railroad)
+        {
+            Railroad railroad = (Railroad)property;
+            retString += railroad.Owner + " owns " + railroad.AlliedRailroads + " other railroads";
+            return retString;
+        }
+
+        // Space is a utility, with dice rolling influencing price
+        else if (property is Utility)
+        {
+            Utility utility = (Utility)property;
+            retString += "You just rolled a " + utility.CurrentDiceRoll + "," +
+                " and " + utility.Owner;
+            if (utility.IsAllied)
+            {
+                retString += " owns both utilities";
+            }
+            else
+            {
+                retString += " owns only one utility";
+            }
+            return retString;
+        }
+        else
+        {
+            throw new Exception("Attempting to get landed on title for an owned property, " +
+                "from a non-owned property type space...");
+        }
+    }
+
+    // Returns the cost for landing on an owned property 
+    public int GetLandedOnOwnedPropertyRent()
+    {
+        // Cast to property type and use derived method
+        Property property = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+        return property.RentPrice;
+    }
+
     // Player rolled the dice
     public void DiceRolled(int diceResult, bool wereDoubles)
     {
@@ -403,6 +514,29 @@ public class Board
         CurrentPlayer.RolledDice = true;
     }
 
+    // Current player purchases the current space they're on
+    public void PropertyPurchase()
+    {
+        // Obtain the property
+        Property currentSpace = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Subtract cash from player
+        CurrentPlayer.Cash -= currentSpace.PurchasePrice;
+
+        // Add property to player
+        CurrentPlayer.Properties.Add(currentSpace);
+
+        // Mark space as purchased and add owner to space
+        currentSpace.Owner = CurrentPlayer;
+        currentSpace.IsPurchased = true;
+    }
+
+    // Player is paying rent on a property they landed om
+    public void PayRent()
+    {
+        Property property = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+        CurrentPlayer.Cash -= property.RentPrice;
+    }
 
     // Player is buying a house
     public void BuyHouse(int propertyIndex)
@@ -415,19 +549,19 @@ public class Board
         property.Houses++;
     }
 
-    // Player is selling a house
+    // Player is selling a house, houses worth half their buy value
     public void SellHouse(int propertyIndex)
     {
         // Obtain property
         ColorProperty property = (ColorProperty)GetSpace(propertyIndex);
 
         // Update it's properties
-        CurrentPlayer.Cash += property.HouseCost;
+        CurrentPlayer.Cash += property.HouseCost / 2;
         property.Houses--;
     }
 
     // Player is mortgaging a property
-    public void MortgageProperty(int propertyIndex) 
+    public void MortgageProperty(int propertyIndex)
     {
         // Obtain property
         Property property = (Property)GetSpace(propertyIndex);
@@ -455,11 +589,61 @@ public class Board
     // Determines whether or not a player can buy a house on a given property
     public bool HouseAvailible(Player player, ColorProperty property)
     {
-        // Total number of houses full, property is mortgaged, or not enough cash
-        if (property.Houses >= 4 || property.HouseCost > player.Cash || property.IsMortgaged)
+        // Total number of houses full, property is mortgaged, not enough cash, or full color set unowned
+        if (property.Houses >= 4 || property.HouseCost > player.Cash || property.IsMortgaged || !property.ColorSetOwned)
         {
             return false;
         }
+
+        // Total house number would exceed other house minimum by > 1
+        int houseMin = 4;
+        List<ColorProperty> colorSet = GetColorSet(property);
+
+        // Find smallest num of houses
+        foreach (ColorProperty colorProperty in colorSet)
+        {
+            if (colorProperty.Houses < houseMin)
+            {
+                houseMin = colorProperty.Houses;
+            }
+        }
+
+        // Check that new house total would not exeed min by 1
+        if (property.Houses + 1 - houseMin > 1)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool SellHouseAvailible(Player player, ColorProperty property)
+    {
+        // Non-zero num of houses, not a hotel
+        if (property.Houses <= 0 || property.Houses >= 5)
+        {
+            return false;
+        }
+
+        // Total house number would be lower than the max by > 1
+        int houseMax = 0;
+        List<ColorProperty> colorSet = GetColorSet(property);
+
+        // Find smallest num of houses
+        foreach (ColorProperty colorProperty in colorSet)
+        {
+            if (colorProperty.Houses > houseMax)
+            {
+                houseMax = colorProperty.Houses;
+            }
+        }
+
+        // Check that new house total would not exeed min by 1
+        if (houseMax - (property.Houses - 1) > 1)
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -471,6 +655,17 @@ public class Board
         {
             return false;
         }
+
+        // Color set all has at least 4 houses
+        List<ColorProperty> colorSet = GetColorSet(property);
+        foreach (ColorProperty colorProperty in colorSet)
+        {
+            if (colorProperty.Houses < 4)
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -483,6 +678,30 @@ public class Board
             return true;
         }
         return false;
+    }
+
+    // Returns the full color set of a given property
+    private List<ColorProperty> GetColorSet(ColorProperty property)
+    {
+        // Get the color
+        string color = property.Color;
+        List<ColorProperty> colorSet = new List<ColorProperty>();
+        foreach (Space space in m_spaces)
+        {
+            // Only check color properties
+            if (space is  ColorProperty)
+            {
+                // Cast and check color
+                ColorProperty colorProperty = (ColorProperty)space;
+                
+                // Add if the same
+                if (colorProperty.Color == color)
+                {
+                    colorSet.Add(colorProperty);
+                }   
+            }
+        }
+        return colorSet;
     }
 
     // Casts a string version of an action into the enum type

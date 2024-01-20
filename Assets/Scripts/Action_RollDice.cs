@@ -20,6 +20,7 @@ public class Action_RollDice : Action
     private bool m_orderDetermined;
     private int m_diceResult;
     private bool m_wereDoubles;
+    private bool m_utilityCostRoll;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,7 @@ public class Action_RollDice : Action
         m_diceButton.onClick.AddListener(StartRoll);
         m_continueButton.onClick.AddListener(SendToGame);
         m_orderDetermined = false;
+        m_utilityCostRoll = false;
 
         // Set the window
         ResetWindow();
@@ -37,7 +39,12 @@ public class Action_RollDice : Action
     public bool OrderDetermined
     {
         get { return m_orderDetermined; }
-        set { m_orderDetermined = value;}
+        set { m_orderDetermined = value; }
+    }
+    public bool UtilityCostRoll
+    {
+        get { return m_utilityCostRoll; }
+        set { m_utilityCostRoll = value; }
     }
 
     // All players roll dice, players go in order of the result of their dice roll
@@ -58,8 +65,8 @@ public class Action_RollDice : Action
         while (elapsedTime < .5f)
         {
             // Set the dice face to a random image
-            die1Val = Random.Range(1, 6);
-            die2Val = Random.Range(1, 6);
+            die1Val = Random.Range(1, 7);
+            die2Val = Random.Range(1, 7);
             die1.sprite = m_diceSprites[die1Val];
             die2.sprite = m_diceSprites[die2Val];
 
@@ -69,7 +76,10 @@ public class Action_RollDice : Action
         }
 
         // Assign dice result
-        m_diceResult = die1Val + die2Val;
+        //m_diceResult = die1Val + die2Val;
+
+        // ================= TESTING ======================
+        m_diceResult = 1;
 
         // Assign if doubles or not
         m_wereDoubles = false;
@@ -86,9 +96,13 @@ public class Action_RollDice : Action
     public override void ResetWindow()
     {
         // Set title accordingly 
-        if (!m_orderDetermined)
+        if (!OrderDetermined)
         {
             m_title.text = "Roll Dice to Determine Order...";
+        }
+        else if (UtilityCostRoll)
+        {
+            m_title.text = "Roll Dice to Determine Utility Rent Price...";
         }
         else
         {
@@ -109,6 +123,10 @@ public class Action_RollDice : Action
         {
             m_gameController.Action_OrderDetermined(m_diceResult);
 
+        }
+        else if (UtilityCostRoll)
+        {
+            m_gameController.Action_UtilityCostDetermined(m_diceResult);
         }
         else
         {

@@ -28,7 +28,7 @@ public class Player
         PlayerNum = playerNum;
         TurnInitialized = false;
 
-        m_cash = 1500;
+        m_cash = 5000;
     }
 
     // Getters and setters
@@ -113,6 +113,21 @@ public class Player
     {   
         get { return m_properties; } 
     }
-    
+    public bool OnOwnedProperty
+    {
+        get
+        {
+            // Check each property
+            foreach (Property property in Properties)
+            {
+                // Index and current space match
+                if (property.Index == CurrentSpace)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
 }

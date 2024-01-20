@@ -18,7 +18,7 @@ public class Property : Space
     }
 
     // Virtual rent price calculator to be implemented by inherited classes
-    public virtual int RentPrice(int factor) { throw new System.Exception("Virtual base class rent price function being called"); }
+    public virtual int RentPrice { get { throw new System.Exception("Virtual base class rent price function being called"); } }
 
     // Getters and setters
     public int PurchasePrice
@@ -40,12 +40,9 @@ public class Property : Space
         get { return m_purchased; } 
         set { m_purchased = value; }
     }
-    public bool IsMortgaged
+    public override bool IsMortgaged
     {
         get { return m_mortgaged; }
         set { m_mortgaged = value; }
     }
-
-    // Updates the action type of a space, depending on it's status
-    public virtual void UpdateActionType() { }
 }
