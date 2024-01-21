@@ -153,19 +153,20 @@ public class GameController : MonoBehaviour
                 currentActionWindow = m_actionWindows[1];
                 break;
 
-            // Property stuff
+            // Landed on a Utility, haven't rolled to determine cost
             case Board.Actions.DetermineUtilityCost:
                 m_diceRollController.UtilityCostRoll = true;
                 m_diceRollController.ResetWindow();
                 currentActionWindow = m_actionWindows[1];
                 break;
 
+            // Landed on an onowned property 
             case Board.Actions.LandedOn_UnownedProperty:
                 m_LO_unownedPropertyController.Title = m_board.GetLandedOnUnownedPropertyTitle();
                 currentActionWindow = m_actionWindows[2];
                 break;
 
-            
+            // Landed on an owned property
             case Board.Actions.LandedOn_OwnedColorProperty:
             case Board.Actions.LandedOn_OwnedRailroad:
             case Board.Actions.LandedOn_OwnedUtility:
@@ -173,6 +174,15 @@ public class GameController : MonoBehaviour
                 m_payOrCollectConroller.ContinueButtonAmount = -1 * m_board.GetLandedOnOwnedPropertyRent();
                 m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
                 m_payOrCollectConroller.ContinueButton.onClick.AddListener(Action_PayingRent);
+                currentActionWindow = m_actionWindows[3];
+                break;
+
+            // Landed on a tax property
+            case Board.Actions.LandedOn_Tax:
+                m_payOrCollectConroller.Title = m_board.GetLandedOnTaxTitle();
+                m_payOrCollectConroller.ContinueButtonAmount = -1 * m_board.GetLandedOnTaxCost();
+                m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
+                m_payOrCollectConroller.ContinueButton.onClick.AddListener(Action_PayingTax);
                 currentActionWindow = m_actionWindows[3];
                 break;
 
@@ -328,6 +338,19 @@ public class GameController : MonoBehaviour
     {
         // Subtract the cash from player
         m_board.PayRent();
+
+        // Completed space action
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+
+        // Update made to game state
+        m_updateMade = true;
+    }
+
+    // Player paying tax
+    public void Action_PayingTax()
+    {
+        // Subtract cash from player
+        m_board.PayTax();
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;

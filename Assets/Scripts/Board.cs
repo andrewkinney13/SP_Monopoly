@@ -63,18 +63,17 @@ public class Board
         TestBuy(0, 7);
         TestBuy(0, 9);
         TestBuy(0, 11);
-        TestBuy(0, 12);
         TestBuy(0, 13);
         TestBuy(0, 14);
 
-        TestBuy(1, 16);
+        TestBuy(1, 12);
         TestBuy(1, 17);
         TestBuy(1, 19);
         TestBuy(1, 21);
         TestBuy(1, 23);
         TestBuy(1, 24);
         TestBuy(1, 25);
-        TestBuy(1, 26);
+        TestBuy(1, 28);
         m_players[0].CurrentSpace = 0;
         m_players[1].CurrentSpace = 0;
 
@@ -118,6 +117,12 @@ public class Board
                 case "Space":
                 case "Card":
                     currentSpace = new Space(name, spaceNum, action, GetSpaceDescription(name));
+                    break;
+
+                // Tax
+                case "Tax":
+                    int taxCost = int.Parse(vals[3]);
+                    currentSpace = new Tax (name, spaceNum, action, taxCost, GetSpaceDescription(name));
                     break;
 
                 // Utility
@@ -470,7 +475,7 @@ public class Board
         {
             Utility utility = (Utility)property;
             retString += "You just rolled a " + utility.CurrentDiceRoll + "," +
-                " and " + utility.Owner;
+                " and " + utility.Owner.Name;
             if (utility.IsAllied)
             {
                 retString += " owns both utilities";
@@ -494,6 +499,22 @@ public class Board
         // Cast to property type and use derived method
         Property property = (Property)m_spaces[CurrentPlayer.CurrentSpace];
         return property.RentPrice;
+    }
+
+    // Returns a title for landing on a tax space
+    public string GetLandedOnTaxTitle()
+    {
+        // Cast to tax
+        Tax taxSpace = (Tax)m_spaces[CurrentPlayer.CurrentSpace];
+        return "You landed on " + taxSpace.Name;
+    }
+
+    // Returns the tax amount for current tax property
+    public int GetLandedOnTaxCost()
+    {
+        // Cast to tax
+        Tax taxSpace = (Tax)m_spaces[CurrentPlayer.CurrentSpace];
+        return taxSpace.TaxCost;
     }
 
     // Player rolled the dice
@@ -526,10 +547,14 @@ public class Board
         // Add property to player
         CurrentPlayer.Properties.Add(currentSpace);
 
+        // Sort the properties
+        CurrentPlayer.Properties.Sort();
+
         // Mark space as purchased and add owner to space
         currentSpace.Owner = CurrentPlayer;
         currentSpace.IsPurchased = true;
     }
+
 
     // Player is paying rent on a property they landed om
     public void PayRent()
@@ -540,6 +565,16 @@ public class Board
         // Take cash from player who landed and give it to owner
         CurrentPlayer.Cash -= property.RentPrice;
         property.Owner.Cash += property.RentPrice;
+    }
+
+    // Player is paying tax from a tax space they landed on
+    public void PayTax()
+    {
+        // Cast space
+        Tax taxSpace = (Tax)m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Take cash 
+        CurrentPlayer.Cash -= taxSpace.TaxCost;
     }
 
     // Player is buying a house

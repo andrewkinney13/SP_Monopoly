@@ -2,7 +2,7 @@ Go,LandedOn_Go,Space
 Mediterranean Avenue,LandedOn_UnownedProperty,ColorProperty,60,50,2,10,30,90,160,250,Brown
 Community Chest,LandedOn_ChanceOrCommunityChest,Card
 Baltic Avenue,LandedOn_UnownedProperty,ColorProperty,60,50,4,20,60,180,320,450,Brown
-Income Tax,LandedOn_Tax,Space
+Income Tax,LandedOn_Tax,Tax,200
 Reading Railroad,LandedOn_UnownedProperty,Railroad
 Oriental Avenue,LandedOn_UnownedProperty,ColorProperty,100,50,6,30,90,270,400,550,Light Blue
 Vermont Avenue,LandedOn_UnownedProperty,ColorProperty,100,50,6,30,90,270,400,550,Light Blue
@@ -36,5 +36,5 @@ Pennsylvania Avenue,LandedOn_UnownedProperty,ColorProperty,320,200,28,150,450,10
 Short Line,LandedOn_UnownedProperty,Railroad
 Chance,LandedOn_ChanceOrCommunityChest,Card
 Park Place,LandedOn_UnownedProperty,ColorProperty,350,200,35,175,500,1100,1300,1500,Dark Blue
-Luxury Tax,LandedOn_Tax,Space
+Luxury Tax,LandedOn_Tax,Tax,200
 Boardwalk,LandedOn_UnownedProperty,ColorProperty,400,200,50,200,600,1400,1700,2000,Dark Blue

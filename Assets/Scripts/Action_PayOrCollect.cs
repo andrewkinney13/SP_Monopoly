@@ -23,7 +23,7 @@ public class Action_PayOrCollect : Action
             if (value  < 0)
             {
                 m_continueButtonText.color = Color.red;
-                m_continueButtonText.text = "Pay: $" + value;
+                m_continueButtonText.text = "Pay: $" + -1 * value;
             }
             else
             {

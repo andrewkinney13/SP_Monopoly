@@ -79,7 +79,7 @@ public class Action_RollDice : Action
         //m_diceResult = die1Val + die2Val;
 
         // ================= TESTING ======================
-        m_diceResult = 12;
+        m_diceResult = 4;
 
         // Assign if doubles or not
         m_wereDoubles = false;

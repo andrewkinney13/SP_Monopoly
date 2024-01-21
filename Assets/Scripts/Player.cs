@@ -41,7 +41,19 @@ public class Player
     {
         get 
         {
-            return "Cash: " + m_cash + "\n"; 
+            string retString = "Cash: $" + m_cash + "\n";
+            retString += "Properties:\n";
+            int i = 0;
+            foreach (Space space in m_properties) 
+            {
+                retString += space.Name;
+                i++;
+                if (i != Properties.Count)
+                {
+                    retString += ", ";
+                }
+            }
+            return retString;
         }
     }
     public string Icon
