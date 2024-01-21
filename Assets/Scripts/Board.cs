@@ -461,7 +461,7 @@ public class Board
         else if (property is Railroad)
         {
             Railroad railroad = (Railroad)property;
-            retString += railroad.Owner + " owns " + railroad.AlliedRailroads + " other railroads";
+            retString += railroad.Owner.Name + " owns " + railroad.AlliedRailroads + " other railroad(s)";
             return retString;
         }
 
@@ -501,9 +501,9 @@ public class Board
     {
         // Update the current space of player
         int destinationSpace = diceResult + CurrentPlayer.CurrentSpace;
-        if (destinationSpace > 39)
+        if (destinationSpace >= 40)
         {
-            destinationSpace -= 39;
+            destinationSpace -= 40;
         }
         CurrentPlayer.CurrentSpace = destinationSpace;
 
@@ -534,8 +534,12 @@ public class Board
     // Player is paying rent on a property they landed om
     public void PayRent()
     {
+        // Cast space
         Property property = (Property)m_spaces[CurrentPlayer.CurrentSpace];
+
+        // Take cash from player who landed and give it to owner
         CurrentPlayer.Cash -= property.RentPrice;
+        property.Owner.Cash += property.RentPrice;
     }
 
     // Player is buying a house

@@ -29,7 +29,8 @@ public class GameController : MonoBehaviour
     public CameraController m_cameraController;
     public Action_RollDice m_diceRollController;
     public Action_LO_UnownedProperty m_LO_unownedPropertyController;
-    public Action_LO_OwnedProperty m_LO_ownedPropertyController;
+    public Action_PayOrCollect m_payOrCollectConroller;
+
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -52,6 +53,8 @@ public class GameController : MonoBehaviour
         {
             button.onClick.AddListener(() => OnSpaceClick(int.Parse(button.name)));
         }
+
+        // Assign go button function
 
         // Initialize the board
         m_board = new Board();
@@ -166,8 +169,10 @@ public class GameController : MonoBehaviour
             case Board.Actions.LandedOn_OwnedColorProperty:
             case Board.Actions.LandedOn_OwnedRailroad:
             case Board.Actions.LandedOn_OwnedUtility:
-                m_LO_ownedPropertyController.Title = m_board.GetLandedOnOwnedPropertyTitle();
-                m_LO_ownedPropertyController.ContinueButtonText = m_board.GetLandedOnOwnedPropertyRent();
+                m_payOrCollectConroller.Title = m_board.GetLandedOnOwnedPropertyTitle();
+                m_payOrCollectConroller.ContinueButtonAmount = -1 * m_board.GetLandedOnOwnedPropertyRent();
+                m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
+                m_payOrCollectConroller.ContinueButton.onClick.AddListener(Action_PayingRent);
                 currentActionWindow = m_actionWindows[3];
                 break;
 
@@ -292,6 +297,13 @@ public class GameController : MonoBehaviour
 
         // Move the player icon
         StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, currentSpace, destinationSpace));
+
+        // Post go message if passing it
+        if (currentSpace > destinationSpace) 
+        {
+            PostGoMessage();
+            return;
+        }
 
         // Update was made
         UpdateMade = true;
@@ -458,6 +470,32 @@ public class GameController : MonoBehaviour
         m_propertyManager.ClosePropertyManger();
     }
 
+    // Alerts user they passed go, asks them to collect $200
+    public void PostGoMessage()
+    {
+        // Set pay or collect window
+        m_payOrCollectConroller.Title = "You passed Go!";
+        m_payOrCollectConroller.ContinueButtonAmount = 200;
+        m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
+        m_payOrCollectConroller.ContinueButton.onClick.AddListener(PlayerCollectGo);
+        m_actionWindows[3].SetActive(true);
+    }
+
+    // User collecting $200
+    public void PlayerCollectGo()
+    {
+        // User collects 200
+        m_board.CurrentPlayer.Cash += 200;
+
+        // Update cash
+        UpdatePanelCash();
+
+        // Close the window
+        m_actionWindows[3].SetActive(false);
+
+        // Update the panel
+        UpdateMade = true;
+    }
 
     // When user clicks a player
     void OnPlayerClick(int playerNum)

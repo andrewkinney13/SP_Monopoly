@@ -16,7 +16,7 @@ public class PlayerTrackController : MonoBehaviour
 
     // Private data members
     private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
-    private float m_iconMovementAnimationDuration = .25f;
+    private float m_iconMovementAnimationDuration = .01f; // .25f is good ======== TESTING =============
 
     // Set the player moving message to inactive
     private void Start()
@@ -236,8 +236,6 @@ public class PlayerTrackController : MonoBehaviour
                 currentRotation.z = 90;
             }
             playerIcon.rectTransform.eulerAngles = currentRotation;
-
-            
         }
 
         // Uncover action window

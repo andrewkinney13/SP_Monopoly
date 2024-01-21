@@ -62,7 +62,7 @@ public class Action_RollDice : Action
         float elapsedTime = 0f;
         int die1Val = 0;
         int die2Val = 0;
-        while (elapsedTime < .5f)
+        while (elapsedTime < .01f) // .5f is good ======== TESTING =============
         {
             // Set the dice face to a random image
             die1Val = Random.Range(1, 7);
@@ -79,7 +79,7 @@ public class Action_RollDice : Action
         //m_diceResult = die1Val + die2Val;
 
         // ================= TESTING ======================
-        m_diceResult = 1;
+        m_diceResult = 12;
 
         // Assign if doubles or not
         m_wereDoubles = false;
