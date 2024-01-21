@@ -22,22 +22,22 @@ public class Board
     // Potential actions a player might have to make
     public enum Actions
     {
-        EndTurn = 0,
-        DetermineOrder = 1,
-        RollDice = 2,
-        LandedOn_UnownedProperty = 3,
-        LandedOn_OwnedColorProperty = 4,
-        LandedOn_OwnedUtility = 5,
-        LandedOn_OwnedRailroad = 6,
-        LandedOn_ChanceOrCommunityChest = 7,
-        LandedOn_VisitingJail = 8,
-        LandedOn_FreeParking = 9,
-        LandedOn_GoToJail = 10,
-        LandedOn_Tax = 11,
-        LandedOn_Go = 12,
-        LandedOn_MortgagedProperty = 13,
-        DetermineUtilityCost = 14,
-        ERROR = 999
+        EndTurn,
+        DetermineOrder,
+        RollDice,
+        LandedOn_UnownedProperty,
+        LandedOn_OwnedColorProperty,
+        LandedOn_OwnedRailroad,
+        LandedOn_OwnedUtility,
+        LandedOn_ChanceOrCommunityChest,
+        LandedOn_VisitingJail,
+        LandedOn_FreeParking,
+        LandedOn_GoToJail,
+        LandedOn_Tax,
+        LandedOn_Go,
+        LandedOn_MortgagedProperty,
+        DetermineUtilityCost,
+        ERROR
     }
 
     // Constructor
@@ -123,6 +123,11 @@ public class Board
                 case "Tax":
                     int taxCost = int.Parse(vals[3]);
                     currentSpace = new Tax (name, spaceNum, action, taxCost, GetSpaceDescription(name));
+                    break;
+
+                // Go to jail space
+                case "Jail:":
+                    currentSpace = new Jail(name, spaceNum, action, GetSpaceDescription(name));
                     break;
 
                 // Utility
@@ -287,7 +292,7 @@ public class Board
         }
 
         // Roll dice to move
-        if (!CurrentPlayer.RolledDice)
+        if (!CurrentPlayer.RolledDice && !CurrentPlayer.InJail)
         {
             return Actions.RollDice;
         }
@@ -296,19 +301,30 @@ public class Board
         if (!CurrentPlayer.SpaceActionCompleted)
         {
             // Check if player is on their owned space
-            if (CurrentPlayer.OnOwnedProperty)
+            if (CurrentPlayer.OnOwnedProperty && !CurrentPlayer.RolledDoubles)
             {
                 return Actions.EndTurn;
             }
 
             // Check if player is on a mortgaged space
-            if (m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged)
+            if (m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged && !CurrentPlayer.RolledDoubles)
             {
                 return Actions.EndTurn;
             }
 
-            // Otherwise do the space activity
-            return m_spaces[CurrentPlayer.CurrentSpace].ActionType;
+            // Otherwise do the space activity (if there's no activity, and they rolled doubles, don't end turn!
+            Actions spaceAction = m_spaces[CurrentPlayer.CurrentSpace].ActionType;
+            if (!(spaceAction == Actions.EndTurn && CurrentPlayer.RolledDoubles))
+            {
+                return m_spaces[CurrentPlayer.CurrentSpace].ActionType;
+            }
+        }
+
+        // If they rolled doubles, let them roll again and have another turn
+        if (CurrentPlayer.RolledDoubles && !CurrentPlayer.InJail)
+        {
+            CurrentPlayer.SpaceActionCompleted = false;
+            return Actions.RollDice;
         }
 
         // Nothing to do, end turn
@@ -325,6 +341,9 @@ public class Board
         // Reset the current player's attributes
         ResetCurrentPlayer();
 
+        // Reset utility bools 
+        ResetUtilities();
+
         // Update whose turn is is
         if (m_turnNum < m_players.Count - 1)
         {
@@ -334,6 +353,15 @@ public class Board
         {
             m_turnNum = 0;
         }
+    }
+
+    // Resets the two utilities, flags that mark whether or not player rolled to determine price
+    private void ResetUtilities()
+    {
+        Utility electricCompany = (Utility)m_spaces[12];
+        Utility waterWorks = (Utility)m_spaces[12];
+        electricCompany.DiceRolled = false;
+        waterWorks.DiceRolled = false;
     }
 
     // Resets the attributes of a player at the end of their turn
@@ -533,6 +561,23 @@ public class Board
 
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
+    }
+
+    // Player going to jail
+    public void GoToJail()
+    {
+        // Mark them as in jail and move them to just visiting
+        CurrentPlayer.InJail = true;
+        CurrentPlayer.CurrentSpace = 10;
+        CurrentPlayer.SpaceActionCompleted = true;
+    }
+
+    // Player pays to get out of jail
+    public void GetOutOfJail()
+    {
+        // Remove jail cost and unmark them as in jail
+        CurrentPlayer.Cash -= 75;
+        CurrentPlayer.InJail = false;
     }
 
     // Current player purchases the current space they're on
@@ -753,11 +798,11 @@ public class Board
             case "LandedOn_UnownedProperty":
                 return Actions.LandedOn_UnownedProperty;
             case "LandedOn_ChanceOrCommunityChest":
-                return Actions.LandedOn_ChanceOrCommunityChest;
+                return Actions.EndTurn;
             case "LandedOn_VisitingJail":
                 return Actions.LandedOn_VisitingJail;
             case "LandedOn_FreeParking":
-                return Actions.LandedOn_FreeParking;
+                return Actions.EndTurn;
             case "LandedOn_GoToJail":
                 return Actions.LandedOn_GoToJail;
             case "LandedOn_Tax":

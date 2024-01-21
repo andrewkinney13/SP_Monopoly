@@ -176,6 +176,9 @@ public class PlayerTrackController : MonoBehaviour
         {
             spaceDifference = (40 - initialSpace) + destinationSpace; 
         }
+        Debug.Log(initialSpace);
+        Debug.Log(destinationSpace);
+        Debug.Log(spaceDifference);
 
         // Move each space to the next
         for (int spacesMoved = 0; spacesMoved < spaceDifference; spacesMoved++) 

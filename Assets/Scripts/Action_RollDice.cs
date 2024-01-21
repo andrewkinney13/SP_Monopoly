@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 
-public class Action_RollDice : Action
+public class Action_RollDice : MonoBehaviour
 {
     // Unity data members
+    public GameController m_gameController;
     public Image m_die1;
     public Image m_die2;
     public Button m_diceButton;
@@ -79,7 +80,7 @@ public class Action_RollDice : Action
         //m_diceResult = die1Val + die2Val;
 
         // ================= TESTING ======================
-        m_diceResult = 4;
+        m_diceResult = 10;
 
         // Assign if doubles or not
         m_wereDoubles = false;
@@ -90,10 +91,14 @@ public class Action_RollDice : Action
 
         // Update the window
         m_title.text = "You Rolled a " + m_diceResult + "!";
+        if (m_wereDoubles && OrderDetermined)
+        {
+            m_title.text += "\nYou rolled Doubles!";
+        }
         m_continueText.color = Color.green;
         m_continueButton.interactable = true;
     }
-    public override void ResetWindow()
+    public void ResetWindow()
     {
         // Set title accordingly 
         if (!OrderDetermined)
@@ -116,7 +121,7 @@ public class Action_RollDice : Action
         m_die2.sprite = m_diceSprites[0];
     }
 
-    public override void SendToGame()
+    public void SendToGame()
     {
         // Alert game controller that action occured
         if (!m_orderDetermined)

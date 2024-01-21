@@ -4,9 +4,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Action_LO_UnownedProperty : Action
+public class Action_LO_UnownedProperty : MonoBehaviour
 {
     // Unity data members
+    public GameController m_gameController;
     public TMP_Text m_title;
     public Button m_yesButton;
     public Button m_noButton;
@@ -24,8 +25,4 @@ public class Action_LO_UnownedProperty : Action
     {
         set { m_title.text = value; }
     }
-
-    // Base class abstract implementations
-    public override void SendToGame() { }    
-    public override void ResetWindow() { }
 }

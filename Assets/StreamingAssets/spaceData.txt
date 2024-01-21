@@ -28,7 +28,7 @@ Atlantic Avenue,LandedOn_UnownedProperty,ColorProperty,260,150,22,110,330,800,97
 Ventnor Avenue,LandedOn_UnownedProperty,ColorProperty,260,150,22,110,330,800,975,1150,Yellow
 Water Works,LandedOn_UnownedProperty,Utility,150
 Marvin Gardens,LandedOn_UnownedProperty,ColorProperty,280,150,24,120,360,850,1025,1200,Yellow
-Go to Jail,LandedOn_GoToJail,Space
+Go to Jail,LandedOn_GoToJail,Jail
 Pacific Avenue,LandedOn_UnownedProperty,ColorProperty,300,200,26,130,390,900,1100,1275,Green
 North Carolina Avenue,LandedOn_UnownedProperty,ColorProperty,300,200,26,130,390,900,1100,1275,Green
 Community Chest,LandedOn_ChanceOrCommunityChest,Card

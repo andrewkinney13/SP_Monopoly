@@ -18,6 +18,7 @@ public class Player
     private bool m_rolledDoubles;
     private bool m_spaceActionCompleted;
     private bool m_turnCompleted;
+    private bool m_inJail;
     private List<Space> m_properties = new List<Space>(); 
 
     // Constructor
@@ -42,7 +43,16 @@ public class Player
         get 
         {
             string retString = "Cash: $" + m_cash + "\n";
-            retString += "Properties:\n";
+            retString += "In Jail: ";
+            if (InJail)
+            {
+                retString += "Yes";
+            }
+            else
+            {
+                retString += "No";
+            }
+            retString += "\nProperties:\n";
             int i = 0;
             foreach (Space space in m_properties) 
             {
@@ -140,6 +150,12 @@ public class Player
             }
             return false;
         }
+    }
+
+    public bool InJail
+    {
+        get { return m_inJail; }
+        set { m_inJail = value; }
     }
 
 }

@@ -27,10 +27,12 @@ public class GameController : MonoBehaviour
     public DetailsPopupController m_playerDetailsController;
     public PlayerTrackController m_playerTrackController;
     public CameraController m_cameraController;
+    
     public Action_RollDice m_diceRollController;
     public Action_LO_UnownedProperty m_LO_unownedPropertyController;
-    public Action_PayOrCollect m_payOrCollectConroller;
 
+    public Action_Generic m_genericActionController;
+    // public Action_TwoChoice m_twoChoiceActionController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -144,64 +146,99 @@ public class GameController : MonoBehaviour
         }
 
         // Set the proper action window
-        GameObject currentActionWindow;
         switch (action)
         {
             // Dice rolling
             case Board.Actions.DetermineOrder:
             case Board.Actions.RollDice:
-                currentActionWindow = m_actionWindows[1];
+                m_actionWindows[1].SetActive(true);
                 break;
 
             // Landed on a Utility, haven't rolled to determine cost
             case Board.Actions.DetermineUtilityCost:
                 m_diceRollController.UtilityCostRoll = true;
                 m_diceRollController.ResetWindow();
-                currentActionWindow = m_actionWindows[1];
+                m_actionWindows[1].SetActive(true);
+                break;
+
+            // Landed on go to jail
+            case Board.Actions.LandedOn_GoToJail:
+                CreateGenericActionWindow("You're going to jail, sorry!", "Move", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(Action_GoToJail);
+                break;
+
+            // Landed on visiting jail
+            case Board.Actions.LandedOn_VisitingJail:
+                if (m_board.CurrentPlayer.InJail)
+                {
+                    CreateGenericActionWindow("You must pay to be released from Jail...", "Pay $75", Color.red);
+                    m_genericActionController.ActButton.onClick.AddListener(Action_GetOutOfJail);
+                }
+                else if (m_board.CurrentPlayer.RolledDoubles)
+                {
+                    m_actionWindows[1].SetActive(true);
+                    
+                }
+                else
+                {
+                    CreateGenericActionWindow("No actions left to complete", "End Turn", Color.black);
+                    m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
+                }
                 break;
 
             // Landed on an onowned property 
             case Board.Actions.LandedOn_UnownedProperty:
                 m_LO_unownedPropertyController.Title = m_board.GetLandedOnUnownedPropertyTitle();
-                currentActionWindow = m_actionWindows[2];
+                m_actionWindows[2].SetActive(true);
                 break;
 
             // Landed on an owned property
             case Board.Actions.LandedOn_OwnedColorProperty:
             case Board.Actions.LandedOn_OwnedRailroad:
             case Board.Actions.LandedOn_OwnedUtility:
-                m_payOrCollectConroller.Title = m_board.GetLandedOnOwnedPropertyTitle();
-                m_payOrCollectConroller.ContinueButtonAmount = -1 * m_board.GetLandedOnOwnedPropertyRent();
-                m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
-                m_payOrCollectConroller.ContinueButton.onClick.AddListener(Action_PayingRent);
-                currentActionWindow = m_actionWindows[3];
+                CreateGenericActionWindow(m_board.GetLandedOnOwnedPropertyTitle(), "Pay: " + (-1 * m_board.GetLandedOnOwnedPropertyRent()), Color.red);
+                m_genericActionController.ActButton.onClick.AddListener(Action_PayingRent);
                 break;
 
             // Landed on a tax property
             case Board.Actions.LandedOn_Tax:
-                m_payOrCollectConroller.Title = m_board.GetLandedOnTaxTitle();
-                m_payOrCollectConroller.ContinueButtonAmount = -1 * m_board.GetLandedOnTaxCost();
-                m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
-                m_payOrCollectConroller.ContinueButton.onClick.AddListener(Action_PayingTax);
-                currentActionWindow = m_actionWindows[3];
+                CreateGenericActionWindow(m_board.GetLandedOnTaxTitle(), "Pay: $" + (-1 * m_board.GetLandedOnTaxCost()), Color.red);
+                m_genericActionController.ActButton.onClick.AddListener(Action_PayingTax);
+                m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
                 break;
 
             // Ending turn / default (error)
             case Board.Actions.EndTurn:
-                currentActionWindow = m_actionWindows[0];
+                CreateGenericActionWindow("No Actions Left to Complete", "End Turn", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
                 break;
+
+            // Error if hitting this default case
             default:
-                currentActionWindow = m_actionWindows[0];
+                CreateGenericActionWindow("No Actions Left to Complete", "End Turn", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
                 Debug.Log("Determine action did not find action for this move...");
                 break;
         }
 
-        // Set the window as active
-        currentActionWindow.gameObject.SetActive(true);
-
         // Display the properties owned by the player in the properties and cards section
         ClearPropertyCardView();
         CreatePropertyCardView();
+    }
+
+    // Creates a generic action window 
+    private void CreateGenericActionWindow(string title, string buttonText, Color buttonColor)
+    {
+        // Set text attributes
+        m_genericActionController.Title = title;
+        m_genericActionController.ActButtonText = buttonText;
+        m_genericActionController.ActButtonColor = buttonColor;
+
+        // Set the window to active 
+        m_actionWindows[0].gameObject.SetActive(true);
+
+        // Clear listeners 
+        m_genericActionController.ResetListeners();
     }
 
     // Clears all the property and card view contents and resets the size
@@ -308,10 +345,11 @@ public class GameController : MonoBehaviour
         // Move the player icon
         StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, currentSpace, destinationSpace));
 
-        // Post go message if passing it
+        // Post go message if passing it, not on way to jail though!
         if (currentSpace > destinationSpace) 
         {
-            PostGoMessage();
+            CreateGenericActionWindow("You passed Go!", "Collect $200", Color.green);
+            m_genericActionController.ActButton.onClick.AddListener(Action_CollectGo);
             return;
         }
 
@@ -357,6 +395,45 @@ public class GameController : MonoBehaviour
 
         // Update made to game state
         m_updateMade = true;
+    }
+
+    // Player going to jail
+    public void Action_GoToJail()
+    {
+        // Move the player's icon
+        StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, m_board.CurrentPlayer.CurrentSpace, 10));
+
+        // Update board
+        m_board.GoToJail();
+
+        // Update made
+        UpdateMade = true;
+    }
+
+    // Player getting out of jail
+    public void Action_GetOutOfJail()
+    {
+        // Update board
+        m_board.GetOutOfJail();
+
+        // Update made
+        UpdateMade = true;
+    }
+
+    // PLayer collecting $200
+    public void Action_CollectGo()
+    {
+        // User collects 200
+        m_board.CurrentPlayer.Cash += 200;
+
+        // Update cash
+        UpdatePanelCash();
+
+        // Close the window
+        m_actionWindows[3].SetActive(false);
+
+        // Update the panel
+        UpdateMade = true;
     }
 
     // When user clicks a space
@@ -493,32 +570,6 @@ public class GameController : MonoBehaviour
         m_propertyManager.ClosePropertyManger();
     }
 
-    // Alerts user they passed go, asks them to collect $200
-    public void PostGoMessage()
-    {
-        // Set pay or collect window
-        m_payOrCollectConroller.Title = "You passed Go!";
-        m_payOrCollectConroller.ContinueButtonAmount = 200;
-        m_payOrCollectConroller.ContinueButton.onClick.RemoveAllListeners();
-        m_payOrCollectConroller.ContinueButton.onClick.AddListener(PlayerCollectGo);
-        m_actionWindows[3].SetActive(true);
-    }
-
-    // User collecting $200
-    public void PlayerCollectGo()
-    {
-        // User collects 200
-        m_board.CurrentPlayer.Cash += 200;
-
-        // Update cash
-        UpdatePanelCash();
-
-        // Close the window
-        m_actionWindows[3].SetActive(false);
-
-        // Update the panel
-        UpdateMade = true;
-    }
 
     // When user clicks a player
     void OnPlayerClick(int playerNum)
