@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -6,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Handles the board objects
@@ -55,8 +57,6 @@ public class GameController : MonoBehaviour
         {
             button.onClick.AddListener(() => OnSpaceClick(int.Parse(button.name)));
         }
-
-        // Assign go button function
 
         // Initialize the board
         m_board = new Board();
@@ -121,10 +121,10 @@ public class GameController : MonoBehaviour
     
 
     // Getters and setters
-    public bool UpdateMade
+    public void UpdateMade()
     {
-        get { return m_updateMade; }
-        set { m_updateMade = value; }
+        // Mark update made
+        m_updateMade = true;
     }
 
 
@@ -204,7 +204,6 @@ public class GameController : MonoBehaviour
             case Board.Actions.LandedOn_Tax:
                 CreateGenericActionWindow(m_board.GetLandedOnTaxTitle(), "Pay: $" + (-1 * m_board.GetLandedOnTaxCost()), Color.red);
                 m_genericActionController.ActButton.onClick.AddListener(Action_PayingTax);
-                m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
                 break;
 
             // Ending turn / default (error)
@@ -331,7 +330,7 @@ public class GameController : MonoBehaviour
         m_board.UtilityCostDetermined(diceRoll);
 
         // Mark update made
-        UpdateMade = true;
+        UpdateMade();
     }
 
     // Player rolled the dice
@@ -354,7 +353,7 @@ public class GameController : MonoBehaviour
         }
 
         // Update was made
-        UpdateMade = true;
+        UpdateMade();
     }
 
     // Player buying property
@@ -368,7 +367,7 @@ public class GameController : MonoBehaviour
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;
-        UpdateMade = true;
+        UpdateMade();
     }
 
     // Player paying rent for a color property
@@ -376,6 +375,18 @@ public class GameController : MonoBehaviour
     {
         // Subtract the cash from player
         m_board.PayRent();
+
+        // Update cash panel
+        UpdatePanelCash();
+
+        // Check bankruptcy 
+        if (m_board.CurrentPlayer.Bankrupt)
+        {
+            // Tell the user
+            CreateGenericActionWindow(m_board.GetBankruptMessage(), "Relinquish Property", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoingBankrupt);
+            return;
+        }
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;
@@ -389,6 +400,18 @@ public class GameController : MonoBehaviour
     {
         // Subtract cash from player
         m_board.PayTax();
+
+        // Update panel 
+        UpdatePanelCash();
+
+        // Check bankruptcy 
+        if (m_board.CurrentPlayer.Bankrupt)
+        {
+            // Tell the user
+            CreateGenericActionWindow(m_board.GetBankruptMessage(), "Relinquish Property", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoingBankrupt);
+            return;
+        }
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;
@@ -407,7 +430,7 @@ public class GameController : MonoBehaviour
         m_board.GoToJail();
 
         // Update made
-        UpdateMade = true;
+        UpdateMade();
     }
 
     // Player getting out of jail
@@ -416,8 +439,35 @@ public class GameController : MonoBehaviour
         // Update board
         m_board.GetOutOfJail();
 
+        // Check bankruptcy 
+        if (m_board.CurrentPlayer.Bankrupt)
+        {
+            // Tell the user
+            CreateGenericActionWindow(m_board.GetBankruptMessage(), "Relinquish Property", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoingBankrupt);
+            return;
+        }
+
         // Update made
-        UpdateMade = true;
+        UpdateMade();
+    }
+
+    // Player going bankrupt
+    public void Action_GoingBankrupt()
+    {
+        // Update board
+        m_board.GoingBankrupt();
+
+        // Check if game over (all but one players bankrupt)
+        if (m_board.GameOver())
+        {
+            // Open end game scene after saving data
+            m_board.SaveEndGameData();
+            SceneManager.LoadScene("End Game");
+        }
+
+        // End their turn
+        Action_EndTurn();
     }
 
     // PLayer collecting $200
@@ -429,11 +479,11 @@ public class GameController : MonoBehaviour
         // Update cash
         UpdatePanelCash();
 
-        // Close the window
-        m_actionWindows[3].SetActive(false);
+        // Completed space action
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
 
         // Update the panel
-        UpdateMade = true;
+        UpdateMade();
     }
 
     // When user clicks a space

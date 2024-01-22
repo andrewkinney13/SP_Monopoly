@@ -95,7 +95,6 @@ public class MenuController : MonoBehaviour
 
         // Load game scene
         SceneManager.LoadScene("Board Scene");
-
     }
 
     // Creates player

@@ -75,6 +75,7 @@ public class Board
         TestBuy(1, 25);
         TestBuy(1, 28);
         m_players[0].CurrentSpace = 0;
+        m_players[1].Cash = 5;
         m_players[1].CurrentSpace = 0;
 
     }
@@ -300,19 +301,25 @@ public class Board
         // Landed on a space and hasn't acted yet
         if (!CurrentPlayer.SpaceActionCompleted)
         {
-            // Check if player is on their owned space
-            if (CurrentPlayer.OnOwnedProperty && !CurrentPlayer.RolledDoubles)
+            // Check if the property is mortgaged, or player on own property
+            if (CurrentPlayer.OnOwnedProperty || m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged)
             {
-                return Actions.EndTurn;
+                // If rolled doubles, let them roll again
+                if (CurrentPlayer.RolledDoubles)
+                {
+                    CurrentPlayer.SpaceActionCompleted = false;
+                    return Actions.RollDice;
+                }
+
+                // If didn't roll doubles, end turn
+                if (!CurrentPlayer.RolledDoubles)
+                {
+                    return Actions.EndTurn;
+                }
             }
 
-            // Check if player is on a mortgaged space
-            if (m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged && !CurrentPlayer.RolledDoubles)
-            {
-                return Actions.EndTurn;
-            }
-
-            // Otherwise do the space activity (if there's no activity, and they rolled doubles, don't end turn!
+            // Otherwise do the space activity, if it's an end turn activity (free parking, just visiting) and 
+            // player rolled doubles, don't end turn
             Actions spaceAction = m_spaces[CurrentPlayer.CurrentSpace].ActionType;
             if (!(spaceAction == Actions.EndTurn && CurrentPlayer.RolledDoubles))
             {
@@ -320,7 +327,7 @@ public class Board
             }
         }
 
-        // If they rolled doubles, let them roll again and have another turn
+        // If they rolled doubles, let them roll again and have another turn (unless in jail)
         if (CurrentPlayer.RolledDoubles && !CurrentPlayer.InJail)
         {
             CurrentPlayer.SpaceActionCompleted = false;
@@ -344,14 +351,22 @@ public class Board
         // Reset utility bools 
         ResetUtilities();
 
-        // Update whose turn is is
-        if (m_turnNum < m_players.Count - 1)
+        // Update whose turn is is (don't use a bankrupt player)
+        while (true)
         {
-            m_turnNum++;
-        }
-        else
-        {
-            m_turnNum = 0;
+            if (m_turnNum < m_players.Count - 1)
+            {
+                m_turnNum++;
+            }
+            else
+            {
+                m_turnNum = 0;
+            }
+
+            if (!CurrentPlayer.Bankrupt)
+            {
+                break;
+            }
         }
     }
 
@@ -429,6 +444,27 @@ public class Board
         {
             return 0;
         }
+    }
+
+    // Checks if all players but one are bankrupt
+    public bool GameOver()
+    {
+        // Count amount of bankrupt players
+        int bankruptPlayers = 0;
+        foreach (Player player in m_players)
+        {
+            if (player.Bankrupt)
+            {
+                bankruptPlayers++;
+            }
+        }
+
+        // Check if all but one are bankrupt
+        if (bankruptPlayers == m_players.Count - 1)
+        {
+            return true;
+        }
+        return false;
     }
 
     // Returns a message about the player order
@@ -521,6 +557,24 @@ public class Board
         }
     }
 
+    // Player just went bankrupt, return message based on conditions
+    public string GetBankruptMessage()
+    {
+        // Obtian current space reference
+        Space currentSpace = m_spaces[CurrentPlayer.CurrentSpace];
+
+        // At the hands of a player
+        if (currentSpace is Property)
+        {
+            // Cast space to property
+            Property property = (Property)currentSpace;
+            return "You were bankrupted by " + property.Owner.Name + "!";
+        }
+
+        // At the hands of the bank
+        return "You were bankrupted by the Bank!";
+    }
+
     // Returns the cost for landing on an owned property 
     public int GetLandedOnOwnedPropertyRent()
     {
@@ -561,6 +615,40 @@ public class Board
 
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
+    }
+
+    // Player went bankrupt
+    public void GoingBankrupt()
+    {
+        // Bankrupt from property
+        Space currentSpace = m_spaces[CurrentPlayer.CurrentSpace];
+        if (currentSpace is Property)
+        {
+            // Give owner all of the properties of bankrupt player
+            Property currentProperty = (Property)currentSpace;
+            foreach (Property property in CurrentPlayer.Properties)
+            {
+                property.Owner = currentProperty.Owner;
+                property.IsMortgaged = false;
+                property.IsPurchased = false;
+            }
+            currentProperty.Owner.Properties.AddRange(CurrentPlayer.Properties);
+        }
+
+        // Bankrupt from bank
+        else
+        {
+            // Return all the properties to the board
+            foreach (Property property in CurrentPlayer.Properties)
+            {
+                property.Owner = null;
+                property.IsMortgaged = false;
+                property.IsPurchased = false;
+            }
+        }
+
+        // Remove all properties from player
+        CurrentPlayer.Properties.Clear();
     }
 
     // Player going to jail
@@ -836,5 +924,52 @@ public class Board
             default:
                 throw new Exception ("Error determining space description for space: " + name);
         }
+    }
+
+    // Saves game data to text file for end game scene to read
+    public void SaveEndGameData()
+    {
+        // Create textfile
+        string filePath = Application.streamingAssetsPath + "endGameData.txt";
+
+        // Create write string
+        List<string> data = new List<string>();
+
+        // Find winning player
+        Player winner= null;
+        foreach(Player player in m_players)
+        {
+            if (!player.Bankrupt)
+            {
+                winner = player;
+                break;
+            }    
+        }
+
+        // Add their name
+        data.Add(winner.Name);
+
+        // Add their icon
+        data.Add(winner.Icon);
+
+        // Add their cash
+        data.Add(winner.Cash.ToString());
+
+        //Add their properties
+        string propertiesList = "";
+        int i = 0;
+        foreach (Property property in winner.Properties)
+        {
+            propertiesList += property.Name;
+            if (i != winner.Properties.Count - 1)
+            {
+                propertiesList += ", ";
+            }
+            i++;
+        }
+        data.Add(propertiesList);
+
+        // Write all the data
+        File.WriteAllLines(filePath, data);
     }
 }

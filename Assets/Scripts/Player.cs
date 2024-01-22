@@ -19,6 +19,7 @@ public class Player
     private bool m_spaceActionCompleted;
     private bool m_turnCompleted;
     private bool m_inJail;
+    private bool m_bankrupt;
     private List<Space> m_properties = new List<Space>(); 
 
     // Constructor
@@ -52,6 +53,16 @@ public class Player
             {
                 retString += "No";
             }
+            retString += "\nBankrupt: ";
+            if (Bankrupt)
+            {
+                retString += "Yes";
+            }
+            else
+            {
+                retString += "No";
+            }
+            
             retString += "\nProperties:\n";
             int i = 0;
             foreach (Space space in m_properties) 
@@ -151,11 +162,19 @@ public class Player
             return false;
         }
     }
-
     public bool InJail
     {
         get { return m_inJail; }
         set { m_inJail = value; }
+    }
+
+    // Being bankrupt is determined by your cash being 0 or below
+    public bool Bankrupt
+    {
+        get 
+        {
+            return Cash <= 0;
+        }
     }
 
 }

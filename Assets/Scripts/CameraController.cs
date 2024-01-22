@@ -158,6 +158,12 @@ public class CameraController : MonoBehaviour
                     break;
             }
 
+            // Maintain boundary 
+            if (delta.x <= -300)
+            {
+                delta.x = -300;
+            }
+
             // Move camera based on the difference
             transform.Translate(delta);
 
