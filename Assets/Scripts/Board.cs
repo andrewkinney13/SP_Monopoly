@@ -57,6 +57,7 @@ public class Board
         m_turnNum = 0;
 
         // ======================= TESTING ===============================
+        /*
         TestBuy(0, 1);
         TestBuy(0, 3);
         TestBuy(0, 5);
@@ -65,18 +66,29 @@ public class Board
         TestBuy(0, 11);
         TestBuy(0, 13);
         TestBuy(0, 14);
+        TestBuy(0, 15);
+        TestBuy(0, 16);
+        TestBuy(0, 17);
+        TestBuy(0, 1);
+        TestBuy(0, 21);
+        TestBuy(0, 23);
+        TestBuy(0, 24);
+        TestBuy(0, 25);
+        TestBuy(0, 26);
+        TestBuy(0, 27);
+        TestBuy(0, 28);
+        TestBuy(0, 29);
+        TestBuy(0, 31);
+        TestBuy(0, 32);
+        TestBuy(0, 34);
+        TestBuy(0, 35);
+        TestBuy(0, 37);
+        TestBuy(0, 39);
 
-        TestBuy(1, 12);
-        TestBuy(1, 17);
-        TestBuy(1, 19);
-        TestBuy(1, 21);
-        TestBuy(1, 23);
-        TestBuy(1, 24);
-        TestBuy(1, 25);
-        TestBuy(1, 28);
         m_players[0].CurrentSpace = 0;
         m_players[1].Cash = 5;
         m_players[1].CurrentSpace = 0;
+        */
 
     }
 

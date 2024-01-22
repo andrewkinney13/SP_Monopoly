@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
     public CameraController m_cameraController;
     
     public Action_RollDice m_diceRollController;
-    public Action_LO_UnownedProperty m_LO_unownedPropertyController;
+    public Action_YesNo m_yesNoController;
 
     public Action_Generic m_genericActionController;
     // public Action_TwoChoice m_twoChoiceActionController;
@@ -188,7 +188,11 @@ public class GameController : MonoBehaviour
 
             // Landed on an onowned property 
             case Board.Actions.LandedOn_UnownedProperty:
-                m_LO_unownedPropertyController.Title = m_board.GetLandedOnUnownedPropertyTitle();
+                m_yesNoController.Title = m_board.GetLandedOnUnownedPropertyTitle();
+                m_yesNoController.YesButton.onClick.RemoveAllListeners();
+                m_yesNoController.NoButton.onClick.RemoveAllListeners();
+                m_yesNoController.YesButton.onClick.AddListener(() => Action_BuyingProperty(true));
+                m_yesNoController.NoButton.onClick.AddListener(() => Action_BuyingProperty(false));
                 m_actionWindows[2].SetActive(true);
                 break;
 

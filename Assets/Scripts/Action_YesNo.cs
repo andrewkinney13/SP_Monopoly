@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Action_LO_UnownedProperty : MonoBehaviour
+public class Action_YesNo : MonoBehaviour
 {
     // Unity data members
     public GameController m_gameController;
@@ -14,10 +14,16 @@ public class Action_LO_UnownedProperty : MonoBehaviour
 
     // Set the button listeners
     void Start()
+    { }
+
+    // Getters
+    public Button YesButton
     {
-        // Buy the property
-        m_yesButton.onClick.AddListener(() => m_gameController.Action_BuyingProperty(true));
-        m_noButton.onClick.AddListener(() => m_gameController.Action_BuyingProperty(false));
+        get { return m_yesButton; }
+    }
+    public Button NoButton
+    {
+        get { return m_noButton; }
     }
 
     // Assign the title of the window

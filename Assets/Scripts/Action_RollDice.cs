@@ -80,7 +80,7 @@ public class Action_RollDice : MonoBehaviour
         //m_diceResult = die1Val + die2Val;
 
         // ================= TESTING ======================
-        m_diceResult = 11;
+        m_diceResult = 3;
 
         // Assign if doubles or not
         m_wereDoubles = false;
