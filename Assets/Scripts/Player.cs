@@ -31,7 +31,9 @@ public class Player
         Icon = icon;
         PlayerNum = playerNum;
         TurnInitialized = false;
-
+        InJail = false;
+        CommunityChestJailCards = 0;
+        ChanceJailCards = 0;
         m_cash = 1500;
     }
 

@@ -123,12 +123,17 @@ public class GameController : MonoBehaviour
         m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash.ToString();
     }
     
-
-    // Getters and setters
+    // Updates the update made flag
     public void UpdateMade()
     {
         // Mark update made
         m_updateMade = true;
+    }
+
+    // Update's players action status
+    public void ActionMade()
+    {
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
     }
 
 
@@ -206,9 +211,36 @@ public class GameController : MonoBehaviour
             // Landed on an unowned property 
             case Board.Actions.LandedOn_UnownedProperty:
                 CreateTwoChoiceActionWindow(m_board.GetLandedOnUnownedPropertyTitle(), "Yes", Color.green, "No", Color.red);
+
+                // Disable first button if cannot afford
+                Property property = (Property)m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace);
+                if (m_board.CurrentPlayer.Cash < property.PurchasePrice)
+                {
+                    m_twoChoiceActionController.LeftButton.interactable = false;
+                }
+
                 m_twoChoiceActionController.LeftButton.onClick.AddListener(() => Action_BuyingProperty(true));
                 m_twoChoiceActionController.RightButton.onClick.AddListener(() => Action_BuyingProperty(false));
                 m_actionWindows[2].SetActive(true);
+                break;
+
+            // Landed on a mortgaged property
+            case Board.Actions.LandedOn_MortgagedProperty:
+                Debug.Log("HERE");
+                Property mortgagedProperty = (Property)m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace);
+                CreateGenericActionWindow("You landed on " + mortgagedProperty.Name + ", owned by " +
+                     mortgagedProperty.Owner.Name + ". But, because it is mortgaged you don't need to pay rent!", "Continue", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(ActionMade);
+                m_genericActionController.ActButton.onClick.AddListener(UpdateMade);
+                break;
+
+            // Landed on a jailed person's property
+            case Board.Actions.LandedOn_JailedOwnerProperty:
+                Property jailedProperty = (Property)m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace);
+                CreateGenericActionWindow("You landed on " + jailedProperty.Name + ", owned by " +
+                   jailedProperty.Owner.Name + ". But, because they are in jail you don't need to pay rent!", "Continue", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(ActionMade);
+                m_genericActionController.ActButton.onClick.AddListener(UpdateMade);
                 break;
 
             // Landed on an owned property
@@ -274,7 +306,7 @@ public class GameController : MonoBehaviour
 
         // Reactivate buttons
         m_twoChoiceActionController.LeftButton.interactable = true;
-        m_twoChoiceActionController.LeftButton.interactable = true;
+        m_twoChoiceActionController.RightButton.interactable = true;
 
         // Set text
         m_twoChoiceActionController.Title = title;

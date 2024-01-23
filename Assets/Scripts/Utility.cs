@@ -51,18 +51,22 @@ public class Utility : Property
     public override Board.Actions ActionType
     {
         get
-        {
+        {   
             if (IsPurchased && !DiceRolled)
-            {   
+            {
+                if (Owner.InJail)
+                {
+                    return Board.Actions.LandedOn_JailedOwnerProperty;
+                }
+                if (IsMortgaged)
+                {
+                    return Board.Actions.LandedOn_MortgagedProperty;
+                }
                 return Board.Actions.DetermineUtilityCost;
             }
             if (IsPurchased && DiceRolled)
             {
                 return Board.Actions.LandedOn_OwnedUtility;
-            }
-            if (IsMortgaged)
-            {
-                return Board.Actions.LandedOn_MortgagedProperty;
             }
             return Board.Actions.LandedOn_UnownedProperty;
         }

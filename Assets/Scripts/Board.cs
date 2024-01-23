@@ -38,6 +38,7 @@ public class Board
         LandedOn_Go,
         LandedOn_MortgagedProperty,
         DetermineUtilityCost,
+        LandedOn_JailedOwnerProperty,
         ERROR
     }
 
@@ -53,9 +54,6 @@ public class Board
         // Initialize the players and spaces
         InitializeSpaces();
         InitializePlayers();
-
-        // Set the turn num to 0
-        m_turnNum = 0;
     }
 
     void TestBuy(int playerNum, int propertyNum)
@@ -274,7 +272,7 @@ public class Board
         if (!CurrentPlayer.SpaceActionCompleted)
         {
             // Check if the property is mortgaged, or player on own property
-            if (CurrentPlayer.OnOwnedProperty || m_spaces[CurrentPlayer.CurrentSpace].IsMortgaged)
+            if (CurrentPlayer.OnOwnedProperty)
             {
                 // If rolled doubles, let them roll again
                 if (CurrentPlayer.RolledDoubles)

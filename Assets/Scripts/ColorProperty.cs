@@ -42,12 +42,16 @@ public class ColorProperty : Property
         {
             if (IsPurchased)
             {
+                if (Owner.InJail)
+                {
+                    return Board.Actions.LandedOn_JailedOwnerProperty;
+                }
+                if (IsMortgaged)
+                {
+                    return Board.Actions.LandedOn_MortgagedProperty;
+                }
                 return Board.Actions.LandedOn_OwnedColorProperty;
             }    
-            if (IsMortgaged)
-            {
-                return Board.Actions.LandedOn_MortgagedProperty;
-            }
             return Board.Actions.LandedOn_UnownedProperty;
         }
     }

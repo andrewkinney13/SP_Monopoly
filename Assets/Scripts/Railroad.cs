@@ -36,11 +36,15 @@ public class Railroad : Property
         {
             if (IsPurchased)
             {
+                if (Owner.InJail)
+                {
+                    return Board.Actions.LandedOn_JailedOwnerProperty;
+                }
+                if (IsMortgaged)
+                {
+                    return Board.Actions.LandedOn_MortgagedProperty;
+                }
                 return Board.Actions.LandedOn_OwnedRailroad;
-            }
-            if (IsMortgaged)
-            {
-                return Board.Actions.LandedOn_MortgagedProperty;
             }
             return Board.Actions.LandedOn_UnownedProperty;
         }

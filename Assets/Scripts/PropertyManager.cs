@@ -20,6 +20,7 @@ public class PropertyManager : MonoBehaviour
     public Button m_backButton;
     public TMP_Text m_description;
     public GameObject m_window;
+    public Scrollbar m_scrollbar;
     
 
     // Start is called before the first frame update
@@ -30,12 +31,6 @@ public class PropertyManager : MonoBehaviour
         m_backButton.onClick.AddListener(ClosePropertyManger);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, 
         bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, 
         bool mortgageAvailible, bool unmortgageAvailible, int propertyIndex)
@@ -43,6 +38,9 @@ public class PropertyManager : MonoBehaviour
         // Add all listeners
         m_buyHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_BuyHouse(propertyIndex));
         m_sellHouseOrHotelButton.onClick.AddListener(() => m_gameController.PropertyManager_SellHouse(propertyIndex));
+
+        // Reset scrollbar
+        m_scrollbar.value = 0f;
 
         // Set text of titles
         m_title.text = propertyName;
