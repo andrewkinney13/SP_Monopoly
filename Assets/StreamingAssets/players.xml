@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Players>
+  <Player>
+    <Name>a</Name>
+    <Icon>Hat</Icon>
+  </Player>
+  <Player>
+    <Name>b</Name>
+    <Icon>Car</Icon>
+  </Player>
+  <Player>
+    <Name>c</Name>
+    <Icon>Battleship</Icon>
+  </Player>
+  <Player>
+    <Name>d</Name>
+    <Icon>Thimble</Icon>
+  </Player>
+  <Player>
+    <Name>e</Name>
+    <Icon>Boot</Icon>
+  </Player>
+  <Player>
+    <Name>f</Name>
+    <Icon>Wheel Barrel</Icon>
+  </Player>
+</Players>

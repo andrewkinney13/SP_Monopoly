@@ -136,9 +136,19 @@ public class MenuController : MonoBehaviour
         // Reset the icon to null
         m_selectedIcon = string.Empty;
 
-        // Show popup confirming the player was added
-        m_popupContoller.CreatePopupWindow("Success",
+        // Show popup confirming the player was added, not at limit yet
+        if (m_playerCount != 5)
+        {
+            m_popupContoller.CreatePopupWindow("Success",
             "Player " + (m_playerCount + 1) + " added successfuly", 'G');
+        }
+        // Players full popup
+        else
+        {
+            m_popupContoller.CreatePopupWindow("Success",
+                "Player " + (m_playerCount + 1) + " added successfuly\nMaximum players created!", 'G');
+        }
+        
 
         // Increment the number of players
         m_playerCount++;
