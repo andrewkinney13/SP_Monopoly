@@ -8,7 +8,7 @@ Oriental Avenue,LandedOn_UnownedProperty,ColorProperty,100,50,6,30,90,270,400,55
 Vermont Avenue,LandedOn_UnownedProperty,ColorProperty,100,50,6,30,90,270,400,550,Light Blue
 Chance,LandedOn_ChanceOrCommunityChest,Card
 Connecticut Avenue,LandedOn_UnownedProperty,ColorProperty,120,50,8,40,100,300,450,600,Light Blue
-Just Visiting,LandedOn_VisitingJail,Space
+Just Visiting,LandedOn_VisitingJail,Just Visiting
 St. Charles Place,LandedOn_UnownedProperty,ColorProperty,140,100,10,50,150,450,625,750,Purple
 Electric Company,LandedOn_UnownedProperty,Utility,150
 States Avenue,LandedOn_UnownedProperty,ColorProperty,140,100,10,50,150,450,625,750,Purple
@@ -18,7 +18,7 @@ St. James Place,LandedOn_UnownedProperty,ColorProperty,180,100,14,70,200,550,750
 Tennessee Avenue,LandedOn_UnownedProperty,ColorProperty,180,100,14,70,200,550,750,950,Orange
 Community Chest,LandedOn_ChanceOrCommunityChest,Card
 New York Avenue,LandedOn_UnownedProperty,ColorProperty,200,100,16,80,220,600,800,1000,Orange
-Free Parking,LandedOn_FreeParking,Space
+Free Parking,LandedOn_FreeParking,Free Parking
 Kentucky Avenue,LandedOn_UnownedProperty,ColorProperty,220,150,18,90,250,700,875,1050,Red
 Chance,LandedOn_ChanceOrCommunityChest,Card
 Indiana Avenue,LandedOn_UnownedProperty,ColorProperty,220,150,18,90,250,700,875,1050,Red

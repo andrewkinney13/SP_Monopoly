@@ -18,6 +18,7 @@ public class Board
     private const int SPACE_NUM = 40; // There are always 40 spaces on the board
     private List<Player> m_players = new List<Player>();
     private int m_turnNum;
+    private CardController m_cardController = new CardController();
 
     // Potential actions a player might have to make
     public enum Actions
@@ -57,12 +58,13 @@ public class Board
         m_turnNum = 0;
 
         // ======================= TESTING ===============================
-        /*
+        
         TestBuy(0, 1);
-        TestBuy(0, 3);
-        TestBuy(0, 5);
+        
+        TestBuy(0, 6);
         TestBuy(0, 7);
         TestBuy(0, 9);
+        /*
         TestBuy(0, 11);
         TestBuy(0, 13);
         TestBuy(0, 14);
@@ -83,12 +85,13 @@ public class Board
         TestBuy(0, 34);
         TestBuy(0, 35);
         TestBuy(0, 37);
-        TestBuy(0, 39);
+        TestBuy(0, 39); */
 
+        
         m_players[0].CurrentSpace = 0;
-        m_players[1].Cash = 5;
+        //m_players[1].Cash = 5;
         m_players[1].CurrentSpace = 0;
-        */
+
 
     }
 
@@ -126,21 +129,24 @@ public class Board
             int purchasePrice;
             switch (vals[2])
             {
-                // Default space
-                case "Space":
-                case "Card":
+                // Generic space
+                case "Jail":
+                case "Go":
+                case "Free Parking":
+                case "Just Visiting":
                     currentSpace = new Space(name, spaceNum, action, GetSpaceDescription(name));
                     break;
+
+                // Card
+                case "Card":
+                    currentSpace = new CardSpace(name, spaceNum, action, m_cardController, GetSpaceDescription(name));
+                    break;
+
 
                 // Tax
                 case "Tax":
                     int taxCost = int.Parse(vals[3]);
                     currentSpace = new Tax (name, spaceNum, action, taxCost, GetSpaceDescription(name));
-                    break;
-
-                // Go to jail space
-                case "Jail:":
-                    currentSpace = new Jail(name, spaceNum, action, GetSpaceDescription(name));
                     break;
 
                 // Utility
@@ -629,6 +635,41 @@ public class Board
         CurrentPlayer.RolledDice = true;
     }
 
+    // Player picking up card
+    public Card PickupCard()
+    {
+        // Return card for the player
+        CardSpace cardSpace = (CardSpace)m_spaces[CurrentPlayer.CurrentSpace];
+        return cardSpace.TakeCard();
+    }
+
+    // Returns the repair cost for current player based on card's values
+    public int GetRepairCost(int houseCost, int hotelCost)
+    {
+        // Go through every property owned by current player
+        int sumCost = 0;
+        foreach(Property property in CurrentPlayer.Properties)
+        {
+            // Skip any railroads or utilities
+            if (!(property is ColorProperty))
+                continue;
+
+            // Cast to color property
+            ColorProperty colorProperty = (ColorProperty)property;
+
+            // Add to sum for houses or hotels
+            if (colorProperty.Houses == 5)
+            {
+                sumCost += hotelCost;
+            }
+            else
+            {
+                sumCost += houseCost * colorProperty.Houses;
+            }
+        }
+        return sumCost;
+    }
+
     // Player went bankrupt
     public void GoingBankrupt()
     {
@@ -673,10 +714,25 @@ public class Board
     }
 
     // Player pays to get out of jail
-    public void GetOutOfJail()
+    public void GetOutOfJailPay()
     {
         // Remove jail cost and unmark them as in jail
         CurrentPlayer.Cash -= 75;
+        CurrentPlayer.InJail = false;
+    }
+
+    // Player uses card to get out of jail
+    public void GetOutOfJailWithCard()
+    {
+        // Remove jail card and unmark them as in jail
+        if (CurrentPlayer.CommunityChestJailCards >= 0)
+        {
+            CurrentPlayer.CommunityChestJailCards--;
+        }
+        else
+        {
+            CurrentPlayer.ChanceJailCards--;
+        }
         CurrentPlayer.InJail = false;
     }
 
@@ -898,7 +954,7 @@ public class Board
             case "LandedOn_UnownedProperty":
                 return Actions.LandedOn_UnownedProperty;
             case "LandedOn_ChanceOrCommunityChest":
-                return Actions.EndTurn;
+                return Actions.LandedOn_ChanceOrCommunityChest;
             case "LandedOn_VisitingJail":
                 return Actions.LandedOn_VisitingJail;
             case "LandedOn_FreeParking":

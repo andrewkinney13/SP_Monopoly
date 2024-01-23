@@ -20,6 +20,8 @@ public class Player
     private bool m_turnCompleted;
     private bool m_inJail;
     private bool m_bankrupt;
+    private int m_comunityChestJailCards;
+    private int m_chanceJailCards;
     private List<Space> m_properties = new List<Space>(); 
 
     // Constructor
@@ -166,6 +168,17 @@ public class Player
     {
         get { return m_inJail; }
         set { m_inJail = value; }
+    }
+    public int ChanceJailCards
+    {
+        get { return m_chanceJailCards; }
+        set { m_chanceJailCards = value; }
+    }
+    public int CommunityChestJailCards
+    {
+        get { return m_comunityChestJailCards; }
+        set { m_comunityChestJailCards = value; }
+
     }
 
     // Being bankrupt is determined by your cash being 0 or below

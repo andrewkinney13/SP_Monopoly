@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
@@ -29,12 +30,9 @@ public class GameController : MonoBehaviour
     public DetailsPopupController m_playerDetailsController;
     public PlayerTrackController m_playerTrackController;
     public CameraController m_cameraController;
-    
     public Action_RollDice m_diceRollController;
-    public Action_YesNo m_yesNoController;
-
     public Action_Generic m_genericActionController;
-    // public Action_TwoChoice m_twoChoiceActionController;
+    public Action_TwoChoice m_twoChoiceActionController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -48,6 +46,8 @@ public class GameController : MonoBehaviour
     public List<RenderTexture> m_propertyRenderTextures;
     public Scrollbar m_propertyCardScrollbar;
     public PropertyManager m_propertyManager;
+    public Sprite m_chanceGetOutOfJailFreeCard;
+    public Sprite m_communityChestGetOutOfJailFreeCard;
 
     // Runs when the script is initialized, using this as a constructor
     void Start()
@@ -169,16 +169,29 @@ public class GameController : MonoBehaviour
 
             // Landed on visiting jail
             case Board.Actions.LandedOn_VisitingJail:
+
+                // In jail
                 if (m_board.CurrentPlayer.InJail)
                 {
-                    CreateGenericActionWindow("You must pay to be released from Jail...", "Pay $75", Color.red);
-                    m_genericActionController.ActButton.onClick.AddListener(Action_GetOutOfJail);
+                    CreateTwoChoiceActionWindow("You must pay to be released from Jail...", "Pay $75", Color.red, "Use Jail Card", Color.black);
+                    m_twoChoiceActionController.LeftButton.onClick.AddListener(Action_GetOutOfJailPay);
+                    m_twoChoiceActionController.RightButton.onClick.AddListener(Action_GetOutOfJailWithCard);
+
+                    // Check if they have a card
+                    if (m_board.CurrentPlayer.CommunityChestJailCards == 0 && m_board.CurrentPlayer.ChanceJailCards == 0)
+                    {
+                        m_twoChoiceActionController.RightButton.interactable = false;
+                    }
                 }
+
+                // Not in jail, rolled doubles
                 else if (m_board.CurrentPlayer.RolledDoubles)
                 {
                     m_actionWindows[1].SetActive(true);
                     
                 }
+
+                // End their turn
                 else
                 {
                     CreateGenericActionWindow("No actions left to complete", "End Turn", Color.black);
@@ -186,13 +199,11 @@ public class GameController : MonoBehaviour
                 }
                 break;
 
-            // Landed on an onowned property 
+            // Landed on an unowned property 
             case Board.Actions.LandedOn_UnownedProperty:
-                m_yesNoController.Title = m_board.GetLandedOnUnownedPropertyTitle();
-                m_yesNoController.YesButton.onClick.RemoveAllListeners();
-                m_yesNoController.NoButton.onClick.RemoveAllListeners();
-                m_yesNoController.YesButton.onClick.AddListener(() => Action_BuyingProperty(true));
-                m_yesNoController.NoButton.onClick.AddListener(() => Action_BuyingProperty(false));
+                CreateTwoChoiceActionWindow(m_board.GetLandedOnUnownedPropertyTitle(), "Yes", Color.green, "No", Color.red);
+                m_twoChoiceActionController.LeftButton.onClick.AddListener(() => Action_BuyingProperty(true));
+                m_twoChoiceActionController.RightButton.onClick.AddListener(() => Action_BuyingProperty(false));
                 m_actionWindows[2].SetActive(true);
                 break;
 
@@ -210,7 +221,13 @@ public class GameController : MonoBehaviour
                 m_genericActionController.ActButton.onClick.AddListener(Action_PayingTax);
                 break;
 
-            // Ending turn / default (error)
+            // Landed on a card property
+            case Board.Actions.LandedOn_ChanceOrCommunityChest:
+                CreateGenericActionWindow("You landed on " + m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name, "Pickup Card", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(Action_PickedUpCard);
+                break;
+
+            // Ending turn 
             case Board.Actions.EndTurn:
                 CreateGenericActionWindow("No Actions Left to Complete", "End Turn", Color.black);
                 m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
@@ -244,6 +261,28 @@ public class GameController : MonoBehaviour
         m_genericActionController.ResetListeners();
     }
 
+    // Creates a two choice action window
+    private void CreateTwoChoiceActionWindow(string title, string leftButtonText, Color leftButtonColor, string rightButtonText, Color rightButtonColor)
+    {
+        // Clear listeners 
+        m_twoChoiceActionController.LeftButton.onClick.RemoveAllListeners();
+        m_twoChoiceActionController.RightButton.onClick.RemoveAllListeners();
+
+        // Reactivate buttons
+        m_twoChoiceActionController.LeftButton.interactable = true;
+        m_twoChoiceActionController.LeftButton.interactable = true;
+
+        // Set text
+        m_twoChoiceActionController.Title = title;
+        m_twoChoiceActionController.LeftButtonText = leftButtonText;
+        m_twoChoiceActionController.RightButtonText = rightButtonText;
+        m_twoChoiceActionController.LeftButtonColor = leftButtonColor;
+        m_twoChoiceActionController.RightButtonColor = rightButtonColor;
+
+        // Set window active
+        m_actionWindows[2].SetActive(true);
+    }
+
     // Clears all the property and card view contents and resets the size
     private void ClearPropertyCardView()
     {
@@ -255,6 +294,15 @@ public class GameController : MonoBehaviour
         {
             Destroy(propertyView.gameObject);
         }
+
+        // Obtain all the card views
+        Image[] cardImages = m_propertyCardContent.GetComponentsInChildren<Image>();
+
+        // Destroy them
+        foreach (Image cardImage in cardImages)
+        {
+            Destroy(cardImage.gameObject);
+        }
     }
 
     // Adds a new property to the properties and cards section
@@ -262,15 +310,16 @@ public class GameController : MonoBehaviour
     {
         // Set the sizes
         float propertyWidth = 224f;
+        float cardWidth = propertyWidth * 2;
         float propertyHeight = 300f;
-        float startX = -2590f;
+        float startX = -3860f;
 
         // Loop through owned properties
         int propertyNum = 0;
         foreach (Space property in  m_board.CurrentPlayer.Properties) 
         {
             // Create object with viewer as child of properties content
-            GameObject newPropertyImage = new GameObject("RawImage");
+            GameObject newPropertyImage = new GameObject("Property");
             newPropertyImage.transform.SetParent(m_propertyCardContent.transform);
             RawImage newViewer = newPropertyImage.AddComponent<RawImage>();
             newViewer.transform.localScale = new Vector2(1,1);
@@ -278,7 +327,7 @@ public class GameController : MonoBehaviour
             // Set size and position
             RectTransform newViewerRect = newPropertyImage.GetComponent<RectTransform>();
             newViewerRect.sizeDelta = new Vector2(propertyWidth, propertyHeight);
-            float xOffset = startX + 20 + propertyWidth * propertyNum + 20 * propertyNum;
+            float xOffset = startX + 10 + propertyWidth * propertyNum + 20 * propertyNum;
             newViewerRect.anchoredPosition = new Vector2(xOffset, 0);
 
             // Assign property render texture to the viewer
@@ -290,6 +339,39 @@ public class GameController : MonoBehaviour
             
             // Increment property
             propertyNum++;
+        }
+
+        // For each card player owns, add it 
+        int numCards = m_board.CurrentPlayer.CommunityChestJailCards + m_board.CurrentPlayer.ChanceJailCards;
+        int chanceCardsPrinted = 0;
+        int communityChanceCardsPrinted = 0;
+        for (int i = 0; i < numCards; i++)
+        {
+            // Create object with viewer as child of properties content
+            GameObject newCardImage = new GameObject("Card");
+            newCardImage.transform.SetParent(m_propertyCardContent.transform);
+            Image newViewer = newCardImage.AddComponent<Image>();
+            newViewer.transform.localScale = new Vector2(2f, 1);
+
+            // Set size and position
+            RectTransform newViewerRect = newCardImage.GetComponent<RectTransform>();
+            newViewerRect.sizeDelta = new Vector2(propertyWidth, propertyHeight);
+            float xOffset = startX + 125 + propertyWidth * propertyNum + cardWidth * i + 20 * propertyNum + i * 20;
+            newViewerRect.anchoredPosition = new Vector2(xOffset, 0);
+
+            // Print chance first
+            if (chanceCardsPrinted < m_board.CurrentPlayer.ChanceJailCards)
+            {
+                newViewer.sprite = m_chanceGetOutOfJailFreeCard;
+                chanceCardsPrinted++;
+            }    
+            // Print community chest second
+            else
+            {
+                newViewer.sprite = m_communityChestGetOutOfJailFreeCard;
+                communityChanceCardsPrinted++;
+            }
+            
         }
     }
 
@@ -348,7 +430,7 @@ public class GameController : MonoBehaviour
         // Move the player icon
         StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, currentSpace, destinationSpace));
 
-        // Post go message if passing it, not on way to jail though!
+        // Post go message if passing it
         if (currentSpace > destinationSpace) 
         {
             CreateGenericActionWindow("You passed Go!", "Collect $200", Color.green);
@@ -359,6 +441,168 @@ public class GameController : MonoBehaviour
         // Update was made
         UpdateMade();
     }
+
+    // Player picked up a community chest or chance card
+    public void Action_PickedUpCard()
+    {
+        // Obtain a card for them
+        Card card = m_board.PickupCard();
+
+        // Create window according to the card's action and attatch appropriate action function
+        switch(card.ActionType)
+        {
+            case CardController.Actions.collectMoney:
+                CreateGenericActionWindow(card.Description, "Collect $" + card.Value, Color.green);
+                m_genericActionController.ActButton.onClick.AddListener(() => Card_CollectMoney(card.Value));
+                break;
+            case CardController.Actions.payMoney:
+                CreateGenericActionWindow(card.Description, "Pay $" + card.Value, Color.red);
+                m_genericActionController.ActButton.onClick.AddListener(() => Card_PayMoney(card.Value));
+                break;
+            case CardController.Actions.getJailCard:
+                CreateGenericActionWindow(card.Description, "Get Card", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(Card_GetJailCard);
+                break;
+            case CardController.Actions.move:
+                CreateGenericActionWindow(card.Description, "Move", Color.black);
+                m_genericActionController.ActButton.onClick.AddListener(() => Card_MoveToSpace(card.Location));
+                break;
+            case CardController.Actions.makeRepairs:
+                int repairCost = m_board.GetRepairCost(card.Value, card.Value2);
+                CreateGenericActionWindow(card.Description, "Pay $" + repairCost, Color.red);
+                m_genericActionController.ActButton.onClick.AddListener(() => Card_MakeRepairs(repairCost));
+                break;
+
+            default:
+                throw new Exception("Card action not defined");
+        }
+
+    }
+
+    // Collecting money from card
+    public void Card_CollectMoney(int amount)
+    {
+        // Add cash
+        m_board.CurrentPlayer.Cash += amount;
+
+        // Mark update
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade();
+    }
+
+    // Paying money from card
+    public void Card_PayMoney(int amount)
+    {
+        // Subtract cash
+        m_board.CurrentPlayer.Cash -= amount;
+
+        // Mark update
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade();
+    }
+
+    // Making repairs from card
+    public void Card_MakeRepairs(int amount)
+    {
+        // Subtract cash
+        m_board.CurrentPlayer.Cash -= amount;
+
+        // Mark update
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade();
+    }
+
+    // Moving to space from card
+    public void Card_MoveToSpace(string location)
+    {
+        // Find space to move to, start with current space (some cards ask find nearest
+        int currentSpace = m_board.CurrentPlayer.CurrentSpace;
+        int originSpace = currentSpace;
+
+        // Search spaces after current to Go
+        int destinationSpace = -1;
+        int spacesSearched = 0;
+        while (spacesSearched <= 40)
+        {
+            // Perfect match 
+            if (m_board.GetSpace(currentSpace).Name == location)
+            {
+                destinationSpace = currentSpace;
+                break;
+            }
+
+            // Looking for nearest railroad
+            if (m_board.GetSpace(currentSpace) is Railroad && location == "Railroad")
+            {
+                destinationSpace = currentSpace;
+                break;
+            }
+
+            // Looking for nearest utility
+            else if (m_board.GetSpace(currentSpace) is Utility && location == "Utility")
+            {
+                destinationSpace = currentSpace;
+                break;
+            }
+
+            // Update current space
+            currentSpace++;
+            if (currentSpace == 40)
+            {
+                currentSpace = 0;
+            }
+            spacesSearched++;
+        }
+
+        // Check that current space is found
+        if (destinationSpace == -1)
+        {
+            throw new Exception("Couldn't find space to move to :(");
+        }
+
+        // Move the player icon
+        StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, m_board.CurrentPlayer.CurrentSpace, destinationSpace));
+
+        // Move player on board
+        m_board.CurrentPlayer.CurrentSpace = destinationSpace;
+
+        // If going to jail, mark player as in jail
+        if (m_board.GetSpace(destinationSpace).Name == "Just Visiting")
+        {
+            Action_GoToJail();
+            return;
+        }    
+
+        // If passed go, post message
+        else if (m_board.GetSpace(destinationSpace).Name == "Go" || originSpace > currentSpace)
+        {
+            CreateGenericActionWindow("You passed Go!", "Collect $200", Color.green);
+            m_genericActionController.ActButton.onClick.AddListener(Action_CollectGo);
+            return;
+        }
+
+        // Mark update
+        UpdateMade();
+    }
+
+    // Getting jail card from card
+    public void Card_GetJailCard()
+    {
+        // Give player jail card
+        if (m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name == "Chance")
+        {
+            m_board.CurrentPlayer.ChanceJailCards++;
+        }
+        else
+        {
+            m_board.CurrentPlayer.CommunityChestJailCards++;
+        }
+        
+        // Mark update
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade();
+    }
+
 
     // Player buying property
     public void Action_BuyingProperty(bool buying)
@@ -438,10 +682,10 @@ public class GameController : MonoBehaviour
     }
 
     // Player getting out of jail
-    public void Action_GetOutOfJail()
+    public void Action_GetOutOfJailPay()
     {
         // Update board
-        m_board.GetOutOfJail();
+        m_board.GetOutOfJailPay();
 
         // Check bankruptcy 
         if (m_board.CurrentPlayer.Bankrupt)
@@ -455,6 +699,17 @@ public class GameController : MonoBehaviour
         // Update made
         UpdateMade();
     }
+
+    // Player getting out of jail with card
+    public void Action_GetOutOfJailWithCard()
+    {
+        // Remove player's jail card
+        m_board.GetOutOfJailWithCard();
+
+        // Update made
+        UpdateMade();
+    }
+
 
     // Player going bankrupt
     public void Action_GoingBankrupt()
@@ -483,8 +738,11 @@ public class GameController : MonoBehaviour
         // Update cash
         UpdatePanelCash();
 
-        // Completed space action
-        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        // Update space action (if on go)
+        if (m_board.CurrentPlayer.CurrentSpace == 0)
+        {
+            m_board.CurrentPlayer.SpaceActionCompleted = true;
+        }    
 
         // Update the panel
         UpdateMade();
