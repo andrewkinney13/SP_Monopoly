@@ -32,7 +32,7 @@ public class Player
         PlayerNum = playerNum;
         TurnInitialized = false;
 
-        m_cash = 5000;
+        m_cash = 1500;
     }
 
     // Getters and setters

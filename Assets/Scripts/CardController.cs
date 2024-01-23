@@ -24,6 +24,10 @@ public class CardController
     {
         // Init cards lists
         InitializeCardLists();
+
+        // Suffle card lists
+        ShuffleCardDeck(m_chanceCardDeck);
+        ShuffleCardDeck(m_communityChestCardDeck);
     }
 
     // Take card functions
@@ -112,6 +116,24 @@ public class CardController
                 return Actions.getJailCard;
             default:
                 throw new Exception("Card data type not found, type: " + action);
+        }
+    }
+
+    // Shuffles a deck
+    void ShuffleCardDeck(List<Card> cards)
+    {
+        System.Random random = new System.Random();
+
+        // Loop through each card, swap with a random index
+        for (int i = cards.Count - 1; i >= 0; i--) 
+        {
+            // Get index
+            int randIndex = random.Next(0, i + 1);
+
+            // Swap elements
+            Card tempCard = cards[i];
+            cards[i] = cards[randIndex];
+            cards[randIndex] = tempCard;
         }
     }
 }

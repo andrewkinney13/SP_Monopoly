@@ -15,7 +15,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     // Data Members
-    private Board m_board;     
+    private Board m_board;
     private bool m_updateMade = false;
 
     // Popup window
@@ -33,10 +33,11 @@ public class GameController : MonoBehaviour
     public Action_RollDice m_diceRollController;
     public Action_Generic m_genericActionController;
     public Action_TwoChoice m_twoChoiceActionController;
+    public TradingController m_tradingController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
-    
+
     // Player panel components
     public Image m_panelIcon;
     public TMP_Text m_panelTitle;
@@ -89,7 +90,7 @@ public class GameController : MonoBehaviour
         if (m_board.CurrentPlayer.TurnCompleted)
         {
             // Update the turn in board
-            m_board.UpdateTurn(); 
+            m_board.UpdateTurn();
 
             // Alert ourselves that an update was made to panel
             m_updateMade = true;
@@ -102,10 +103,13 @@ public class GameController : MonoBehaviour
 
             // Close the properties and cards window if it's open
             m_propertyManager.ClosePropertyManger();
+
+            // Close the trading menu if it's open
+            m_tradingController.CloseTradingMenu();
         }
 
-        // Erase the space details window if user clicks
-        if (Input.GetMouseButtonDown(0))
+        // Erase the details windows if user clicks or mouse over the player panel
+        if (Input.GetMouseButtonDown(0) || !m_cameraController.MouseInBounds())
         {
             m_spaceDetailsController.CloseDetailsWindow();
             m_playerDetailsController.CloseDetailsWindow();
@@ -882,12 +886,81 @@ public class GameController : MonoBehaviour
         m_propertyManager.ClosePropertyManger();
     }
 
+    // Player traded with someone
+    public void TradeMade(string playerName, string itemName, int cashAmount, bool propertyTraded, bool cardTraded)
+    {
+        // Find the player being traded with
+        Player tradeToPlayer = m_board.FindPlayerByName(playerName);
+
+        // If trading a property, trade it
+        if (propertyTraded)
+        {
+            // Find the property
+            Property tradedProperty = m_board.FindPropertyByName(itemName);
+
+            // Change owners
+            tradeToPlayer.Properties.Add(tradedProperty);
+            m_board.CurrentPlayer.Properties.Remove(tradedProperty);
+            tradedProperty.Owner = tradeToPlayer;
+        }
+
+        // If trading a card, trade it
+        if (cardTraded) 
+        {
+            if (itemName == "Community Chest Jail Card")
+            {
+                tradeToPlayer.CommunityChestJailCards++;
+                m_board.CurrentPlayer.CommunityChestJailCards--;
+            }
+            else
+            {
+                tradeToPlayer.ChanceJailCards++;
+                m_board.CurrentPlayer.ChanceJailCards--;
+            }
+        }
+
+        // If trading cash, trade it
+        if (cashAmount > 0)
+        {
+            // Add cash to trade player's cash
+            tradeToPlayer.Cash += cashAmount;
+
+            // Subtract from current player's cash
+            m_board.CurrentPlayer.Cash -= cashAmount;
+
+            // Update the cash in the panel
+            UpdatePanelCash();
+        }
+
+        // Redraw the property card view
+        ClearPropertyCardView();
+        CreatePropertyCardView();
+
+        // Redraw the trading window with updates
+        List<string> propertiesAndCards = m_board.GetPlayerPropertiesAndCardsStrings(m_board.CurrentPlayer);
+        m_tradingController.CreateTradingMenu(tradeToPlayer.Name, GetIconSprite(tradeToPlayer.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
+    }
 
     // When user clicks a player
     void OnPlayerClick(int playerNum)
     {
-        // Display it in the space details window, where the user clicked
-        m_playerDetailsController.CreateDetailsWindow(m_board.GetPlayerName(playerNum), m_board.GetPlayerDescription(playerNum));
+        // Get player reference of the person selected
+        Player player = m_board.GetPlayer(playerNum);
+
+        // Display detail window with their info
+        m_playerDetailsController.CreateDetailsWindow(player.Name, player.Description);
+       
+        // Don't display trading menu if selected current player
+        if (player == m_board.CurrentPlayer)
+        {
+            return;
+        }
+
+        // Obtain string list of current player's properties
+        List<string> propertiesAndCards = m_board.GetPlayerPropertiesAndCardsStrings(m_board.CurrentPlayer);
+
+        // Open the trading menu
+        m_tradingController.CreateTradingMenu(player.Name, GetIconSprite(player.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
     }
 
     // Initializes the player lanes and icons 
@@ -895,7 +968,7 @@ public class GameController : MonoBehaviour
     {
         m_playerTrackController.CreateLanes();
         m_playerTrackController.SetIcons(m_playerButtons);
-        for (int playerNum = 0; playerNum < m_board.PlayerCount; playerNum++) 
+        for (int playerNum = 0; playerNum < m_board.PlayerCount; playerNum++)
         {
             // Create local player num
             int localPlayerNum = playerNum;
@@ -910,6 +983,7 @@ public class GameController : MonoBehaviour
             StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 0, 0));
         }
     }
+
 
     // Returns the image associated with a partular icon
     Sprite GetIconSprite(string iconName)
@@ -944,9 +1018,9 @@ public class GameController : MonoBehaviour
                 return texture;
             }
         }
-
+        
         // No space found, FREAK OUT!
-        throw new System.Exception("No texture found for specified property! Index: " + spaceIndex);
+        throw new Exception("No texture found for specified property! Index: " + spaceIndex);
     }
 
     // Deactivates all houses (for game start)

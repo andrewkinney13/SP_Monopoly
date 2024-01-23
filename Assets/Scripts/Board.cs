@@ -56,43 +56,6 @@ public class Board
 
         // Set the turn num to 0
         m_turnNum = 0;
-
-        // ======================= TESTING ===============================
-        
-        TestBuy(0, 1);
-        
-        TestBuy(0, 6);
-        TestBuy(0, 7);
-        TestBuy(0, 9);
-        /*
-        TestBuy(0, 11);
-        TestBuy(0, 13);
-        TestBuy(0, 14);
-        TestBuy(0, 15);
-        TestBuy(0, 16);
-        TestBuy(0, 17);
-        TestBuy(0, 1);
-        TestBuy(0, 21);
-        TestBuy(0, 23);
-        TestBuy(0, 24);
-        TestBuy(0, 25);
-        TestBuy(0, 26);
-        TestBuy(0, 27);
-        TestBuy(0, 28);
-        TestBuy(0, 29);
-        TestBuy(0, 31);
-        TestBuy(0, 32);
-        TestBuy(0, 34);
-        TestBuy(0, 35);
-        TestBuy(0, 37);
-        TestBuy(0, 39); */
-
-        
-        m_players[0].CurrentSpace = 0;
-        //m_players[1].Cash = 5;
-        m_players[1].CurrentSpace = 0;
-
-
     }
 
     void TestBuy(int playerNum, int propertyNum)
@@ -227,6 +190,17 @@ public class Board
         return m_spaces[index];
     }
 
+    // Returns player object at indexty
+    public Player GetPlayer(int index)
+    {
+        if (index < 0 || index > m_players.Count - 1)
+        {
+            throw new ArgumentException("Player index out of range");
+        }
+
+        return m_players[index];
+    }
+
     // Returns how many houses are on a space
     public int GetPropertyHouses(int propertyIndex)
     {
@@ -271,26 +245,6 @@ public class Board
 
         // Return the icon name
         return m_players[playerNum].Icon;
-    }
-
-    // Returns player's name
-    public string GetPlayerName(int playerNum)
-    {
-        // Check player num 
-        CheckPlayerNum(playerNum);
-
-        // Return the icon name
-        return m_players[playerNum].Name;
-    }
-
-    // Returns player's description
-    public string GetPlayerDescription(int playerNum)
-    {
-        // Check player num 
-        CheckPlayerNum(playerNum);
-
-        // Return the icon name
-        return m_players[playerNum].Description;
     }
 
     // Changes utility flag that the player is currently on, indicates they rolled dice to determine cost
@@ -992,6 +946,67 @@ public class Board
             default:
                 throw new Exception ("Error determining space description for space: " + name);
         }
+    }
+
+    // Returns player with specified name
+    public Player FindPlayerByName(string name)
+    {
+        // Return player 
+        foreach (Player player in m_players)
+        {
+            if (player.Name == name)
+            {
+                return player;
+            }
+        }
+
+        // Player not found, freak out
+        throw new Exception("Player: " + name + " not found searching by name...");
+    }
+
+    // Returns property with specified name
+    public Property FindPropertyByName(string name)
+    {
+        // Return property 
+        foreach (Space space in m_spaces)
+        {
+            // Only check property spaces
+            if (space is Property)
+            {
+                Property property = (Property)space;
+                if (property.Name == name) 
+                {
+                    return property;
+                }
+            }
+        }
+
+        // Property never found
+        throw new Exception("Property: " + name + " not found searching by name...");
+    }
+
+    // Returns a string list of player's properties' names
+    public List<string> GetPlayerPropertiesAndCardsStrings(Player player)
+    {
+        // Iterate over all owned properties
+        List<string> items = new List<string>();
+        foreach (Property property in player.Properties)
+        {
+            items.Add(property.Name);
+        }
+
+        // Iterate over cards
+        for (int i = 0; i < player.CommunityChestJailCards; i++)
+        {
+            items.Add("Community Chest Jail Card");
+        }
+        for (int i = 0; i < player.ChanceJailCards; i++)
+        {
+            items.Add("Chance Jail Card");
+        }
+
+        // Return the list
+        return items;
     }
 
     // Saves game data to text file for end game scene to read

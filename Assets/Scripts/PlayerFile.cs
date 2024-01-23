@@ -51,9 +51,8 @@ public class PlayerFile
     // Reads a player from the xml file
     public Dictionary<string, string> ReadPlayersFromFile()
     {
-        // Obtain file path THIS NEEDS TO BE CHANGED LATER AFTER TESTING DONE!
-        string filePath = Path.Combine(Application.streamingAssetsPath, "PlayersCopy.xml");
-        // string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
+        // Obtain file path 
+        string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
 
 
         // Setup the players dict

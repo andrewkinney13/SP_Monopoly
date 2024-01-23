@@ -63,7 +63,7 @@ public class Action_RollDice : MonoBehaviour
         float elapsedTime = 0f;
         int die1Val = 0;
         int die2Val = 0;
-        while (elapsedTime < .01f) // .5f is good ======== TESTING =============
+        while (elapsedTime < .5f) 
         {
             // Set the dice face to a random image
             die1Val = Random.Range(1, 7);
@@ -77,10 +77,7 @@ public class Action_RollDice : MonoBehaviour
         }
 
         // Assign dice result
-        //m_diceResult = die1Val + die2Val;
-
-        // ================= TESTING ======================
-        m_diceResult = 2;
+        m_diceResult = die1Val + die2Val;
 
         // Assign if doubles or not
         m_wereDoubles = false;
@@ -108,6 +105,10 @@ public class Action_RollDice : MonoBehaviour
         else if (UtilityCostRoll)
         {
             m_title.text = "Roll Dice to Determine Utility Rent Price...";
+        }
+        else if (m_wereDoubles)
+        {
+            m_title.text = "You rolled doubles, roll again!";
         }
         else
         {
