@@ -4,54 +4,21 @@ using UnityEngine;
 
 public class Utility : Property
 {
-    // Data members
-    private int m_rentMultiplier;
-    private int m_currentDiceRoll;
-    private bool m_diceRolled;
-    private bool m_allied;
-    
+    // ============================== Private Data Members ============================= //
+    int m_currentDiceRoll;
+    bool m_diceRolled;
 
-    // Constructor
-    public Utility(string name, int index, Board.Actions action, int purchasePrice, int multiplier, string description)
-        : base (name, index, action, purchasePrice, description)
-    {
+    // ============================== Constructor ====================================== //
+    public Utility(string name, int index, Board.Actions action, int purchasePrice, string description) : 
+        base (name, index, action, purchasePrice, description) { }
 
-    }
-
-    // What is multiplied by dice
-    public int RentMultiplier
-    {
-        get 
-        { 
-            // Utilities both owned gived 10x, just one owned gived 4x
-            if (IsAllied)
-            {
-                return 10;
-            }
-            return 4;
-        }
-    }
-    
-    // What the current dice roll is
-    public int CurrentDiceRoll
-    {
-        get { return m_currentDiceRoll; }
-        set { m_currentDiceRoll = value; }
-    }
-
-    // Whether or not the player has rolled the dice
-    public bool DiceRolled
-    {
-        get { return m_diceRolled; }
-        set { m_diceRolled = value; }
-    }
-
+    // ============================== Override Methods ================================= //
 
     // What action a player must do, landing on this property
     public override Board.Actions ActionType
     {
         get
-        {   
+        {
             if (IsPurchased && !DiceRolled)
             {
                 if (Owner.InJail)
@@ -107,6 +74,36 @@ public class Utility : Property
     public override int RentPrice
     {
         get { return RentMultiplier * CurrentDiceRoll; }
+    }
+
+    // ============================== Properties ======================================= //
+
+    // What is multiplied by dice
+    public int RentMultiplier
+    {
+        get 
+        { 
+            // Utilities both owned gived 10x, just one owned gived 4x
+            if (IsAllied)
+            {
+                return 10;
+            }
+            return 4;
+        }
+    }
+    
+    // What the current dice roll is
+    public int CurrentDiceRoll
+    {
+        get { return m_currentDiceRoll; }
+        set { m_currentDiceRoll = value; }
+    }
+
+    // Whether or not the player has rolled the dice
+    public bool DiceRolled
+    {
+        get { return m_diceRolled; }
+        set { m_diceRolled = value; }
     }
 
     // Checks if the owner owns the other utility

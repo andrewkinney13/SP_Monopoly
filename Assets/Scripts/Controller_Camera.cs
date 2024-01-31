@@ -6,38 +6,37 @@ using UnityEngine.UI;
 
 // Class to control camera controlled by the user
 // Handles zooming and moving around while looking at the board
-public class CameraController : MonoBehaviour
+public class Controller_Camera : MonoBehaviour
 {
-    // Unity data members
+    // ============================== Unity Data Members =============================== //
     public Button m_leftRotate;
     public Button m_rightRotate;
     public GameObject m_cameraPivot;
     public RectTransform m_screenBorder;
 
-    // Private Data Members
-    private Camera m_camera;
-    private Vector3 m_lastMousePosition;
-    private float m_minSize = 50.0f;
-    private float m_maxSize = 325.0f;
-    private bool m_zoomEnabled;
-    private bool m_moveEnabled;
+    // ============================== Private Data Members ============================= //
+    Camera m_camera;
+    Vector3 m_lastMousePosition;
+    float m_minSize = 50.0f;
+    float m_maxSize = 325.0f;
+    bool m_zoomEnabled;
+    bool m_moveEnabled;
 
-    private void Start()
+    // ============================== Start / Update =================================== //
+    void Start()
     {
         // Initialize camera w/ proper size
         m_camera = Camera.main;
         m_camera.orthographicSize = m_maxSize - 25f;
 
-        // Assign the rotate function buttons
+        // Assign the rotate method buttons
         m_leftRotate.onClick.AddListener(() => RotateCamera(-90));
         m_rightRotate.onClick.AddListener(() => RotateCamera(90));
 
         // Enable zooming
         m_zoomEnabled = true;
     }
-
-    // Runs every frame
-    private void Update()
+     void Update()
     {
         // Zooms if the player scrolled
         Zoom();
@@ -46,12 +45,7 @@ public class CameraController : MonoBehaviour
         Move();
     }
 
-    // Rotate camera 
-    private void RotateCamera(int angle)
-    {
-        // Rotate camera
-        m_cameraPivot.transform.Rotate(0f, 0f, angle);
-    }
+    // ============================== Properties ======================================= //
 
     // So other classes with scroll bars can disable zoom
     public bool ZoomEnabled
@@ -67,46 +61,7 @@ public class CameraController : MonoBehaviour
         get { return m_moveEnabled; }
     }
 
-    // Resets camera's position and orientation 
-    public void ResetCamera()
-    {
-        // Reorient the camera pivot
-        int currentRotation = (int)m_cameraPivot.transform.eulerAngles.z;
-        RotateCamera(-1 * (currentRotation));
-
-        // Reset size and position within the pivot
-        m_camera.orthographicSize = m_maxSize - 25f;
-        m_camera.transform.position = new Vector3(-1000f, 0f, -1f);
-    }
-
-    // If the user scrolls this frame, adjust the screen accordingly
-    private void Zoom()
-    {
-        // Do nothing if zooming disabled
-        if (!ZoomEnabled || !MouseInBounds()) 
-        { 
-           return;
-        }
-
-        // Get the scroll direction
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        // Obtain new size based on the scroll direction
-        float newSize = Camera.main.orthographicSize - (scroll * 2) * m_minSize;
-
-        // Assign size if within the max and min range
-        newSize = Mathf.Clamp(newSize, m_minSize, m_maxSize);
-
-        // Obtain cursor position
-        Vector3 cursorPosition = m_camera.ScreenToWorldPoint(Input.mousePosition);
-
-        // Calculate difference between the cursor position and where the camera was
-        Vector3 offset = cursorPosition - m_camera.transform.position;
-
-        // Apply the offset to zoom towards the cursor position
-        m_camera.transform.position += offset * (1.0f - newSize / m_camera.orthographicSize);
-        m_camera.orthographicSize = newSize;
-    }
+    // ============================== Public Methods =================================== //
 
     // Moves the camera according to cursor position
     public void Move()
@@ -141,7 +96,7 @@ public class CameraController : MonoBehaviour
                     float y = delta.y;
                     delta.y = delta.x;
                     delta.x = -y;
-                    
+
                     break;
 
                 // 180 flip, board is upside down, flip x and y signs
@@ -185,5 +140,55 @@ public class CameraController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    // Resets camera's position and orientation 
+    public void ResetCamera()
+    {
+        // Reorient the camera pivot
+        int currentRotation = (int)m_cameraPivot.transform.eulerAngles.z;
+        RotateCamera(-1 * (currentRotation));
+
+        // Reset size and position within the pivot
+        m_camera.orthographicSize = m_maxSize - 25f;
+        m_camera.transform.position = new Vector3(-1000f, 0f, -1f);
+    }
+
+    // ============================== Private Methods ================================== //
+
+    // Rotate camera 
+    void RotateCamera(int angle)
+    {
+        // Rotate camera
+        m_cameraPivot.transform.Rotate(0f, 0f, angle);
+    }
+
+    // If the user scrolls this frame, adjust the screen accordingly
+    void Zoom()
+    {
+        // Do nothing if zooming disabled
+        if (!ZoomEnabled || !MouseInBounds()) 
+        { 
+           return;
+        }
+
+        // Get the scroll direction
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+        // Obtain new size based on the scroll direction
+        float newSize = Camera.main.orthographicSize - (scroll * 2) * m_minSize;
+
+        // Assign size if within the max and min range
+        newSize = Mathf.Clamp(newSize, m_minSize, m_maxSize);
+
+        // Obtain cursor position
+        Vector3 cursorPosition = m_camera.ScreenToWorldPoint(Input.mousePosition);
+
+        // Calculate difference between the cursor position and where the camera was
+        Vector3 offset = cursorPosition - m_camera.transform.position;
+
+        // Apply the offset to zoom towards the cursor position
+        m_camera.transform.position += offset * (1.0f - newSize / m_camera.orthographicSize);
+        m_camera.orthographicSize = newSize;
     }
 }

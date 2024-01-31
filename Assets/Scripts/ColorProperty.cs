@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ColorProperty : Property
 {
-    // Data members   
+    // ============================== Private Data Members ============================= //  
     int m_houseCost;
     int m_numHouses;
     string m_color;
 
-    // Constructor
+    // ============================== Constructor ====================================== //
     public ColorProperty(string name, int index, Board.Actions action, int purchasePrice, int houseCost, List<int> rentPrices, string description, string color) 
         : base (name, index, action, purchasePrice, description)
     {
@@ -19,6 +19,7 @@ public class ColorProperty : Property
         m_color = color;
     }
 
+    // ============================== Override Methods ================================= //
     public override int RentPrice
     {
         get
@@ -32,7 +33,6 @@ public class ColorProperty : Property
             // Otherwise standard price
             return m_rentPrices[Houses];
         }
-        
     }
 
     // What action a player must do, landing on this property
@@ -51,28 +51,15 @@ public class ColorProperty : Property
                     return Board.Actions.LandedOn_MortgagedProperty;
                 }
                 return Board.Actions.LandedOn_OwnedColorProperty;
-            }    
+            }
             return Board.Actions.LandedOn_UnownedProperty;
         }
-    }
-    public int HouseCost
-    {
-        get { return m_houseCost; }
-    }
-    public int Houses
-    {
-        get { return m_numHouses; }
-        set { m_numHouses = value; }
-    }
-    public string Color
-    {
-        get { return m_color; }
     }
 
     // Description
     public override string Description
     {
-        get 
+        get
         {
             // Owned or not
             string retString = "Owner: ";
@@ -105,7 +92,7 @@ public class ColorProperty : Property
             {
                 retString += "\nHouses: " + Houses + "\n";
             }
-            
+
             retString += "Purchase cost: $" + PurchasePrice + "\n" +
                 "RENT: $" + m_rentPrices[0] + "\n" +
                 "With 1 House: $" + m_rentPrices[1] + "\n" +
@@ -119,6 +106,22 @@ public class ColorProperty : Property
 
             return retString;
         }
+    }
+
+    // ============================== Properties ======================================= //
+
+    public int HouseCost
+    {
+        get { return m_houseCost; }
+    }
+    public int Houses
+    {
+        get { return m_numHouses; }
+        set { m_numHouses = value; }
+    }
+    public string Color
+    {
+        get { return m_color; }
     }
 
     // Checks if all properties are owned by the owner, rent is doubled if so

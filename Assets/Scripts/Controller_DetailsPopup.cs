@@ -5,16 +5,17 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class DetailsPopupController : MonoBehaviour
+public class Controller_DetailsPopup : MonoBehaviour
 {
-    // Unity data members
+    // ============================== Unity Data Members =============================== //
     public TMP_Text m_name;
     public TMP_Text m_details;
-    public GameObject m_window; 
-    
-    private bool m_isActive;
+    public GameObject m_window;
 
-    // Update is called once per frame
+    // ============================== Private Data Members ============================= //
+    bool m_isActive;
+
+    // ============================== Start / Update =================================== //
     void Update()
     {
         // Renders the window above the cursor if it's active
@@ -29,6 +30,8 @@ public class DetailsPopupController : MonoBehaviour
             windowTransform.position = mousePosition;
         }
     }
+
+    // ============================== Public Methods =================================== //
 
     // Creates a propery details window within the screen UI
     public void CreateDetailsWindow(string propertyName, string propertyDetails)
@@ -50,6 +53,5 @@ public class DetailsPopupController : MonoBehaviour
         m_window.SetActive(false);
         m_isActive = false;
     }
-
 }
 

@@ -5,21 +5,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PopupController : MonoBehaviour
+public class Controller_Popup : MonoBehaviour
 {
-    // Unity Data Members
+    // ============================== Unity Data Members =============================== //
     public GameObject m_popupWindow;
     public Button m_popupCloseButton;
     public TMP_Text m_title;
     public TMP_Text m_message;
-    public CameraController m_cameraController;
+    public Controller_Camera m_cameraController;
     public GameObject m_blocker;
 
+    // ============================== Start / Update =================================== //
     public void Start()
     {
         m_popupCloseButton.onClick.AddListener(ClosePopupWindow);
         m_blocker.SetActive(false); 
     }
+
+    // ============================== Public Methods =================================== //
 
     // Closes the popup window
     public void ClosePopupWindow()

@@ -5,24 +5,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class PlayerTrackController : MonoBehaviour
+public class Controller_PlayerTrack : MonoBehaviour
 {
-    // Unity data members
+    // ============================== Unity Data Members =============================== //
     public List<Button> m_playerIcons;
     public GameObject m_movingPlayerMessageWindow;
     public TMP_Text m_movingPlayerMessage;
     public Image m_houseIcon;
     public Image m_hotelIcon;
 
-    // Private data members
-    private List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
-    private float m_iconMovementAnimationDuration = .25f; 
+    // ============================== Private Data Members ============================= //
+    List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
+    float m_iconMovementAnimationDuration = .25f;
 
-    // Set the player moving message to inactive
-    private void Start()
+    // ============================== Start / Update =================================== //
+    void Start()
     {
         m_movingPlayerMessageWindow.SetActive(false);
     }
+
+    // ============================== Public Methods =================================== //
 
     // Sets the player icon buttons with the correct order assigned by GameController
     public void SetIcons(List<Button> icons)
@@ -103,37 +105,6 @@ public class PlayerTrackController : MonoBehaviour
             // Add this lane for the current player
             m_playerLanes.Add(currentLane);
         }
-    }
-
-    // Obtains the horizontal position of an icon depending on what space it's on
-    private float GetHorizontalPositon(int location)
-    {
-        switch (location) 
-        {
-            case 0:
-                return 5.25f;
-            case 1:
-                return 4f;
-            case 2:
-                return 3f;
-            case 3:
-                return 2f;
-            case 4:
-                return 1f;
-            case 5:
-                return 0f;
-            case 6:
-                return -1f;
-            case 7:
-                return -2f;
-            case 8:
-                return -3f;
-            case 9:
-                return -4f;
-            case 10:
-                return -5.25f;
-        }
-        throw new ArgumentException("Space index out of range...");
     }
 
     // Obtains the location that a player should be at,
@@ -240,5 +211,38 @@ public class PlayerTrackController : MonoBehaviour
 
         // Uncover action window
         m_movingPlayerMessageWindow.SetActive(false);
+    }
+
+    // ============================== Private Methods ================================== //
+
+    // Obtains the horizontal position of an icon depending on what space it's on
+    float GetHorizontalPositon(int location)
+    {
+        switch (location)
+        {
+            case 0:
+                return 5.25f;
+            case 1:
+                return 4f;
+            case 2:
+                return 3f;
+            case 3:
+                return 2f;
+            case 4:
+                return 1f;
+            case 5:
+                return 0f;
+            case 6:
+                return -1f;
+            case 7:
+                return -2f;
+            case 8:
+                return -3f;
+            case 9:
+                return -4f;
+            case 10:
+                return -5.25f;
+        }
+        throw new ArgumentException("Space index out of range...");
     }
 }

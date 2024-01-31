@@ -1,77 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// CLASS
+///     Action_TwoChoice
+/// 
+/// SYSNOPSIS
+///     Action_TwoChoice : MonoBehavior - class to handle functionality and user
+///     interaction with a two choice action.
+///     
+/// DESCRIPTION
+///     Controls a window in the player panel, under "Current Player Action".
+///     This window is used when a player encounters an action which contains two 
+///     choices, and therefore two seperate buttons.
+/// 
+/// </summary>
 public class Action_TwoChoice : MonoBehaviour
 {
-    // Unity data members
-    public GameController m_gameController;
+    // ============================== Unity Data Members =============================== //
+    public Controller_Game m_gameController;
     public TMP_Text m_title;
     public Button m_leftButton;
     public Button m_rightButton;
     public TMP_Text m_leftButtonText;
     public TMP_Text m_rightButtonText;
 
-    // Set the button listeners
-    void Start()
-    { }
+    // ============================== Properties ======================================= //
 
-    // Getters
-    public Button LeftButton
-    {
-        get { return m_leftButton; }
-    }
-    public Button RightButton
-    {
-        get { return m_rightButton; }
-    }
-    public string LeftButtonText
-    {
-        set { m_leftButtonText.text = value; }
-    }
-    public string RightButtonText
-    {
-        set { m_rightButtonText.text = value; }
-    }
+    // Returns reference to the left button
+    public Button LeftButton { get { return m_leftButton; } }
+
+    // Returns reference to the right button
+    public Button RightButton { get { return m_rightButton; } }
+
+    // Sets the text for the left button
+    public string LeftButtonText { set { m_leftButtonText.text = value; } }
+
+    // Sets the text for the left button
+    public string RightButtonText { set { m_rightButtonText.text = value; } }
+
+    // Sets the color of the act button's text, and font according to the color
     public Color LeftButtonColor
     {
         set
         {
             // Make bold if an actual color
             if (value != Color.black)
-            {
                 m_leftButtonText.fontStyle = FontStyles.Bold;
-            }
+            
+            // If it's black make it a normal font style
             else
-            {
                 m_leftButtonText.fontStyle = FontStyles.Normal;
-            }
+            
             m_leftButtonText.color = value;
         }
     }
+
+    // Sets the color of the act button's text, and font according to the color
     public Color RightButtonColor
     {
         set
         {
             // Make bold if an actual color
             if (value != Color.black)
-            {
                 m_rightButtonText.fontStyle = FontStyles.Bold;
-            }
+
+            // If it's black make it a normal font style
             else
-            {
                 m_rightButtonText.fontStyle = FontStyles.Normal;
-            }
+            
             m_rightButtonText.color = value;
         }
     }
 
-
-    // Assign the title of the window
-    public string Title
-    {
-        set { m_title.text = value; }
-    }
+    // Sets the title text of the window
+    public string Title { set { m_title.text = value; } }
 }

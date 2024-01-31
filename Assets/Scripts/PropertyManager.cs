@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class PropertyManager : MonoBehaviour
 {
     // Data memebrs
-    public GameController m_gameController;
+    public Controller_Game m_gameController;
 
-    // Unity data members
+    // ============================== Unity Data Members =============================== //
     public TMP_Text m_title;
     public Button m_buyHouseOrHotelButton;
     public TMP_Text m_buyHouseOrHotelButtonText;
@@ -21,9 +21,9 @@ public class PropertyManager : MonoBehaviour
     public TMP_Text m_description;
     public GameObject m_window;
     public Scrollbar m_scrollbar;
-    
 
-    // Start is called before the first frame update
+
+    // ============================== Start / Update =================================== //
     void Start()
     {
         // Set window to be inactive to start
@@ -31,6 +31,7 @@ public class PropertyManager : MonoBehaviour
         m_backButton.onClick.AddListener(ClosePropertyManger);
     }
 
+    // ============================== Public Methods =================================== //
     public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, 
         bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, 
         bool mortgageAvailible, bool unmortgageAvailible, int propertyIndex)
@@ -116,5 +117,4 @@ public class PropertyManager : MonoBehaviour
         m_sellHouseOrHotelButton.onClick.RemoveAllListeners();
         m_mortgageButton.onClick.RemoveAllListeners();
     }
-
 }

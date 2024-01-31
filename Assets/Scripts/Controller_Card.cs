@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class CardController
+public class Controller_Card
 {
-    // Data members
-    private List<Card> m_chanceCardDeck = new List<Card>();
-    private List<Card> m_communityChestCardDeck = new List<Card>();
+    // ============================== Public Data Members ============================== //
     public enum Actions
     {
         collectMoney,
@@ -19,8 +17,13 @@ public class CardController
         getJailCard
     }
 
-    // Constructor
-    public CardController()
+    // ============================== Private Data Members ============================= //
+    List<Card> m_chanceCardDeck = new List<Card>();
+    List<Card> m_communityChestCardDeck = new List<Card>();
+
+
+    // ============================== Constructor ====================================== //
+    public Controller_Card()
     {
         // Init cards lists
         InitializeCardLists();
@@ -30,7 +33,9 @@ public class CardController
         ShuffleCardDeck(m_communityChestCardDeck);
     }
 
-    // Take card functions
+    // ============================== Public Methods =================================== //
+
+    // Take card methods
     public Card TakeChanceCard()
     {
         // Take the card, move it to back of list
@@ -48,6 +53,7 @@ public class CardController
         return retCard;
     }
 
+    // ============================== Private Methods ================================== //
 
     // Initialze the lists of cards from data file
     void InitializeCardLists()

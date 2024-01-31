@@ -5,26 +5,26 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuController : MonoBehaviour
+public class Controller_StartMenu : MonoBehaviour
 {
-    // Unity data members
+    // ============================== Unity Data Members =============================== //
     public Canvas m_menuCanvas;
     public Button m_startButton;
     public Button m_enterPlayerButton;
     public TMP_InputField m_nameInputField;
     public List<Button> m_iconButtons;
-    public PopupController m_popupContoller;
+    public Controller_Popup m_popupContoller;
 
-    // Private data members
-    private int m_playerCount = 0;
-    private string m_selectedIcon;
-    private Color m_selectedColor;
-    private PlayerFile m_playerFile = new PlayerFile();
+    // ============================== Private Data Members ============================= //
+    int m_playerCount = 0;
+    string m_selectedIcon;
+    Color m_selectedColor;
+    PlayerFile m_playerFile = new PlayerFile();
 
-    // Start is called before the first frame update
+    // ============================== Start / Update =================================== //
     void Start()
     {
-        // Initialize button functions
+        // Initialize button methods
         m_startButton.onClick.AddListener(StartGame);  
         m_enterPlayerButton.onClick.AddListener(CreatePlayer);
         foreach (Button iconButton in m_iconButtons)
@@ -41,8 +41,6 @@ public class MenuController : MonoBehaviour
         // Hide the popup window
         m_popupContoller.ClosePopupWindow();
     }
-
-    // Update is called once per frame
     void Update()
     {
         // Game can start w/ 2 players  // NEEDS TO CHANGE LATER BACK TO >= 2!!!
@@ -66,8 +64,10 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    // ============================== Public Methods =================================== //
+
     // User selected an icon 
-    private void SelectedIcon(Button selectedIconButton)
+    void SelectedIcon(Button selectedIconButton)
     {
         // Clear all button colors, highlight selected button
         foreach (Button iconButton in m_iconButtons)
@@ -88,17 +88,17 @@ public class MenuController : MonoBehaviour
     }
 
     // Starts the game
-    private void StartGame()
+    void StartGame()
     {
         // Close the Xml Player File
         m_playerFile.ClosePlayerFile();
 
         // Load game scene
-        SceneManager.LoadScene("Board Scene");
+        SceneManager.LoadScene("Game");
     }
 
     // Creates player
-    private void CreatePlayer()
+    void CreatePlayer()
     {
         // Obtain the name
         string name = m_nameInputField.text;
@@ -149,7 +149,6 @@ public class MenuController : MonoBehaviour
                 "Player " + (m_playerCount + 1) + " added successfuly\nMaximum players created!", 'G');
         }
         
-
         // Increment the number of players
         m_playerCount++;
     }

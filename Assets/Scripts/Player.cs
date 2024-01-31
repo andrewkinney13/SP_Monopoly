@@ -5,26 +5,25 @@ using UnityEngine;
 
 public class Player
 {
-    // Data members
-    private string m_name;
-    private string m_icon;
-    private int m_cash;
-    private int m_playerNum;
-    private int m_currentSpace;
-    private int m_diceRollResult;
-    private int m_orderDeterminingDiceResult;
-    private bool m_turnInitialized;
-    private bool m_rolledDice;
-    private bool m_rolledDoubles;
-    private bool m_spaceActionCompleted;
-    private bool m_turnCompleted;
-    private bool m_inJail;
-    private bool m_bankrupt;
-    private int m_comunityChestJailCards;
-    private int m_chanceJailCards;
-    private List<Space> m_properties = new List<Space>(); 
+    // ============================== Private Data Members ============================= //
+    string m_name;
+    string m_icon;
+    int m_cash;
+    int m_playerNum;
+    int m_currentSpace;
+    int m_diceRollResult;
+    int m_orderDeterminingDiceResult;
+    bool m_turnInitialized;
+    bool m_rolledDice;
+    bool m_rolledDoubles;
+    bool m_spaceActionCompleted;
+    bool m_turnCompleted;
+    bool m_inJail;
+    int m_comunityChestJailCards;
+    int m_chanceJailCards;
+    List<Space> m_properties = new List<Space>();
 
-    // Constructor
+    // ============================== Constructor ====================================== //
     public Player(string name, string icon, int playerNum) 
     {
         Name = name;
@@ -37,7 +36,7 @@ public class Player
         m_cash = 1500;
     }
 
-    // Getters and setters
+    // ============================== Properties ======================================= //
     public string Name
     {
         get { return m_name; }
@@ -182,8 +181,6 @@ public class Player
         set { m_comunityChestJailCards = value; }
 
     }
-
-    // Being bankrupt is determined by your cash being 0 or below
     public bool Bankrupt
     {
         get 
@@ -191,5 +188,4 @@ public class Player
             return Cash <= 0;
         }
     }
-
 }

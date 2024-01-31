@@ -5,9 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndGameController : MonoBehaviour
+public class Controller_EndGame : MonoBehaviour
 {
-    // Data members
+    // ============================== Unity Data Members =============================== //
     public TMP_Text m_title;
     public Sprite m_icon;
     public List<Sprite> m_icons;
@@ -15,7 +15,7 @@ public class EndGameController : MonoBehaviour
     public TMP_Text m_propertyList;
     public Button m_exitButton;
 
-    // Start is called before the first frame update
+    // ============================== Start / Update =================================== //
     void Start()
     {
         // Read the end game file

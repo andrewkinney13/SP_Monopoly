@@ -5,23 +5,23 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TradingController : MonoBehaviour
+public class Controller_Trading : MonoBehaviour
 {
-    // Unity stuff
-    public GameController m_gameController;
+    // ============================== Unity Data Members =============================== //
+    public Controller_Game m_gameController;
     public GameObject m_tradingMenu;
     public TMP_Text m_tradingPlayerTitle;
-    public UnityEngine.UI.Image m_tradingPlayerIcon;
+    public Image m_tradingPlayerIcon;
     public Button m_sendButton;
     public Button m_doneButton;
     public TMP_Dropdown m_propertyDropdown;
     public TMP_InputField m_cashInput;
 
-    // Data members
-    private int m_availibleCash;
-    private string m_playerName;
+    // ============================== Private Data Members ============================= //
+    int m_availibleCash;
+    string m_playerName;
 
-    // Start is called before the first frame update
+    // ============================== Start / Update =================================== //
     void Start()
     {
         // Add listeners
@@ -33,7 +33,7 @@ public class TradingController : MonoBehaviour
         m_tradingMenu.SetActive(false);
     }
 
-    // Creates the trading menu window
+    // ============================== Public Methods =================================== //
     public void CreateTradingMenu(string name, Sprite icon, List<string> propertiesAndCards, int availibleCash)
     {
         // Clear cash input
@@ -67,7 +67,9 @@ public class TradingController : MonoBehaviour
         m_tradingMenu.SetActive(false);
     }
 
-    // Set the send button function
+    // ============================== Public Methods =================================== //
+
+    // Set the send button method
     void SendToGame()
     {
         // Obtain the selected property
@@ -109,7 +111,7 @@ public class TradingController : MonoBehaviour
         Debug.Log(selectedOption);
     }
 
-    // Set the done button function
+    // Set the done button method
     void OnDoneClick()
     {
         // Just set the window to inactive

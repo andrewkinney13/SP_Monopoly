@@ -4,22 +4,23 @@ using UnityEngine;
 
 public class Card
 {
-    // Data members
-    CardController.Actions m_actionType;
+    // ============================== Private Data Members ============================= //
+    Controller_Card.Actions m_actionType;
     string m_description;
     int m_value;
     int m_value2;
     string m_location;
 
-    // Constructor
-    public Card(CardController.Actions actionType, string description)
+    // ============================== Constructor ====================================== //
+    public Card(Controller_Card.Actions actionType, string description)
     {
         m_actionType = actionType;
         m_description = description;
     }
 
-    // Getters and setters
-    public CardController.Actions ActionType
+    // ============================== Properties ======================================= //
+
+    public Controller_Card.Actions ActionType
     {
         get { return m_actionType; }
     }
@@ -33,8 +34,8 @@ public class Card
         get
         {
             // Check access exception
-            if (m_actionType == CardController.Actions.getJailCard
-                || m_actionType == CardController.Actions.move)
+            if (m_actionType == Controller_Card.Actions.getJailCard
+                || m_actionType == Controller_Card.Actions.move)
                 throw new System.Exception("Accessing invalid property (Value) for this card");
             return m_value;
         }
@@ -45,7 +46,7 @@ public class Card
         get
         {
             // Check access exception
-            if (m_actionType != CardController.Actions.makeRepairs)
+            if (m_actionType != Controller_Card.Actions.makeRepairs)
                 throw new System.Exception("Accessing invalid property (Value2) for this card");
             return m_value2;
         }
@@ -56,7 +57,7 @@ public class Card
         get
         {
             // Check access exception
-            if (m_actionType != CardController.Actions.move)
+            if (m_actionType != Controller_Card.Actions.move)
                 throw new System.Exception("Accessing invalid property (Value) for this card");
             return m_location;
         }

@@ -8,10 +8,12 @@ using UnityEngine;
 
 public class PlayerFile
 {
-    // Data members
-    private XmlWriter m_writer;
-    private XmlReader m_reader;
-    private string m_fileName = "Players.xml";
+    // ============================== Private Data Members ============================= //
+    XmlWriter m_writer;
+    XmlReader m_reader;
+    string m_fileName = "Players.xml";
+
+    // ============================== Public Methods =================================== //
 
     // Creates "players.xml" file to save player data 
     public void CreatePlayerFile()

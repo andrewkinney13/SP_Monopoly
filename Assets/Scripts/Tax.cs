@@ -4,22 +4,18 @@ using UnityEngine;
 
 public class Tax : Space
 {
-    // Data members
-    private int m_taxCost;
+    // ============================== Private Data Members ============================= //
+    int m_taxCost;
 
-    // Constructor
+    // ============================== Constructor ====================================== //
     public Tax(string name, int index, Board.Actions action, int taxCost, string description) : base(name, index, action, description)
     {
         m_taxCost = taxCost;
     }
 
-    // Getters and setters
+    // ============================== Properties ======================================= //
     public int TaxCost 
     { 
         get { return m_taxCost; } 
     }
-
-
-
-    
 }
