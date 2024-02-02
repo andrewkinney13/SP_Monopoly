@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Controller_StartMenu : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public Canvas m_menuCanvas;
     public Button m_startButton;
     public Button m_enterPlayerButton;
@@ -15,13 +15,13 @@ public class Controller_StartMenu : MonoBehaviour
     public List<Button> m_iconButtons;
     public Controller_Popup m_popupContoller;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     int m_playerCount = 0;
     string m_selectedIcon;
     Color m_selectedColor;
     PlayerFile m_playerFile = new PlayerFile();
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Initialize button methods
@@ -64,7 +64,7 @@ public class Controller_StartMenu : MonoBehaviour
         }
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // User selected an icon 
     void SelectedIcon(Button selectedIconButton)

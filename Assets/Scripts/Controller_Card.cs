@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Controller_Card
 {
-    // ============================== Public Data Members ============================== //
+    // ======================================== Public Data Members ======================================== //
     public enum Actions
     {
         collectMoney,
@@ -17,12 +17,12 @@ public class Controller_Card
         getJailCard
     }
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     List<Card> m_chanceCardDeck = new List<Card>();
     List<Card> m_communityChestCardDeck = new List<Card>();
 
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Controller_Card()
     {
         // Init cards lists
@@ -33,7 +33,7 @@ public class Controller_Card
         ShuffleCardDeck(m_communityChestCardDeck);
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Take card methods
     public Card TakeChanceCard()
@@ -53,7 +53,7 @@ public class Controller_Card
         return retCard;
     }
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
     // Initialze the lists of cards from data file
     void InitializeCardLists()

@@ -7,24 +7,24 @@ using TMPro;
 
 public class Controller_PlayerTrack : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public List<Button> m_playerIcons;
     public GameObject m_movingPlayerMessageWindow;
     public TMP_Text m_movingPlayerMessage;
     public Image m_houseIcon;
     public Image m_hotelIcon;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     float m_iconMovementAnimationDuration = .25f;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         m_movingPlayerMessageWindow.SetActive(false);
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Sets the player icon buttons with the correct order assigned by GameController
     public void SetIcons(List<Button> icons)
@@ -213,7 +213,7 @@ public class Controller_PlayerTrack : MonoBehaviour
         m_movingPlayerMessageWindow.SetActive(false);
     }
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
     // Obtains the horizontal position of an icon depending on what space it's on
     float GetHorizontalPositon(int location)

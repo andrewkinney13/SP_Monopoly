@@ -7,15 +7,15 @@ using UnityEngine.UI;
 
 public class Controller_DetailsPopup : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public TMP_Text m_name;
     public TMP_Text m_details;
     public GameObject m_window;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     bool m_isActive;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Update()
     {
         // Renders the window above the cursor if it's active
@@ -31,7 +31,7 @@ public class Controller_DetailsPopup : MonoBehaviour
         }
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Creates a propery details window within the screen UI
     public void CreateDetailsWindow(string propertyName, string propertyDetails)

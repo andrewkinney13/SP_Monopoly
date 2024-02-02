@@ -8,13 +8,13 @@ using UnityEngine.UI;
 // Handles zooming and moving around while looking at the board
 public class Controller_Camera : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public Button m_leftRotate;
     public Button m_rightRotate;
     public GameObject m_cameraPivot;
     public RectTransform m_screenBorder;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     Camera m_camera;
     Vector3 m_lastMousePosition;
     float m_minSize = 50.0f;
@@ -22,7 +22,7 @@ public class Controller_Camera : MonoBehaviour
     bool m_zoomEnabled;
     bool m_moveEnabled;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Initialize camera w/ proper size
@@ -45,7 +45,7 @@ public class Controller_Camera : MonoBehaviour
         Move();
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     // So other classes with scroll bars can disable zoom
     public bool ZoomEnabled
@@ -61,7 +61,7 @@ public class Controller_Camera : MonoBehaviour
         get { return m_moveEnabled; }
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Moves the camera according to cursor position
     public void Move()
@@ -154,7 +154,7 @@ public class Controller_Camera : MonoBehaviour
         m_camera.transform.position = new Vector3(-1000f, 0f, -1f);
     }
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
     // Rotate camera 
     void RotateCamera(int angle)

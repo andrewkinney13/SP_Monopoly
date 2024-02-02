@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Railroad : Property
 {
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Railroad(string name, int index, Board.Actions action, int purchasePrice, int rentPrice, string description)
         : base (name, index, action, purchasePrice, description)
     {
@@ -18,7 +18,7 @@ public class Railroad : Property
         m_rentPrices.Add(rentPrice * 8);
     }
 
-    // ============================== Override Methods ================================= //
+    // ======================================== Override Methods =========================================== //
 
     // Returns land on price for how many railroads owned
     public override int RentPrice
@@ -83,7 +83,7 @@ public class Railroad : Property
         }
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
     public int AlliedRailroads
     {
         get

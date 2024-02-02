@@ -19,7 +19,7 @@ using UnityEngine;
 /// </summary>
 public class Board
 {
-    // ============================== Public Data Members ============================== //
+    // ======================================== Public Data Members ======================================== //
 
     // Types of actions a space can require a player to do
     public enum Actions
@@ -43,7 +43,7 @@ public class Board
         ERROR
     }
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     Controller_Card m_cardController = new Controller_Card();
     List<Space> m_spaces = new List<Space>();
     List<Player> m_players = new List<Player>();
@@ -51,10 +51,10 @@ public class Board
     const int MAX_PLAYERS = 6;
     int m_turnNum;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Board() { }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     // Returns a player object reference who has the turn
     public Player CurrentPlayer { get { return m_players[m_turnNum]; } }
@@ -68,7 +68,7 @@ public class Board
     ///     GetSpace - accessing space reference via index.
     /// 
     /// SYSNOPSIS
-    ///     Space GetSpace(int a_index);
+    ///     public Space GetSpace(int a_index);
     ///         a_index         --> what index to access the space from.
     ///     
     /// RETURNS
@@ -93,7 +93,7 @@ public class Board
     ///     GetPlayer - accessing player reference via index.
     /// 
     /// SYSNOPSIS
-    ///     Player GetPlayer(int a_index);
+    ///     public Player GetPlayer(int a_index);
     ///         a_index         --> what index to access the player from.
     /// 
     /// RETURNS
@@ -119,7 +119,7 @@ public class Board
     ///                         via index.
     /// 
     /// SYSNOPSIS
-    ///     int GetPropertyHouses(int a_index);
+    ///     public int GetPropertyHouses(int a_index);
     ///         a_index         --> what index to access the property from, who's house 
     ///                             amount we're looking.
     /// RETURNS
@@ -149,7 +149,7 @@ public class Board
     ///     GetPlayerIconName - accessing player icon name via index.
     /// 
     /// SYSNOPSIS
-    ///     string GetPlayerIconName(int a_index);
+    ///     public string GetPlayerIconName(int a_index);
     ///         a_index         --> what player index to access the icon
     ///                             name from.
     ///                             
@@ -175,7 +175,7 @@ public class Board
     ///     GetPlayerByName - accessing player by name.
     /// 
     /// SYSNOPSIS
-    ///     string GetPlayerByName(string a_name);
+    ///     public string GetPlayerByName(string a_name);
     ///         a_name          --> name of the player.
     /// 
     /// RETURNS
@@ -207,7 +207,7 @@ public class Board
     ///     GetPropertyByName - accessing property by name.
     /// 
     /// SYSNOPSIS
-    ///     string GetPropertyByName(string a_name);
+    ///     public string GetPropertyByName(string a_name);
     ///         a_name          --> name of the property.
     ///                             
     /// RETURNS
@@ -244,7 +244,7 @@ public class Board
     ///     GetPlayerPropertiesAndCardsStrings - access list of players' properties and cards.
     /// 
     /// SYSNOPSIS
-    ///     List<string> GetPlayerPropertiesAndCardsStrings(Player a_player);
+    ///     public List<string> GetPlayerPropertiesAndCardsStrings(Player a_player);
     ///         a_player        --> object reference of a player.
     ///        
     /// DESCRIPTION
@@ -286,6 +286,7 @@ public class Board
 
         return items;
     }
+    /* public List<string> GetPlayerElligibleTradeStrings(Player a_player) */
 
     /// <summary>
     /// 
@@ -424,6 +425,7 @@ public class Board
                 "from a non-owned property type space...");
         }
     }
+    /* public string GetLandedOnOwnedPropertyTitle() */
 
     /// <summary>
     /// 
@@ -492,7 +494,8 @@ public class Board
     ///     GetLandedOnTaxCost - returns how much tax is for a Tax space.
     ///     
     /// DESCRIPTION
-    ///     
+    ///     Based on the tax space the current player is on, returns the 
+    ///     tax amount for that space.
     ///
     /// RETURNS
     ///     Returns tax amount for the current player's space, when they're on a
@@ -521,7 +524,7 @@ public class Board
     ///     GetRepairCost - returns cost for how much repairing a property would be.
     /// 
     /// SYSNOPSIS
-    ///     string GetRepairCost(int a_houseCost, int a_hotelCost);
+    ///     public string GetRepairCost(int a_houseCost, int a_hotelCost);
     ///         a_houseCost          --> how much each house costs to repair
     ///         a_hotelCost          --> how much each hotel costs to repair
     /// DESCRIPTION
@@ -563,8 +566,9 @@ public class Board
         }
         return sumCost;
     }
+    /* public int GetRepairCost(int a_houseCost, int a_hotelCost) */
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Initializes the spaces and the players
     public void InitializeBoard()
@@ -579,7 +583,7 @@ public class Board
     ///     UtilityCostDetermined - updates Utility flag.
     /// 
     /// SYSNOPSIS
-    ///     void UtilityCostDetermined(int a_diceRoll);
+    ///     public void UtilityCostDetermined(int a_diceRoll);
     ///         a_diceRoll          --> value of the dice roll that the player made.
     ///         
     /// DESCRIPTION
@@ -660,6 +664,7 @@ public class Board
         else
             return Actions.EndTurn;
     }
+    /* public Actions DetermineAction() */
 
     /// <summary>
     /// 
@@ -681,28 +686,26 @@ public class Board
         // Reset utility bools 
         ResetUtilities();
 
-        // Update whose turn is is (don't use a bankrupt player)
+        // Update whose turn is is 
         int searchCount = 0;
         while (true)
         {
+            // Find next player
             if (m_turnNum < m_players.Count - 1)
-            {
                 m_turnNum++;
-            }
             else
-            {
                 m_turnNum = 0;
-            }
 
+            // Skip if bankrupt
             if (!CurrentPlayer.Bankrupt)
-            {
                 break;
-            }
-
+            
+            // Prevent infinite loop
             if (searchCount > MAX_PLAYERS)
                 throw new Exception("All players bankrupted, yet trying to access next turn...\n");
         }
     }
+    /* public void UpdateTurn() */
 
     // Resets the attributes of a player at the end of their turn
     public void ResetCurrentPlayer()
@@ -728,9 +731,7 @@ public class Board
         foreach (Player player in m_players)
         {
             if (!player.TurnInitialized)
-            {
                 return false;
-            }
         }
 
         // All players initialized
@@ -783,16 +784,13 @@ public class Board
         foreach (Player player in m_players)
         {
             if (player.Bankrupt)
-            {
                 bankruptPlayers++;
-            }
         }
 
         // Check if all but one are bankrupt
         if (bankruptPlayers == m_players.Count - 1)
-        {
             return true;
-        }
+        
         return false;
     }
 
@@ -802,7 +800,7 @@ public class Board
     ///     DiceRolled - updates board after a dice roll.
     ///     
     /// SYSNOPSIS
-    ///     void DiceRolled(int a_diceResult, bool a_wereDoubles);
+    ///     public void DiceRolled(int a_diceResult, bool a_wereDoubles);
     ///         a_diceResult        --> value of the dice.
     ///         a_wereDoubles       --> if the faces matched.
     ///                             
@@ -830,6 +828,7 @@ public class Board
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
     }
+    /* public void DiceRolled(int a_diceResult, bool a_wereDoubles) */
 
     /// <summary>
     /// 
@@ -906,6 +905,7 @@ public class Board
         // Remove all properties from player
         CurrentPlayer.Properties.Clear();
     }
+    /* public void GoingBankrupt() */
 
     // Player going to jail, update flags and location
     public void GoToJail()
@@ -975,6 +975,7 @@ public class Board
         property.IsPurchased = true;
         CurrentPlayer.Properties.Sort();
     }
+    /* public void PurchaseProperty() */
 
     /// <summary>
     /// 
@@ -1017,6 +1018,7 @@ public class Board
         CurrentPlayer.Cash -= property.RentPrice;
         property.Owner.Cash += property.RentPrice;
     }
+    /* public void PayRent() */
 
     /// <summary>
     /// 
@@ -1033,18 +1035,16 @@ public class Board
     /// </summary>
     public void PayTax()
     {
-        // Cast space and subtract cash
-        if (!(m_spaces[CurrentPlayer.CurrentSpace] is Tax)) 
+        // Check type
+        if (!(m_spaces[CurrentPlayer.CurrentSpace] is Tax))
         {
-            // Cast space
-            Tax taxSpace = (Tax)m_spaces[CurrentPlayer.CurrentSpace];
-
-            // Take cash 
-            CurrentPlayer.Cash -= taxSpace.TaxCost;
+            throw new Exception("Attempting to pay tax on non-Tax space: " +
+            m_spaces[CurrentPlayer.CurrentSpace].Name);
         }
 
-        throw new Exception("Attempting to pay tax on non-Tax space: " + 
-            m_spaces[CurrentPlayer.CurrentSpace].Name);
+        // Cast space and subtract cash
+        Tax taxSpace = (Tax)m_spaces[CurrentPlayer.CurrentSpace];
+        CurrentPlayer.Cash -= taxSpace.TaxCost;
     }
 
     /// <summary>
@@ -1053,7 +1053,7 @@ public class Board
     ///     BuyHouse - player is buying a house for a property.
     ///     
     /// SYNOPSIS
-    ///     void BuyHouse(int a_propertyIndex)
+    ///     public void BuyHouse(int a_propertyIndex)
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're buying a house for.
     ///     
@@ -1089,7 +1089,7 @@ public class Board
     ///     SellHouse - player is selling house on a property.
     ///     
     /// SYNOPSIS
-    ///     void SellHouse(int a_propertyIndex)
+    ///     public void SellHouse(int a_propertyIndex)
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're buying a house for.
     ///     
@@ -1119,11 +1119,37 @@ public class Board
         property.Houses--;
     }
 
-    // Player is mortgaging a property
-    public void MortgageProperty(int propertyIndex)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     MortgageProperty - player is mortgaging a property.
+    ///     
+    /// SYNOPSIS
+    ///     public void MortgageProperty(int a_propertyIndex)
+    ///         a_propertyIndex         --> space index of the property that
+    ///                                     they're mortgaging.
+    ///     
+    /// DESCRIPTION
+    ///     Player is selling a house on their property.
+    /// 
+    /// EXCEPTION
+    ///     Invalid mortgage attemted.
+    ///    
+    /// </summary>
+    public void MortgageProperty(int a_propertyIndex)
     {
+        // Check type
+        if (!(GetSpace(a_propertyIndex) is Property))
+            throw new Exception("Attempting to mortgage non-Property type space: " +
+                GetSpace(a_propertyIndex).Name);
+
         // Obtain property
-        Property property = (Property)GetSpace(propertyIndex);
+        Property property = (Property)GetSpace(a_propertyIndex);
+
+        // Check that mortgaging is availible
+        if (property.IsMortgaged)
+            throw new Exception("Attempting to mortgage property which is already mortgaged: " +
+                property.Name);
 
         // Add mortgage value to player's cash
         CurrentPlayer.Cash += property.MortgageValue;
@@ -1132,11 +1158,36 @@ public class Board
         property.IsMortgaged = true;
     }
 
-    // Player is unmortgaging their property
-    public void UnmortgageProperty(int propertyIndex)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     UnmortgageProperty - player is mortgaging a property.
+    ///     
+    /// SYNOPSIS
+    ///     public void UnmortgageProperty(int a_propertyIndex)
+    ///         a_propertyIndex         --> space index of the property that
+    ///                                     they're mortgaging.
+    ///     
+    /// DESCRIPTION
+    ///     Player is selling a house on their property.
+    /// 
+    /// EXCEPTION
+    ///     Invalid mortgage attemted.
+    ///    
+    /// </summary>
+    public void UnmortgageProperty(int a_propertyIndex)
     {
+        // Check type
+        if (!(GetSpace(a_propertyIndex) is Property))
+            throw new Exception("Attempting to unmortgage non-Property type space: " +
+                GetSpace(a_propertyIndex).Name);
+
         // Obtain the property 
-        Property property = (Property)GetSpace(propertyIndex);
+        Property property = (Property)GetSpace(a_propertyIndex);
+
+        // Check unmortgage availible
+        if (!UnmortgageAvailible(CurrentPlayer, (ColorProperty)property))
+            throw new Exception("Attempting to ");
 
         // Add mortgage value to player's cash
         CurrentPlayer.Cash -= property.MortgageValue;
@@ -1145,18 +1196,38 @@ public class Board
         property.IsMortgaged = false;
     }
 
-    // Determines whether or not a player can buy a house on a given property
-    public bool HouseAvailible(Player player, ColorProperty property)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     HouseAvailible - is a house availible for a player's property.
+    ///     
+    /// SYNOPSIS
+    ///     public bool HouseAvailible(Player a_player, ColorProperty a_property)
+    ///         a_player                --> player trying to buy a house.
+    ///         a_property              --> property getting house on it.
+    ///     
+    /// DESCRIPTION
+    ///     Checks whether or not a player can buy a house on a property they own.
+    ///     This method enforces the rule that houses are bought on properties one
+    ///     at a time, and not all at once. 
+    ///     
+    /// RETURNS
+    ///     True if house is availible, false if not.
+    ///    
+    /// </summary>
+    public bool HouseAvailible(Player a_player, ColorProperty a_property)
     {
-        // Total number of houses full, property is mortgaged, not enough cash, or full color set unowned
-        if (property.Houses >= 4 || property.HouseCost > player.Cash || property.IsMortgaged || !property.ColorSetOwned)
+        // Total number of houses full, property is mortgaged,
+        // not enough cash, or full color set unowned
+        if (a_property.Houses >= 4 || a_property.HouseCost > a_player.Cash 
+            || a_property.IsMortgaged || !a_property.ColorSetOwned)
         {
             return false;
         }
 
         // Total house number would exceed other house minimum by > 1
         int houseMin = 4;
-        List<ColorProperty> colorSet = GetColorSet(property);
+        List<ColorProperty> colorSet = GetColorSet(a_property);
 
         // Find smallest num of houses
         foreach (ColorProperty colorProperty in colorSet)
@@ -1168,25 +1239,44 @@ public class Board
         }
 
         // Check that new house total would not exeed min by 1
-        if (property.Houses + 1 - houseMin > 1)
+        if (a_property.Houses + 1 - houseMin > 1)
         {
             return false;
         }
 
         return true;
     }
+    /* public bool HouseAvailible(Player a_player, ColorProperty a_property) */
 
-    public bool SellHouseAvailible(ColorProperty property)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     SellHouseAvailible - is a house availible to sell.
+    ///     
+    /// SYNOPSIS
+    ///     public bool SellHouseAvailible(ColorProperty a_property)
+    ///         a_property              --> property trying to sell house.
+    ///     
+    /// DESCRIPTION
+    ///     Checks whether or not a player can sell a house on a property they own.
+    ///     This method enforces the rule that houses are sold on properties one
+    ///     at a time, and not all at once. 
+    ///     
+    /// RETURNS
+    ///     True if selling house is availible, false if not.
+    ///    
+    /// </summary>
+    public bool SellHouseAvailible(ColorProperty a_property)
     {
         // Non-zero num of houses, not a hotel
-        if (property.Houses <= 0 || property.Houses >= 5)
+        if (a_property.Houses <= 0 || a_property.Houses >= 5)
         {
             return false;
         }
 
         // Total house number would be lower than the max by > 1
         int houseMax = 0;
-        List<ColorProperty> colorSet = GetColorSet(property);
+        List<ColorProperty> colorSet = GetColorSet(a_property);
 
         // Find smallest num of houses
         foreach (ColorProperty colorProperty in colorSet)
@@ -1198,25 +1288,45 @@ public class Board
         }
 
         // Check that new house total would not exeed min by 1
-        if (houseMax - (property.Houses - 1) > 1)
+        if (houseMax - (a_property.Houses - 1) > 1)
         {
             return false;
         }
 
         return true;
     }
+    /* public bool SellHouseAvailible(ColorProperty a_property) */
 
-    // Determines whether or not a player can buy a hotel on a given property
-    public bool HotelAvailible(Player player, ColorProperty property)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     HotelAvailible - is a hotel availible to sell.
+    ///     
+    /// SYNOPSIS
+    ///     public bool HotelAvailible(Player a_player, ColorProperty a_property)
+    ///         a_player                --> player buying the hotel.
+    ///         a_property              --> property getting hotel on it.
+    ///     
+    /// DESCRIPTION
+    ///     Checks whether or not a player can buy a hotel on a property they own.
+    ///     This method enforces the rule that hotels can only be bought when there's already 
+    ///     4 houses on a property, and all other properties also have 4 houses.
+    /// 
+    /// RETURNS
+    ///     True if hotel is availible, false if not.
+    ///    
+    /// </summary>
+    public bool HotelAvailible(Player a_player, ColorProperty a_property)
     {
         // House value is not 4, property is mortgaged, or not enough cash
-        if (property.Houses != 4 || property.HouseCost > player.Cash || property.IsMortgaged)
+        if (a_property.Houses != 4 || a_property.HouseCost > a_player.Cash 
+            || a_property.IsMortgaged)
         {
             return false;
         }
 
         // Color set all has at least 4 houses
-        List<ColorProperty> colorSet = GetColorSet(property);
+        List<ColorProperty> colorSet = GetColorSet(a_property);
         foreach (ColorProperty colorProperty in colorSet)
         {
             if (colorProperty.Houses < 4)
@@ -1228,7 +1338,23 @@ public class Board
         return true;
     }
 
-    // Determines whether or not a player can unmortgage their property
+    /// <summary>
+    /// 
+    /// NAME
+    ///     UnmortgageAvailible - can player unmortgage property
+    ///     
+    /// SYNOPSIS
+    ///     public bool UnmortgageAvailible(Player a_player, ColorProperty a_property)
+    ///         a_player                --> player trying to mortgage.
+    ///         a_property              --> property getting unmortgaged.
+    ///     
+    /// DESCRIPTION
+    ///     Checks if a property can be bought back (unmortgaged).
+    /// 
+    /// RETURNS
+    ///     True if unmortgage is availible, false if not.
+    ///    
+    /// </summary>
     public bool UnmortgageAvailible(Player player, Property property)
     {
         // Property is mortgaged, and player can afford to buy it
@@ -1239,56 +1365,49 @@ public class Board
         return false;
     }
 
-    // Saves game data to text file for end game scene to read
-    public void SaveEndGameData()
+    /// <summary>
+    /// 
+    /// NAME
+    ///     GetWinner - returns who won the game.
+    ///     
+    /// DESCRIPTION
+    ///     Determines winner and returns reference to them.
+    /// 
+    /// RETURNS
+    ///     Player reference who won the game (last remaining player with money).
+    ///    
+    /// </summary>
+    public Player GetWinner()
     {
-        // Create textfile
-        string filePath = Application.streamingAssetsPath + "endGameData.txt";
-
-        // Create write string
-        List<string> data = new List<string>();
-
-        // Find winning player
-        Player winner= null;
-        foreach(Player player in m_players)
+        // Find non-bankrupt player
+        foreach (Player player in m_players)
         {
             if (!player.Bankrupt)
             {
-                winner = player;
-                break;
-            }    
-        }
-
-        // Add their name
-        data.Add(winner.Name);
-
-        // Add their icon
-        data.Add(winner.Icon);
-
-        // Add their cash
-        data.Add(winner.Cash.ToString());
-
-        //Add their properties
-        string propertiesList = "";
-        int i = 0;
-        foreach (Property property in winner.Properties)
-        {
-            propertiesList += property.Name;
-            if (i != winner.Properties.Count - 1)
-            {
-                propertiesList += ", ";
+                return player;
             }
-            i++;
         }
-        data.Add(propertiesList);
 
-        // Write all the data
-        File.WriteAllLines(filePath, data);
+        // No player found that's not bankrupt...
+        throw new Exception("All players bankrup! There is no winner to be found...");
     }
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
-    // Obtains spaces from text file
+    /// <summary>
+    /// 
+    /// NAME
+    ///     InitializeSpaces - creates spaces based on space data text file.
+    ///     
+    /// DESCRIPTION
+    ///     Parses a text file with the data for all 40 spaces of the monopoly board. 
+    ///     All spaces either are, or inherit from, the base Space class. Almost all 
+    ///     spaces have unique functionaity, and therefore a unique type, so spaces
+    ///     are dynamically created according to their appropriate type in a switch 
+    ///     statement. All space data, and what determines their type, is in a premade
+    ///     space data text file in the StreamingAssets folder of this project.
+    ///    
+    /// </summary>
     void InitializeSpaces()
     {
         // Obtain space data from file
@@ -1315,30 +1434,34 @@ public class Board
             int purchasePrice;
             switch (vals[2])
             {
-                // Generic space
+                // Generic space (corners)
                 case "Jail":
                 case "Go":
                 case "Free Parking":
                 case "Just Visiting":
-                    currentSpace = new Space(name, spaceNum, action, GetSpaceDescription(name));
+                    currentSpace = new Space(name, spaceNum, action, 
+                        GetSpaceDescription(name));
                     break;
 
                 // Card
                 case "Card":
-                    currentSpace = new CardSpace(name, spaceNum, action, m_cardController, GetSpaceDescription(name));
+                    currentSpace = new CardSpace(name, spaceNum, action, m_cardController, 
+                        GetSpaceDescription(name));
                     break;
 
 
                 // Tax
                 case "Tax":
                     int taxCost = int.Parse(vals[3]);
-                    currentSpace = new Tax(name, spaceNum, action, taxCost, GetSpaceDescription(name));
+                    currentSpace = new Tax(name, spaceNum, action, taxCost, 
+                        GetSpaceDescription(name));
                     break;
 
                 // Utility
                 case "Utility":
                     purchasePrice = int.Parse(vals[3]);
-                    currentSpace = new Utility(name, spaceNum, action, purchasePrice, string.Empty);
+                    currentSpace = new Utility(name, spaceNum, action, purchasePrice, 
+                        string.Empty);
                     break;
 
                 // Color property
@@ -1357,7 +1480,8 @@ public class Board
                     string color = vals[11];
 
                     // Create object
-                    currentSpace = new ColorProperty(name, spaceNum, action, purchasePrice, houseCost, landOnPrices, string.Empty, color);
+                    currentSpace = new ColorProperty(name, spaceNum, action, purchasePrice, 
+                        houseCost, landOnPrices, string.Empty, color);
                     break;
 
                 // Railroad
@@ -1367,12 +1491,10 @@ public class Board
                     currentSpace = new Railroad(name, spaceNum, action, 200, 25, string.Empty);
                     break;
 
-
                 // Case not found, error
                 default:
-                    currentSpace = new Space(name, spaceNum, action, "Unimplemented inherited class");
-                    // ^ Change this to throw new Exception("Space data error at space: " + spaceNum);
-                    break;
+                    throw new Exception("Could not determine space type, given type: " +
+                        vals[2]);
             }
 
             // Add space to list of spaces and move to next space index
@@ -1380,8 +1502,19 @@ public class Board
             spaceNum++;
         }
     }
+    /* void InitializeSpaces() */
 
-    // Obtains the players from PlayerFile class
+    /// <summary>
+    /// 
+    /// NAME
+    ///     InitializePlayers - creates players based on player data xml file.
+    ///     
+    /// DESCRIPTION
+    ///     The start menu where players are created, saves the data to an 
+    ///     xml file. This method reads that data to create a list of 
+    ///     Player objects.
+    ///    
+    /// </summary>
     void InitializePlayers()
     {
         // Create player file object
@@ -1403,11 +1536,27 @@ public class Board
         }
     }
 
-    // Returns the full color set of a given property
-    List<ColorProperty> GetColorSet(ColorProperty property)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     InitializePlayers - creates players based on player data xml file.
+    ///     
+    /// SYNOPSIS
+    ///     List<ColorProperty> GetColorSet(ColorProperty a_property)
+    ///         a_property      --> property who's color set being returned.
+    ///     
+    /// DESCRIPTION
+    ///     Compiles a list of all the properties who have the same color
+    ///     as the passed in property, returns it.
+    ///     
+    /// RETURNS
+    ///     List of color set.
+    ///    
+    /// </summary>
+    List<ColorProperty> GetColorSet(ColorProperty a_property)
     {
         // Get the color
-        string color = property.Color;
+        string color = a_property.Color;
         List<ColorProperty> colorSet = new List<ColorProperty>();
         foreach (Space space in m_spaces)
         {
@@ -1426,12 +1575,14 @@ public class Board
         }
         return colorSet;
     }
+    /* List<ColorProperty> GetColorSet(ColorProperty a_property) */
 
-    // Resets the two utilities, flags that mark whether or not player rolled to determine price
+    // Resets the two utilities,
+    // flags that mark whether or not player rolled to determine price
     void ResetUtilities()
     {
         Utility electricCompany = (Utility)m_spaces[12];
-        Utility waterWorks = (Utility)m_spaces[12];
+        Utility waterWorks = (Utility)m_spaces[28];
         electricCompany.DiceRolled = false;
         waterWorks.DiceRolled = false;
     }
@@ -1440,23 +1591,38 @@ public class Board
     static int SortPlayers(Player player1, Player player2)
     {
         if (player1.OrderDeterminingDiceResult < player2.OrderDeterminingDiceResult)
-        {
             return 1;
-        }
+        
         else if (player1.OrderDeterminingDiceResult > player2.OrderDeterminingDiceResult)
-        {
             return -1;
-        }
+        
         else
-        {
             return 0;
-        }
     }
 
-    // Returns a description for a space depending on it's action type
-    string GetSpaceDescription(string name)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     GetSpaceDescription - returns a description of generic space types.
+    ///     
+    /// SYNOPSIS
+    ///     string GetSpaceDescription(string a_name)
+    ///         a_name      --> space to get description of.
+    ///     
+    /// DESCRIPTION
+    ///     For spaces who don't need dynamic descriptions, this method will 
+    ///     return a predetermined descrption.
+    ///     
+    /// RETURNS
+    ///     String of the description associated with passed in space name.
+    ///     
+    /// EXCEPTION
+    ///     Throws exception if a name is passed in that has no description.
+    ///     
+    /// </summary>
+    string GetSpaceDescription(string a_name)
     {
-        switch (name)
+        switch (a_name)
         {
             case "Go":
                 return "Passing Go gives the player $200!";
@@ -1473,15 +1639,32 @@ public class Board
             case "Community Chest":
                 return "Pick up a card that will decide your fate!";
             default:
-                throw new Exception("Error determining space description for space: " + name);
+                throw new Exception("Error determining space description for space: " + a_name);
         }
     }
+    /* string GetSpaceDescription(string a_name) */
 
-    // Casts a string version of an action into the enum type
-    Actions CastActionString(string str)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CastActionString - returns Action associated with string.
+    ///     
+    /// SYNOPSIS
+    ///     Actions CastActionString(string a_str)
+    ///         a_str      --> string to cast.
+    ///     
+    /// DESCRIPTION
+    ///     Converts action from string (text file) into actual
+    ///     "Actions" enum type.
+    ///     
+    /// EXCEPTION
+    ///     No action found to cast string to.
+    ///     
+    /// </summary>
+    Actions CastActionString(string a_str)
     {
         // Match string with action
-        switch (str)
+        switch (a_str)
         {
             // Actions
             case "LandedOn_UnownedProperty":
@@ -1499,15 +1682,8 @@ public class Board
             case "LandedOn_Go":
                 return Actions.LandedOn_Go;
             default:
-                return Actions.ERROR;
+                throw new Exception("No action found to cast to: " + a_str);
         }
     }
-
-    // Test buying
-    void TestBuy(int playerNum, int propertyNum)
-    {
-        m_turnNum = playerNum;
-        CurrentPlayer.CurrentSpace = propertyNum;
-        PurchaseProperty();
-    }
+    /* Actions CastActionString(string str) */
 }

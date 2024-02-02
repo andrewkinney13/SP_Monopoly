@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class CardSpace : Space
 {
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     Controller_Card m_cardController;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public CardSpace(string name, int index, Board.Actions action, Controller_Card cardController, string description) : base(name, index, action, description)
     {
         // Assign card controller reference
         m_cardController = cardController;
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Taking card method
     public Card TakeCard()

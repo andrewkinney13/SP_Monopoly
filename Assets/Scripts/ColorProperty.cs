@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ColorProperty : Property
 {
-    // ============================== Private Data Members ============================= //  
+    // ======================================== Private Data Members ============================= //  
     int m_houseCost;
     int m_numHouses;
     string m_color;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public ColorProperty(string name, int index, Board.Actions action, int purchasePrice, int houseCost, List<int> rentPrices, string description, string color) 
         : base (name, index, action, purchasePrice, description)
     {
@@ -19,7 +19,7 @@ public class ColorProperty : Property
         m_color = color;
     }
 
-    // ============================== Override Methods ================================= //
+    // ======================================== Override Methods =========================================== //
     public override int RentPrice
     {
         get
@@ -108,7 +108,7 @@ public class ColorProperty : Property
         }
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     public int HouseCost
     {

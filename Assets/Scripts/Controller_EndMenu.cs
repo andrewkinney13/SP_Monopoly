@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Controller_EndGame : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public TMP_Text m_title;
     public Sprite m_icon;
     public List<Sprite> m_icons;
@@ -15,7 +15,7 @@ public class Controller_EndGame : MonoBehaviour
     public TMP_Text m_propertyList;
     public Button m_exitButton;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Read the end game file

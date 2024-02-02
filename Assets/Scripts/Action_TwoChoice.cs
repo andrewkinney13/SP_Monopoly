@@ -19,7 +19,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Action_TwoChoice : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public Controller_Game m_gameController;
     public TMP_Text m_title;
     public Button m_leftButton;
@@ -27,7 +27,7 @@ public class Action_TwoChoice : MonoBehaviour
     public TMP_Text m_leftButtonText;
     public TMP_Text m_rightButtonText;
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     // Returns reference to the left button
     public Button LeftButton { get { return m_leftButton; } }

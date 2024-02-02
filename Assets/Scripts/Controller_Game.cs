@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using TMPro;
@@ -14,7 +15,7 @@ using UnityEngine.UI;
 
 public class Controller_Game : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
 
     // Popup window
     public Controller_Popup m_popupController;
@@ -48,11 +49,11 @@ public class Controller_Game : MonoBehaviour
     public Sprite m_chanceGetOutOfJailFreeCard;
     public Sprite m_communityChestGetOutOfJailFreeCard;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     Board m_board;
     bool m_updateMade = false;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Assign space button methods
@@ -116,7 +117,7 @@ public class Controller_Game : MonoBehaviour
         }
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Player ended their turn
     public void Action_EndTurn()
@@ -277,6 +278,9 @@ public class Controller_Game : MonoBehaviour
         // Update board
         m_board.GoToJail();
 
+        // Update the dice roller
+        m_diceRollController.RolledDoubles = false;
+
         // Update made
         UpdateMade();
     }
@@ -321,7 +325,7 @@ public class Controller_Game : MonoBehaviour
         if (m_board.GameOver())
         {
             // Open end game scene after saving data
-            m_board.SaveEndGameData();
+            SaveEndGameData();
             SceneManager.LoadScene("End Menu");
         }
 
@@ -645,7 +649,7 @@ public class Controller_Game : MonoBehaviour
         }
     }
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
     // Updates the update made flag
     void UpdateMade()
@@ -988,8 +992,6 @@ public class Controller_Game : MonoBehaviour
             bool sellHotelAvailible = colorProperty.Houses == 5;
             bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
 
-            Debug.Log(colorProperty.Index);
-
             m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
                 houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, unmortgageAvailible, colorProperty.Index);
         }
@@ -1050,6 +1052,45 @@ public class Controller_Game : MonoBehaviour
                 FindHouseOrHotelIcon(spaceNum, i + 1).SetActive(false);
             }
         }
+    }
+
+    // Saves the game data for use in the end menu
+    void SaveEndGameData()
+    {
+        // Create textfile
+        string filePath = Application.streamingAssetsPath + "endGameData.txt";
+
+        // Create write string
+        List<string> data = new List<string>();
+
+        // Find winning player
+        Player winner = m_board.GetWinner();
+
+        // Add their name
+        data.Add(winner.Name);
+
+        // Add their icon
+        data.Add(winner.Icon);
+
+        // Add their cash
+        data.Add(winner.Cash.ToString());
+
+        //Add their properties
+        string propertiesList = "";
+        int i = 0;
+        foreach (Property property in winner.Properties)
+        {
+            propertiesList += property.Name;
+            if (i != winner.Properties.Count - 1)
+            {
+                propertiesList += ", ";
+            }
+            i++;
+        }
+        data.Add(propertiesList);
+
+        // Write all the data
+        File.WriteAllLines(filePath, data);
     }
 
     // Returns house/hotel icon given the property num and house num

@@ -5,26 +5,26 @@ using Unity.VisualScripting;
 // Class for spaces that are purchasable by the player
 public class Property : Space
 {
-    // ============================== Protected Data Members =========================== //
+    // ======================================== Protected Data Members =========================== //
     protected int m_purchasePrice;
     protected Player m_owner = null;
     protected bool m_purchased = false;
     protected bool m_mortgaged = false;
     protected List<int> m_rentPrices = new List<int>();
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Property(string name, int index, Board.Actions action, int purchasePrice, string description) : 
         base(name, index, action, description)
     {
         PurchasePrice = purchasePrice;
     }
 
-    // ============================== Virtual Methods ================================== //
+    // ======================================== Virtual Methods ============================================ //
     
     // Rent
     public virtual int RentPrice { get { throw new System.Exception("Virtual base class rent price method being called"); } }
 
-    // ============================== Override Methods ================================= //
+    // ======================================== Override Methods =========================================== //
 
     // If mortgaged
     public override bool IsMortgaged
@@ -33,7 +33,7 @@ public class Property : Space
         set { m_mortgaged = value; }
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
     public int PurchasePrice
     {
         get { return m_purchasePrice; } 

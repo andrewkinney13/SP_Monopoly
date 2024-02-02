@@ -23,7 +23,7 @@ using TMPro;
 /// </summary>
 public class Action_RollDice : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public Controller_Game m_gameController;
     public Image m_die1;
     public Image m_die2;
@@ -33,14 +33,14 @@ public class Action_RollDice : MonoBehaviour
     public List<Sprite> m_diceSprites;
     public TMP_Text m_title;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     const float m_ANIMATION_DURATION = .5f;
     bool m_orderDetermined;
     int m_diceResult;
     bool m_wereDoubles;
     bool m_utilityCostRoll;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Initialize listeners
@@ -55,7 +55,7 @@ public class Action_RollDice : MonoBehaviour
         ResetWindow();
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     // Flag to mark whether or not the dice rolling is for determining order
     // at the start of a new game
@@ -73,7 +73,12 @@ public class Action_RollDice : MonoBehaviour
         set { m_utilityCostRoll = value; }
     }
 
-    // ============================== Public Methods =================================== //
+    // Flag to mark whether or not a player rolled doubles, this only needs to be
+    // updated when a player goes to jail
+    
+    public bool RolledDoubles { set { m_wereDoubles = value; } }
+
+    // ======================================== Public Methods ============================================= //
 
     /// <summary>
     /// 
@@ -107,8 +112,9 @@ public class Action_RollDice : MonoBehaviour
         m_die1.sprite = m_diceSprites[0];
         m_die2.sprite = m_diceSprites[0];
     }
+    /* public void ResetWindow() */
 
-    // ============================== Private Methods ================================== //
+    // ======================================== Private Methods ============================================ //
 
     // Initiates dice roll animation when a user clicks the dice icon
     void OnDiceClick()
@@ -173,6 +179,7 @@ public class Action_RollDice : MonoBehaviour
         m_continueText.color = Color.green;
         m_continueButton.interactable = true;
     }
+    /* IEnumerator RollDice() */
 
     /// <summary>
     /// 

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Utility : Property
 {
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     int m_currentDiceRoll;
     bool m_diceRolled;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Utility(string name, int index, Board.Actions action, int purchasePrice, string description) : 
         base (name, index, action, purchasePrice, description) { }
 
-    // ============================== Override Methods ================================= //
+    // ======================================== Override Methods =========================================== //
 
     // What action a player must do, landing on this property
     public override Board.Actions ActionType
@@ -76,7 +76,7 @@ public class Utility : Property
         get { return RentMultiplier * CurrentDiceRoll; }
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     // What is multiplied by dice
     public int RentMultiplier

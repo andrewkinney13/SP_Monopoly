@@ -9,7 +9,7 @@ public class PropertyManager : MonoBehaviour
     // Data memebrs
     public Controller_Game m_gameController;
 
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public TMP_Text m_title;
     public Button m_buyHouseOrHotelButton;
     public TMP_Text m_buyHouseOrHotelButtonText;
@@ -23,7 +23,7 @@ public class PropertyManager : MonoBehaviour
     public Scrollbar m_scrollbar;
 
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Set window to be inactive to start
@@ -31,7 +31,7 @@ public class PropertyManager : MonoBehaviour
         m_backButton.onClick.AddListener(ClosePropertyManger);
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
     public void CreatePropertyManager(string propertyName, string propertyDescription, int mortgageValue, int houseCost, 
         bool buyHouseAvailible, bool sellHouseAvailible, bool buyHotelAvailible, bool sellHotelAvailible, 
         bool mortgageAvailible, bool unmortgageAvailible, int propertyIndex)

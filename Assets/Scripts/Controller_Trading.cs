@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Controller_Trading : MonoBehaviour
 {
-    // ============================== Unity Data Members =============================== //
+    // ======================================== Unity Data Members ========================================= //
     public Controller_Game m_gameController;
     public GameObject m_tradingMenu;
     public TMP_Text m_tradingPlayerTitle;
@@ -17,11 +17,11 @@ public class Controller_Trading : MonoBehaviour
     public TMP_Dropdown m_propertyDropdown;
     public TMP_InputField m_cashInput;
 
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     int m_availibleCash;
     string m_playerName;
 
-    // ============================== Start / Update =================================== //
+    // ======================================== Start / Update ============================================= //
     void Start()
     {
         // Add listeners
@@ -33,7 +33,7 @@ public class Controller_Trading : MonoBehaviour
         m_tradingMenu.SetActive(false);
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
     public void CreateTradingMenu(string name, Sprite icon, List<string> propertiesAndCards, int availibleCash)
     {
         // Clear cash input
@@ -67,7 +67,7 @@ public class Controller_Trading : MonoBehaviour
         m_tradingMenu.SetActive(false);
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Set the send button method
     void SendToGame()

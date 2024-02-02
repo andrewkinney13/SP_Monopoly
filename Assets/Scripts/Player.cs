@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player
 {
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     string m_name;
     string m_icon;
     int m_cash;
@@ -23,7 +23,7 @@ public class Player
     int m_chanceJailCards;
     List<Space> m_properties = new List<Space>();
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Player(string name, string icon, int playerNum) 
     {
         Name = name;
@@ -36,7 +36,7 @@ public class Player
         m_cash = 1500;
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
     public string Name
     {
         get { return m_name; }

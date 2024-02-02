@@ -7,14 +7,14 @@ using UnityEngine.UI;
 // Base class each space on the board
 public class Space : IComparable<Space>
 {
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     protected string m_name;
     protected int m_index;
     protected string m_actionText = "Action!";
     protected Board.Actions m_actionType;
     protected string m_description;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Space(string name, int index, Board.Actions action, string description)
     {
         Name = name;
@@ -23,7 +23,7 @@ public class Space : IComparable<Space>
         Description = description;
     }
 
-    // ============================== Virtual Methods ================================== //
+    // ======================================== Virtual Methods ============================================ //
     public virtual string Description
     {
         get { return m_description; }
@@ -41,7 +41,7 @@ public class Space : IComparable<Space>
         set { m_actionType = value; }
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
     public string Name
     {
         get { return m_name; }
@@ -59,7 +59,7 @@ public class Space : IComparable<Space>
         set { m_actionText = value; }
     }
 
-    // ============================== Public Methods =================================== //
+    // ======================================== Public Methods ============================================= //
 
     // Sorting method
     public int CompareTo(Space other)

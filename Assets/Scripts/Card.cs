@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class Card
 {
-    // ============================== Private Data Members ============================= //
+    // ======================================== Private Data Members ============================= //
     Controller_Card.Actions m_actionType;
     string m_description;
     int m_value;
     int m_value2;
     string m_location;
 
-    // ============================== Constructor ====================================== //
+    // ======================================== Constructor ================================================ //
     public Card(Controller_Card.Actions actionType, string description)
     {
         m_actionType = actionType;
         m_description = description;
     }
 
-    // ============================== Properties ======================================= //
+    // ======================================== Properties ================================================= //
 
     public Controller_Card.Actions ActionType
     {
