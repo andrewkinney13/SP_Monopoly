@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Tax : Space
 {
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     int m_taxCost;
 
     // ======================================== Constructor ================================================ //

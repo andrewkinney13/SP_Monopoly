@@ -33,7 +33,7 @@ public class Action_RollDice : MonoBehaviour
     public List<Sprite> m_diceSprites;
     public TMP_Text m_title;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members =========================+============= //
     const float m_ANIMATION_DURATION = .5f;
     bool m_orderDetermined;
     int m_diceResult;
@@ -75,7 +75,6 @@ public class Action_RollDice : MonoBehaviour
 
     // Flag to mark whether or not a player rolled doubles, this only needs to be
     // updated when a player goes to jail
-    
     public bool RolledDoubles { set { m_wereDoubles = value; } }
 
     // ======================================== Public Methods ============================================= //

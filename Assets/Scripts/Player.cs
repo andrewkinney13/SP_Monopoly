@@ -1,11 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 
 public class Player
 {
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     string m_name;
     string m_icon;
     int m_cash;

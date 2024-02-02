@@ -1,17 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System.Xml.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerFile
 {
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     XmlWriter m_writer;
     XmlReader m_reader;
-    string m_fileName = "Players.xml";
+    string m_fileName = "playerData.xml";
 
     // ======================================== Public Methods ============================================= //
 

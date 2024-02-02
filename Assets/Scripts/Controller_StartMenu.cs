@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -15,7 +14,7 @@ public class Controller_StartMenu : MonoBehaviour
     public List<Button> m_iconButtons;
     public Controller_Popup m_popupContoller;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     int m_playerCount = 0;
     string m_selectedIcon;
     Color m_selectedColor;

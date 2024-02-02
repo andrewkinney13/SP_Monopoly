@@ -9,7 +9,7 @@ using UnityEngine;
 ///     Board
 /// 
 /// SYSNOPSIS
-///     Board - Handles all programatic game logic
+///     Board - Handles all programatic game logic.
 ///     
 /// DESCRIPTION
 ///     This class implements the majority of the scripting required to enforce
@@ -43,7 +43,7 @@ public class Board
         ERROR
     }
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     Controller_Card m_cardController = new Controller_Card();
     List<Space> m_spaces = new List<Space>();
     List<Player> m_players = new List<Player>();
@@ -62,22 +62,7 @@ public class Board
     // Returns the amount of players in the game
     public int PlayerCount { get { return m_players.Count; } }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetSpace - accessing space reference via index.
-    /// 
-    /// SYSNOPSIS
-    ///     public Space GetSpace(int a_index);
-    ///         a_index         --> what index to access the space from.
-    ///     
-    /// RETURNS
-    ///     Returns a space reference at particular index.
-    /// 
-    /// EXCEPTION
-    ///     Will throw an exception if index is out of bounds.
-    /// 
-    /// </summary>
+    // Returns space object reference at specified index
     public Space GetSpace(int a_index)
     {
         // Check bounds
@@ -87,22 +72,7 @@ public class Board
         return m_spaces[a_index];
     }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetPlayer - accessing player reference via index.
-    /// 
-    /// SYSNOPSIS
-    ///     public Player GetPlayer(int a_index);
-    ///         a_index         --> what index to access the player from.
-    /// 
-    /// RETURNS
-    ///     Returns a player object reference.
-    /// 
-    /// EXCEPTION
-    ///     Will throw an exception if index is out of bounds.
-    /// 
-    /// </summary>
+    // Returns player object reference at specified index
     public Player GetPlayer(int a_index)
     {
         // Check bounds
@@ -112,24 +82,7 @@ public class Board
         return m_players[a_index];
     }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetPropertyHouses - access house property of a color property
-    ///                         via index.
-    /// 
-    /// SYSNOPSIS
-    ///     public int GetPropertyHouses(int a_index);
-    ///         a_index         --> what index to access the property from, who's house 
-    ///                             amount we're looking.
-    /// RETURNS
-    ///     Returns how many houses are on a given color property.
-    ///     
-    /// EXCEPTION
-    ///     Will throw an exception if the index does not point at a Color Property
-    ///     type space.
-    /// 
-    /// </summary>
+    // Returns how many houses are on a given property at passed in space index
     public int GetPropertyHouses(int a_index)
     {
         // Check type
@@ -143,23 +96,7 @@ public class Board
         return property.Houses;
     }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetPlayerIconName - accessing player icon name via index.
-    /// 
-    /// SYSNOPSIS
-    ///     public string GetPlayerIconName(int a_index);
-    ///         a_index         --> what player index to access the icon
-    ///                             name from.
-    ///                             
-    /// RETURNS
-    ///     Returns name of a player's icon.
-    /// 
-    /// EXCEPTION
-    ///     Will throw an exception if the index is out of bounds.
-    /// 
-    /// </summary>
+    // Returns the icon of a player, given their index
     public string GetPlayerIconName(int a_index)
     {
         // Check if it's in bounds
@@ -169,55 +106,21 @@ public class Board
         return m_players[a_index].Icon;
     }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetPlayerByName - accessing player by name.
-    /// 
-    /// SYSNOPSIS
-    ///     public string GetPlayerByName(string a_name);
-    ///         a_name          --> name of the player.
-    /// 
-    /// RETURNS
-    ///     Returns player object reference with specified name.
-    /// 
-    /// EXCEPTION
-    ///     Will throw an exception if the player reference 
-    ///     associated with the name is never found.
-    /// 
-    /// </summary>
+    // Finds matching player based on passed in name string
     public Player GetPlayerByName(string a_name)
     {
         // Seach for player match
         foreach (Player player in m_players)
         {
             if (player.Name == a_name)
-            {
                 return player;
-            }
         }
 
         // Player not found
         throw new Exception("Player: " + a_name + " not found searching by name...");
     }
 
-    /// <summary>
-    /// 
-    /// NAME
-    ///     GetPropertyByName - accessing property by name.
-    /// 
-    /// SYSNOPSIS
-    ///     public string GetPropertyByName(string a_name);
-    ///         a_name          --> name of the property.
-    ///                             
-    /// RETURNS
-    ///     Returns property object with specified name.
-    /// 
-    /// EXCEPTION
-    ///     Will throw an exception if the property reference 
-    ///     associated with the name is never found.
-    /// 
-    /// </summary>
+    // Returns property object reference with matching name
     public Property GetPropertyByName(string a_name)
     {
         // Seeach for space match
@@ -228,9 +131,7 @@ public class Board
             {
                 Property property = (Property)space;
                 if (property.Name == a_name)
-                {
                     return property;
-                }
             }
         }
 

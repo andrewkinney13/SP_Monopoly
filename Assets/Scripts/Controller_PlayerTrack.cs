@@ -14,7 +14,7 @@ public class Controller_PlayerTrack : MonoBehaviour
     public Image m_houseIcon;
     public Image m_hotelIcon;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
     float m_iconMovementAnimationDuration = .25f;
 

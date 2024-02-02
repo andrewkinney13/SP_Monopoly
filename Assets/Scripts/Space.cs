@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 
 // Base class each space on the board
 public class Space : IComparable<Space>
 {
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     protected string m_name;
     protected int m_index;
     protected string m_actionText = "Action!";

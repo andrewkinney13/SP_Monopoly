@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -49,7 +44,7 @@ public class Controller_Game : MonoBehaviour
     public Sprite m_chanceGetOutOfJailFreeCard;
     public Sprite m_communityChestGetOutOfJailFreeCard;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     Board m_board;
     bool m_updateMade = false;
 

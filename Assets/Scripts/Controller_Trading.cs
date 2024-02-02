@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +15,7 @@ public class Controller_Trading : MonoBehaviour
     public TMP_Dropdown m_propertyDropdown;
     public TMP_InputField m_cashInput;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     int m_availibleCash;
     string m_playerName;
 

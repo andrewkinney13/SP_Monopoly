@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Utility : Property
 {
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     int m_currentDiceRoll;
     bool m_diceRolled;
 

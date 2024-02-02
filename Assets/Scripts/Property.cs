@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 // Class for spaces that are purchasable by the player
 public class Property : Space
 {
-    // ======================================== Protected Data Members =========================== //
+    // ======================================== Private Data Members ======================================= //
     protected int m_purchasePrice;
     protected Player m_owner = null;
     protected bool m_purchased = false;

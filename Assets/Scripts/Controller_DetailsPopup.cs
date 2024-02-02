@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 public class Controller_DetailsPopup : MonoBehaviour
@@ -12,7 +9,7 @@ public class Controller_DetailsPopup : MonoBehaviour
     public TMP_Text m_details;
     public GameObject m_window;
 
-    // ======================================== Private Data Members ============================= //
+    // ======================================== Private Data Members ======================================= //
     bool m_isActive;
 
     // ======================================== Start / Update ============================================= //
