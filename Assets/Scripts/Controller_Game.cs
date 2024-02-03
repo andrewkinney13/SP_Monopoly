@@ -543,7 +543,6 @@ public class Controller_Game : MonoBehaviour
         
         else
             m_board.CurrentPlayer.CommunityChestJailCards++;
-        
 
         // Mark update
         m_board.CurrentPlayer.SpaceActionCompleted = true;
