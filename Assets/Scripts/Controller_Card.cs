@@ -6,9 +6,6 @@ using UnityEngine;
 /// <summary>
 /// 
 /// CLASS
-///     Controller_Card
-/// 
-/// SYSNOPSIS
 ///     Controller_Card - class to control the decks of cards used by Community Chest and Chance.
 ///     board spaces. 
 ///     
@@ -68,7 +65,6 @@ public class Controller_Card
     }
 
     // ======================================== Private Methods ============================================ //
-
 
     /// <summary>
     /// 

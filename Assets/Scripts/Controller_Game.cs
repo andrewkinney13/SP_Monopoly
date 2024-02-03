@@ -7,7 +7,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// 
+/// CLASS
+///     Controller_Game : MonoBehaviour - runs the game.
+///     
+/// DESCRIPTION
+///     This class connects the Unity classes of the game with the
+///     Monopoly logic classes; pretty much all of the buttons within
+///     the game point to methods in this class, and those methods will
+///     call the appropriate Board class methods depending on the state of 
+///     the game, what button it was, etc. This class is the most complex
+///     because it controlls all the controller classes, and has the sole
+///     referene to the Board class. This class also handles the majority of the 
+///     player panel functionality.
+/// 
+/// </summary>
 public class Controller_Game : MonoBehaviour
 {
     // ======================================== Unity Data Members ========================================= //
@@ -49,13 +64,22 @@ public class Controller_Game : MonoBehaviour
     bool m_updateMade = false;
 
     // ======================================== Start / Update ============================================= //
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Start - initializes the game.
+    ///     
+    /// DESCRIPTION
+    ///     Initializes the game by making all houses and hotels hidden, adding listeners to the spaces,
+    ///     creating and initializing the Board, and closing the popup window.
+    /// 
+    /// </summary>
     void Start()
     {
         // Assign space button methods
         foreach (Button button in m_spaceButtons)
-        {
             button.onClick.AddListener(() => OnSpaceClick(int.Parse(button.name)));
-        }
 
         // Initialize the board
         m_board = new Board();
@@ -70,6 +94,20 @@ public class Controller_Game : MonoBehaviour
         // Erase all the houses to start
         EraseAllHousesAndHotels();
     }
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Update - checks for updates.
+    ///     
+    /// DESCRIPTION
+    ///     This method runs every frame, constantly checks if updates have been made by
+    ///     the player. this method will redraw the player panel if an update is made, or 
+    ///     switch which player's data is being displayed in the player panel if 
+    ///     the turn swithced. Also checks for the user's mouse being in bounds or clicking
+    ///     off of a popup, and will close any pop-ups for both those cases.
+    /// 
+    /// </summary>
     void Update()
     {
         // Check if anything has been updated
@@ -117,15 +155,28 @@ public class Controller_Game : MonoBehaviour
     // Player ended their turn
     public void Action_EndTurn()
     {
-        // End the current players turn
         m_board.CurrentPlayer.TurnCompleted = true;
     }
 
-    // Player rolled dice to determine their action
-    public void Action_OrderDetermined(int diceResult)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_OrderDetermined - determines players' orders for the game.
+    /// 
+    /// SYNOPSIS
+    ///     public void Action_OrderDetermined(int a_diceResult);
+    ///         a_diceResult        --> value of player's dice roll.
+    /// 
+    /// DESCRIPTION
+    ///     This method runs will keep track of each players first dice roll, and
+    ///     when all have made their first roll, will determine what order to sort the players 
+    ///     for the remaineder of the game.
+    /// 
+    /// </summary>
+    public void Action_OrderDetermined(int a_diceResult)
     {
         // Update the players attributes
-        m_board.OrderDetermined(diceResult);
+        m_board.OrderDetermined(a_diceResult);
 
         // If all players are initialized, we can sort them and finish this action
         if (m_board.AllPlayersInitialized())
@@ -146,24 +197,54 @@ public class Controller_Game : MonoBehaviour
         // Mark the current player as having their turn completed
         m_board.CurrentPlayer.TurnCompleted = true;
     }
+    /* public void Action_OrderDetermined(int diceResult) */
 
-    // Player rolled dice to determine the cost of landing on a utility
-    public void Action_UtilityCostDetermined(int diceRoll)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_UtilityCostDetermined - player determined Utility cost.
+    /// 
+    /// SYNOPSIS
+    ///     public void Action_UtilityCostDetermined(int a_diceRoll);
+    ///         a_diceResult        --> value of player's dice roll.
+    /// 
+    /// DESCRIPTION
+    ///     Current player landed on an owned Utility space, so they
+    ///     had to roll the dice and determine the dice mulitiplier for
+    ///     how much the rent will cost. This method marks that action
+    ///     as having occured.
+    /// 
+    /// </summary>
+    public void Action_UtilityCostDetermined(int a_diceRoll)
     {
         // Update flags and properties on space and controller
         m_diceRollController.UtilityCostRoll = false;
-        m_board.UtilityCostDetermined(diceRoll);
+        m_board.UtilityCostDetermined(a_diceRoll);
 
         // Mark update made
         UpdateMade();
     }
 
-    // Player rolled the dice
-    public void Action_DiceRolled(int diceResult, bool wereDoubles)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_DiceRolled - player rolled the dice.
+    /// 
+    /// SYNOPSIS
+    ///     public void Action_DiceRolled(int a_diceResult, bool a_wereDoubles);
+    ///         a_diceResult        --> value of player's dice roll.
+    ///         a_wereDoubles       --> matching die faces, or not.
+    /// 
+    /// DESCRIPTION
+    ///     Current player rolled the dice to move along the board. This method
+    ///     moves them, checks if they passed go, and marks an update has having occured.
+    /// 
+    /// </summary>
+    public void Action_DiceRolled(int a_diceResult, bool a_wereDoubles)
     {
         // Update board
         int currentSpace = m_board.CurrentPlayer.CurrentSpace;
-        m_board.DiceRolled(diceResult, wereDoubles);
+        m_board.DiceRolled(a_diceResult, a_wereDoubles);
         int destinationSpace = m_board.CurrentPlayer.CurrentSpace;
 
         // Move the player icon
@@ -181,40 +262,42 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Getting jail card from card
-    public void Card_GetJailCard()
-    {
-        // Give player jail card
-        if (m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name == "Chance")
-        {
-            m_board.CurrentPlayer.ChanceJailCards++;
-        }
-        else
-        {
-            m_board.CurrentPlayer.CommunityChestJailCards++;
-        }
-
-        // Mark update
-        m_board.CurrentPlayer.SpaceActionCompleted = true;
-        UpdateMade();
-    }
-
-
-    // Player buying property
-    public void Action_BuyingProperty(bool buying)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_BuyingProperty - player buying property.
+    /// 
+    /// SYNOPSIS
+    ///     public void Action_BuyingProperty(bool a_buying);
+    ///         a_buying            --> whether or not the player is buying the property.
+    /// 
+    /// DESCRIPTION
+    ///     Based on whether or not the player is buying property, this
+    ///     method will allow them to buy it, and regardless complete their turn.
+    /// 
+    /// </summary>
+    public void Action_BuyingProperty(bool a_buying)
     {
         // Call Board method
-        if (buying)
-        {
+        if (a_buying)
             m_board.PurchaseProperty();
-        }
 
         // Completed space action
         m_board.CurrentPlayer.SpaceActionCompleted = true;
         UpdateMade();
     }
 
-    // Player paying rent for a color property
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_PayingRent - current player pays rent on color property.
+    ///     
+    /// DESCRIPTION
+    ///     The current player landed on a color property they do not own. This method
+    ///     is called when they are paying the rent to the owner. Checks for 
+    ///     bankruptcy as well. 
+    /// 
+    /// </summary>
     public void Action_PayingRent()
     {
         // Subtract the cash from player
@@ -238,8 +321,18 @@ public class Controller_Game : MonoBehaviour
         // Update made to game state
         m_updateMade = true;
     }
+    /* public void Action_PayingRent() */
 
-    // Player paying tax
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_PayingTax - current player pays tax.
+    ///     
+    /// DESCRIPTION
+    ///     Current player landed on a tax space, they are 
+    ///     paying for it here. Checks for bankruptcy. 
+    /// 
+    /// </summary>
     public void Action_PayingTax()
     {
         // Subtract cash from player
@@ -263,8 +356,20 @@ public class Controller_Game : MonoBehaviour
         // Update made to game state
         m_updateMade = true;
     }
+    /* public void Action_PayingTax() */
 
-    // Player going to jail
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_GoToJail - current player is going to jail.
+    ///     
+    /// DESCRIPTION
+    ///     Current player landed on Go to Jail, or got sent to jail
+    ///     by Chance or Community Chest. This method moves them there,
+    ///     and updates the board with this info.
+    /// 
+    /// </summary>
     public void Action_GoToJail()
     {
         // Move the player's icon
@@ -280,7 +385,16 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Player getting out of jail
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_GetOutOfJailPay - current player pays to get out of jail.
+    ///     
+    /// DESCRIPTION
+    ///     Current player chose to pay to get out of jail. Update board
+    ///     and check for bankruptcy.
+    /// 
+    /// </summary>
     public void Action_GetOutOfJailPay()
     {
         // Update board
@@ -299,7 +413,16 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Player getting out of jail with card
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_GetOutOfJailWithCard - current player uses card to get out of jail.
+    ///     
+    /// DESCRIPTION
+    ///     Current player had a Get out of Jail Free card, from Community Chest or Chance,
+    ///     and chose to use it to get out of jail. 
+    /// 
+    /// </summary>
     public void Action_GetOutOfJailWithCard()
     {
         // Remove player's jail card
@@ -309,8 +432,17 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-
-    // Player going bankrupt
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_GoingBankrupt - current player ran out of money.
+    ///     
+    /// DESCRIPTION
+    ///     Current player is out of money, this method will mark them 
+    ///     as being out of the game, and also check if the game 
+    ///     is in a terminal state.
+    /// 
+    /// </summary>
     public void Action_GoingBankrupt()
     {
         // Update board
@@ -328,7 +460,16 @@ public class Controller_Game : MonoBehaviour
         Action_EndTurn();
     }
 
-    // PLayer collecting $200
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_CollectGo - current player passed Go.
+    ///     
+    /// DESCRIPTION
+    ///     The current player passed go, so they collect $200,
+    ///     and their turn ends if they are on Go space.
+    /// 
+    /// </summary>
     public void Action_CollectGo()
     {
         // User collects 200
@@ -339,15 +480,24 @@ public class Controller_Game : MonoBehaviour
 
         // Update space action (if on go)
         if (m_board.CurrentPlayer.CurrentSpace == 0)
-        {
             m_board.CurrentPlayer.SpaceActionCompleted = true;
-        }
 
         // Update the panel
         UpdateMade();
     }
 
-    // Player picked up a community chest or chance card
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_PickedUpCard - current player picked up a community chest or
+    ///     chance card.
+    ///     
+    /// DESCRIPTION
+    ///     Current player picks up a community chest or chance card, depending on 
+    ///     the card action, an action window is created in the player panel asking
+    ///     the player to do something.
+    /// 
+    /// </summary>
     public void Action_PickedUpCard()
     {
         // Obtain a card for them
@@ -381,7 +531,23 @@ public class Controller_Game : MonoBehaviour
             default:
                 throw new Exception("Card action not defined");
         }
+    }
+    /* public void Action_PickedUpCard() */
 
+    // Getting jail card from card
+    public void Card_GetJailCard()
+    {
+        // Give player jail card
+        if (m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name == "Chance")
+            m_board.CurrentPlayer.ChanceJailCards++;
+        
+        else
+            m_board.CurrentPlayer.CommunityChestJailCards++;
+        
+
+        // Mark update
+        m_board.CurrentPlayer.SpaceActionCompleted = true;
+        UpdateMade();
     }
 
     // Collecting money from card
@@ -623,28 +789,85 @@ public class Controller_Game : MonoBehaviour
         m_tradingController.CreateTradingMenu(tradeToPlayer.Name, GetIconSprite(tradeToPlayer.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
     }
 
-    // Initializes the player lanes and icons 
-    public void InitializePlayerIcons()
+    // ======================================== Private Methods ============================================ //
+
+    // When user clicks a space
+    void OnSpaceClick(int spaceIndex)
     {
-        m_playerTrackController.CreateLanes();
-        m_playerTrackController.SetIcons(m_playerButtons);
-        for (int playerNum = 0; playerNum < m_board.PlayerCount; playerNum++)
+        // Account for extra chance and community chest
+        if (spaceIndex == 40)
         {
-            // Create local player num
-            int localPlayerNum = playerNum;
+            spaceIndex = 2;
+        }
+        if (spaceIndex == 41)
+        {
+            spaceIndex = 8;
+        }
 
-            // Add the onClick method
-            m_playerButtons[playerNum].onClick.AddListener(() => OnPlayerClick(localPlayerNum));
+        // Get the space info
+        string spaceName = m_board.GetSpace(spaceIndex).Name;
+        string spaceDescription = m_board.GetSpace(spaceIndex).Description;
 
-            // Assign the icon
-            m_playerButtons[playerNum].image.sprite = GetIconSprite(m_board.GetPlayerIconName(playerNum));
+        // Display it in the space details window, where the user clicked
+        m_spaceDetailsController.CreateDetailsWindow(spaceName, spaceDescription);
+    }
 
-            // Move the player to space 0
-            StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 0, 0));
+    // Player clicks on property they own in the properties and cards panel
+    void OnPropertyClick(int spaceIndex)
+    {
+        // Reset the window 
+        m_propertyManager.ResetWindow();
+
+        // Obtain the property
+        Property property = (Property)m_board.GetSpace(spaceIndex);
+
+        // Feed in all parameters if a color property
+        if (m_board.GetSpace(spaceIndex) is ColorProperty)
+        {
+            // Cast to inherited type so we can obtain color property specific values
+            ColorProperty colorProperty = (ColorProperty)property;
+
+            // Determine if player can purchase and sell houses or hotels
+            Player player = m_board.CurrentPlayer;
+            bool houseAvailible = m_board.HouseAvailible(player, colorProperty);
+            bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
+            bool sellHouseAvailible = m_board.SellHouseAvailible(colorProperty);
+            bool sellHotelAvailible = colorProperty.Houses == 5;
+            bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
+
+            m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
+                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, unmortgageAvailible, colorProperty.Index);
+        }
+
+        // Feed in limited paramaters if a utility or a railroad (no houses, hotels)
+        else
+        {
+            bool unmortgageAvailible = m_board.UnmortgageAvailible(m_board.CurrentPlayer, property);
+            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, unmortgageAvailible, 0);
         }
     }
 
-    // ======================================== Private Methods ============================================ //
+    // When user clicks a player
+    void OnPlayerClick(int playerNum)
+    {
+        // Get player reference of the person selected
+        Player player = m_board.GetPlayer(playerNum);
+
+        // Display detail window with their info
+        m_playerDetailsController.CreateDetailsWindow(player.Name, player.Description);
+
+        // Don't display trading menu if selected current player
+        if (player == m_board.CurrentPlayer)
+        {
+            return;
+        }
+
+        // Obtain string list of current player's properties and cards they can trade
+        List<string> propertiesAndCards = m_board.GetPlayerElligibleTradeStrings(m_board.CurrentPlayer);
+
+        // Open the trading menu
+        m_tradingController.CreateTradingMenu(player.Name, GetIconSprite(player.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
+    }
 
     // Updates the update made flag
     void UpdateMade()
@@ -943,82 +1166,25 @@ public class Controller_Game : MonoBehaviour
         }
     }
 
-    // When user clicks a space
-    void OnSpaceClick(int spaceIndex)
+    // Initializes the player lanes and icons 
+    void InitializePlayerIcons()
     {
-        // Account for extra chance and community chest
-        if (spaceIndex == 40)
+        m_playerTrackController.CreateLanes();
+        m_playerTrackController.SetIcons(m_playerButtons);
+        for (int playerNum = 0; playerNum < m_board.PlayerCount; playerNum++)
         {
-            spaceIndex = 2;
+            // Create local player num
+            int localPlayerNum = playerNum;
+
+            // Add the onClick method
+            m_playerButtons[playerNum].onClick.AddListener(() => OnPlayerClick(localPlayerNum));
+
+            // Assign the icon
+            m_playerButtons[playerNum].image.sprite = GetIconSprite(m_board.GetPlayerIconName(playerNum));
+
+            // Move the player to space 0
+            StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 0, 0));
         }
-        if (spaceIndex == 41)
-        {
-            spaceIndex = 8;
-        }
-
-        // Get the space info
-        string spaceName = m_board.GetSpace(spaceIndex).Name;
-        string spaceDescription = m_board.GetSpace(spaceIndex).Description;
-
-        // Display it in the space details window, where the user clicked
-        m_spaceDetailsController.CreateDetailsWindow(spaceName, spaceDescription);
-    }
-
-    // Player clicks on property they own in the properties and cards panel
-    void OnPropertyClick(int spaceIndex)
-    {
-        // Reset the window 
-        m_propertyManager.ResetWindow();
-
-        // Obtain the property
-        Property property = (Property)m_board.GetSpace(spaceIndex);
-
-        // Feed in all parameters if a color property
-        if (m_board.GetSpace(spaceIndex) is ColorProperty)
-        {
-            // Cast to inherited type so we can obtain color property specific values
-            ColorProperty colorProperty = (ColorProperty)property;
-
-            // Determine if player can purchase and sell houses or hotels
-            Player player = m_board.CurrentPlayer;
-            bool houseAvailible = m_board.HouseAvailible(player, colorProperty);
-            bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
-            bool sellHouseAvailible = m_board.SellHouseAvailible(colorProperty);
-            bool sellHotelAvailible = colorProperty.Houses == 5;
-            bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
-
-            m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
-                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, unmortgageAvailible, colorProperty.Index);
-        }
-
-        // Feed in limited paramaters if a utility or a railroad (no houses, hotels)
-        else
-        {
-            bool unmortgageAvailible = m_board.UnmortgageAvailible(m_board.CurrentPlayer, property);
-            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, unmortgageAvailible, 0);
-        }
-    }
-
-    // When user clicks a player
-    void OnPlayerClick(int playerNum)
-    {
-        // Get player reference of the person selected
-        Player player = m_board.GetPlayer(playerNum);
-
-        // Display detail window with their info
-        m_playerDetailsController.CreateDetailsWindow(player.Name, player.Description);
-
-        // Don't display trading menu if selected current player
-        if (player == m_board.CurrentPlayer)
-        {
-            return;
-        }
-
-        // Obtain string list of current player's properties and cards they can trade
-        List<string> propertiesAndCards = m_board.GetPlayerElligibleTradeStrings(m_board.CurrentPlayer);
-
-        // Open the trading menu
-        m_tradingController.CreateTradingMenu(player.Name, GetIconSprite(player.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
     }
     
     // Deactivates all houses (for game start)
@@ -1047,6 +1213,24 @@ public class Controller_Game : MonoBehaviour
                 FindHouseOrHotelIcon(spaceNum, i + 1).SetActive(false);
             }
         }
+    }
+
+    // Returns house/hotel icon given the property num and house num
+    GameObject FindHouseOrHotelIcon(int propertyNum, int houseNum)
+    {
+        // Determine icon name based on num
+        string houseName = "house" + houseNum;
+        if (houseNum == 5)
+        {
+            houseName = "hotel";
+        }
+
+        // Find the parent transform (property object in the scene)
+        Transform propertyTransform = FindSpaceButtonParent(m_spaceButtons[propertyNum]);
+
+        // Find the house object 
+        Transform houseTransform = FindChildByName(propertyTransform, houseName);
+        return houseTransform.gameObject;
     }
 
     // Saves the game data for use in the end menu
@@ -1086,24 +1270,6 @@ public class Controller_Game : MonoBehaviour
 
         // Write all the data
         File.WriteAllLines(filePath, data);
-    }
-
-    // Returns house/hotel icon given the property num and house num
-    GameObject FindHouseOrHotelIcon(int propertyNum, int houseNum)
-    {
-        // Determine icon name based on num
-        string houseName = "house" + houseNum;
-        if (houseNum == 5)
-        {
-            houseName = "hotel";
-        }
-
-        // Find the parent transform (property object in the scene)
-        Transform propertyTransform = FindSpaceButtonParent(m_spaceButtons[propertyNum]);
-
-        // Find the house object 
-        Transform houseTransform = FindChildByName(propertyTransform, houseName);
-        return houseTransform.gameObject;
     }
 
     // Returns the property parent object of a given space button
@@ -1163,9 +1329,4 @@ public class Controller_Game : MonoBehaviour
         // No space found, FREAK OUT!
         throw new Exception("No texture found for specified property! Index: " + spaceIndex);
     }
-
 }
-
-
-
-

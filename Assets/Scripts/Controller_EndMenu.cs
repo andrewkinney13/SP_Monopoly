@@ -4,6 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// CLASS
+///     Controller_EndGame : Monobehaviour - controls the end game scene.
+///     
+/// DESCRIPTION
+///     This class reads in a data file of information pertaining to the
+///     winner of the game, and displays it. Contains an Exit button for
+///     user to end the game.
+/// 
+/// </summary>
 public class Controller_EndGame : MonoBehaviour
 {
     // ======================================== Unity Data Members ========================================= //
@@ -15,6 +26,8 @@ public class Controller_EndGame : MonoBehaviour
     public Button m_exitButton;
 
     // ======================================== Start / Update ============================================= //
+
+    // Creates the scene from text file data
     void Start()
     {
         // Read the end game file
@@ -29,9 +42,7 @@ public class Controller_EndGame : MonoBehaviour
         foreach (Sprite icon in m_icons)
         {
             if (icon.ToString() == data[1])
-            {
                 m_icon = icon;
-            }
         }
 
         // Add exit button listener

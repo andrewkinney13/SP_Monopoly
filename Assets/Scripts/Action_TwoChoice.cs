@@ -5,10 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 
 /// CLASS
-///     Action_TwoChoice
-/// 
-/// SYSNOPSIS
-///     Action_TwoChoice : MonoBehavior - class to handle functionality and user
+///     Action_TwoChoice : MonoBehavior  - class to handle functionality and user
 ///     interaction with a two choice action.
 ///     
 /// DESCRIPTION

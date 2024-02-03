@@ -7,10 +7,7 @@ using TMPro;
 /// <summary>
 /// 
 /// CLASS
-///     Action_RollDice
-/// 
-/// SYSNOPSIS
-///     Action_RollDice : MonoBehavior - class to handle functionality and user
+///     Action_RollDice : MonoBehavior  - class to handle functionality and user
 ///     interaction with dice rolling action window.
 ///     
 /// DESCRIPTION

@@ -4,10 +4,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 
 /// CLASS
-///     Controller_Camera
-/// 
-/// SYSNOPSIS
-///     Action_TwoChoice : MonoBehavior - class to control the camera, and 
+///     Controller_Camera : MonoBehavior - class to control the camera, and 
 ///     the user's interaction with it.
 ///     
 /// DESCRIPTION

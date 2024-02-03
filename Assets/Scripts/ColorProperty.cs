@@ -3,9 +3,6 @@ using System.Collections.Generic;
 /// <summary>
 /// 
 /// CLASS
-///     ColorProperty
-/// 
-/// SYSNOPSIS
 ///     ColorProperty : Property - inherited property class for color spaces.
 ///     
 /// DESCRIPTION

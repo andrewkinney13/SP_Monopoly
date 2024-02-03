@@ -1,7 +1,16 @@
 using TMPro;
 using UnityEngine;
 
-
+/// <summary>
+/// 
+/// CLASS
+///     Controller_DetailsPopup : Monobehaviour - controls detail popup windows.
+///     
+/// DESCRIPTION
+///     This class handles the creation and deletion of pop-up windows that 
+///     hover over the user's cursor.
+/// 
+/// </summary>
 public class Controller_DetailsPopup : MonoBehaviour
 {
     // ======================================== Unity Data Members ========================================= //
@@ -30,21 +39,35 @@ public class Controller_DetailsPopup : MonoBehaviour
 
     // ======================================== Public Methods ============================================= //
 
-    // Creates a propery details window within the screen UI
-    public void CreateDetailsWindow(string propertyName, string propertyDetails)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreateDetailsWindow - creates details window.
+    ///     
+    /// SYNOPSIS
+    ///     public void CreateDetailsWindow(string a_title, string a_text);
+    ///         a_title         --> header of the window.
+    ///         a_text          --> what goes in the textbox.
+    ///     
+    /// DESCRIPTION
+    ///     Creates window with passed in title and text, makes it active, and 
+    ///     updates the flag that says it's active.
+    /// 
+    /// </summary>
+    public void CreateDetailsWindow(string a_title, string a_text)
     {
         // Set up the name and details
-        m_name.text = propertyName;
-        m_details.text = propertyDetails;
+        m_name.text = a_title;
+        m_details.text = a_text;
 
-        // Set the window as active
+        // Update flag
         m_isActive = true;
 
         // Enable the window
         m_window.SetActive(true);
     }
 
-    // Closes the window 
+    // Closes the window and marks flag
     public void CloseDetailsWindow()
     {
         m_window.SetActive(false);

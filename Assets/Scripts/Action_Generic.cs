@@ -19,10 +19,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 
 /// CLASS
-///     Action_Generic
-/// 
-/// SYSNOPSIS
-///     Action_Generic : MonoBehavior - accessor for a generic (single choice) action window's 
+///     Action_Generic : MonoBehavior  - accessor for a generic (single choice) action window's 
 ///     properties in the player panel.
 ///     
 /// DESCRIPTION
@@ -41,25 +38,13 @@ public class Action_Generic : MonoBehaviour
     // ======================================== Properties ================================================= //
 
     // Set the title text
-    public string Title
-    {
-        set { m_title.text = value; }
-    }
+    public string Title { set { m_title.text = value; } }
 
     // Set the action button's text
-    public string ActButtonText
-    {
-        set 
-        {
-            m_actButtonText.text = value;
-        }
-    }
+    public string ActButtonText { set { m_actButtonText.text = value; } }
 
     // Returns a reference to the act button (for adding listeners)
-    public Button ActButton
-    {
-        get { return m_actButton; }
-    }
+    public Button ActButton { get { return m_actButton; } }
 
     // Sets the color of the act button's text, and font
     // according to the color

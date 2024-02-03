@@ -1,9 +1,6 @@
 /// <summary>
 /// 
 /// CLASS
-///     Card
-/// 
-/// SYSNOPSIS
 ///     Card - Stores the data of Community Chest and Chance cards.
 ///     
 /// DESCRIPTION

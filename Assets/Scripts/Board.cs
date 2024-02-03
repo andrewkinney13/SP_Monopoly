@@ -6,9 +6,6 @@ using UnityEngine;
 /// <summary>
 /// 
 /// CLASS
-///     Board
-/// 
-/// SYSNOPSIS
 ///     Board - Handles all programatic game logic.
 ///     
 /// DESCRIPTION

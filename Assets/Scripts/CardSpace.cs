@@ -1,9 +1,6 @@
 /// <summary>
 /// 
 /// CLASS
-///     CardSpace
-/// 
-/// SYSNOPSIS
 ///     CardSpace : Space - inherited space class for Community Chest and Chance spaces.
 ///     
 /// DESCRIPTION
