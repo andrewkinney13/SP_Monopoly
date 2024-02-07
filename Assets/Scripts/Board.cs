@@ -1249,6 +1249,35 @@ public class Board
     /// <summary>
     /// 
     /// NAME
+    ///     MortgageAvailible - can player mortgage property
+    ///     
+    /// SYNOPSIS
+    ///     public bool MortgageAvailible(ColorProperty a_property);
+    ///         a_property              --> property getting mortgaged.
+    ///     
+    /// DESCRIPTION
+    ///     Checks if a property can be mortgaged. 
+    /// 
+    /// RETURNS
+    ///     True if unmortgage is availible, false if not.
+    ///    
+    /// </summary>
+    public bool MortgageAvailible(ColorProperty a_property)
+    { 
+        // If houses on a property, do not allow mortgaging
+        if (a_property.Houses != 0)
+            return false;
+
+        // Property is already mortgaged
+        if (a_property.IsMortgaged)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// 
+    /// NAME
     ///     UnmortgageAvailible - can player unmortgage property
     ///     
     /// SYNOPSIS
@@ -1263,10 +1292,10 @@ public class Board
     ///     True if unmortgage is availible, false if not.
     ///    
     /// </summary>
-    public bool UnmortgageAvailible(Player player, Property property)
+    public bool UnmortgageAvailible(Player a_player, Property a_property)
     {
         // Property is mortgaged, and player can afford to buy it
-        if (property.IsMortgaged && property.MortgageValue < player.Cash)
+        if (a_property.IsMortgaged && a_property.MortgageValue < a_player.Cash)
         {
             return true;
         }

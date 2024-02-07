@@ -952,17 +952,19 @@ public class Controller_Game : MonoBehaviour
             bool hotelAvailible = m_board.HotelAvailible(player, colorProperty);
             bool sellHouseAvailible = m_board.SellHouseAvailible(colorProperty);
             bool sellHotelAvailible = colorProperty.Houses == 5;
+            bool mortgageAvailible = m_board.MortgageAvailible(colorProperty);
             bool unmortgageAvailible = m_board.UnmortgageAvailible(player, colorProperty);
 
             m_propertyManager.CreatePropertyManager(colorProperty.Name, colorProperty.Description, colorProperty.MortgageValue, colorProperty.HouseCost,
-                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, !colorProperty.IsMortgaged, unmortgageAvailible, colorProperty.Index);
+                houseAvailible, sellHouseAvailible, hotelAvailible, sellHotelAvailible, mortgageAvailible, unmortgageAvailible, colorProperty.Index);
         }
 
         // Feed in limited paramaters if a utility or a railroad (no houses, hotels)
         else
         {
             bool unmortgageAvailible = m_board.UnmortgageAvailible(m_board.CurrentPlayer, property);
-            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, unmortgageAvailible, 0);
+            m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, 
+                false, false, false, false, !property.IsMortgaged, unmortgageAvailible, property.Index);
         }
     }
     /* void OnPropertyClick(int a_spaceIndex) */

@@ -166,9 +166,6 @@ public class Action_RollDice : MonoBehaviour
         if (die1Val == die2Val)
             m_wereDoubles = true;
 
-        // REMOVE THIS!!!
-        m_wereDoubles = true;
-
         // Do not mark doubles as true if this is initializing the player order
         if (!OrderDetermined)
             m_wereDoubles = false;
