@@ -3,6 +3,17 @@ using System.IO;
 using System.Xml;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// CLASS
+///     PlayerFile - class for saving and reading player data.
+///     
+/// DESCRIPTION
+///     This class controls saving and writing data to and from
+///     a file for player data, inbetween scene transitions.
+///     Uses XML file format.
+/// 
+/// </summary>
 public class PlayerFile
 {
     // ======================================== Private Data Members ======================================= //
@@ -12,14 +23,20 @@ public class PlayerFile
 
     // ======================================== Public Methods ============================================= //
 
-    // Creates "players.xml" file to save player data 
+
+    /// <summary>
+    /// 
+    /// CLASS
+    ///     CreatePlayerFile - creates the file with player data.
+    ///     
+    /// DESCRIPTION
+    ///     This creates the player XML file, and initialies it.
+    /// 
+    /// </summary>
     public void CreatePlayerFile()
     {
         // Create document w/ indentation
-        XmlWriterSettings settings = new XmlWriterSettings()
-        {
-            Indent = true
-        };
+        XmlWriterSettings settings = new XmlWriterSettings() { Indent = true };
 
         string filePath = Path.Combine(Application.streamingAssetsPath, m_fileName);
         m_writer = XmlWriter.Create(filePath, settings);
@@ -29,7 +46,15 @@ public class PlayerFile
         m_writer.WriteStartElement("Players");
     }
 
-    // Closes the "players.xml" file
+    /// <summary>
+    /// 
+    /// CLASS
+    ///     ClosePlayerFile - closes the file with player data.
+    ///     
+    /// DESCRIPTION
+    ///     This method closes the player file.
+    /// 
+    /// </summary>
     public void ClosePlayerFile()
     {
         m_writer.WriteEndElement();
@@ -38,16 +63,42 @@ public class PlayerFile
         m_writer.Close();
     }
 
-    // Writes a player to the xml file
-    public void WritePlayerToFile(string name, string icon)
+    /// <summary>
+    /// 
+    /// CLASS
+    ///     ClosePlayerFile - closes the file with player data.
+    ///     
+    /// SYNOPSIS
+    ///     public void WritePlayerToFile(string a_name, string a_icon);
+    ///         a_name      --> name of the player.
+    ///         a_icon      --> player's icon name.
+    ///     
+    /// DESCRIPTION
+    ///     This method is used to add player data to the file.
+    /// 
+    /// </summary>
+    public void WritePlayerToFile(string a_name, string a_icon)
     {
         m_writer.WriteStartElement("Player");
-        m_writer.WriteElementString("Name", name);
-        m_writer.WriteElementString("Icon", icon);
+        m_writer.WriteElementString("Name", a_name);
+        m_writer.WriteElementString("Icon", a_icon);
         m_writer.WriteEndElement();
     }
 
-    // Reads a player from the xml file
+    /// <summary>
+    /// 
+    /// CLASS
+    ///     ReadPlayersFromFile - reads player file.
+    ///     
+    /// DESCRIPTION
+    ///     This method is used to read player data from the file,
+    ///     returns all of it as a dictionary of strings.
+    ///     
+    /// RETURNS
+    ///     Dictionary of player data.
+    ///     PlayerName : IconName.
+    /// 
+    /// </summary>
     public Dictionary<string, string> ReadPlayersFromFile()
     {
         // Obtain file path 
@@ -90,10 +141,9 @@ public class PlayerFile
                 }
             }
         }
-
-        // Return the dictionary
         return players;
     }
+    /* public Dictionary<string, string> ReadPlayersFromFile() */
 }
 
 

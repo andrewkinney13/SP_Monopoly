@@ -3,6 +3,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// CLASS
+///     Controller_Trading : MonoBehaviour - controls trading menu.
+///     
+/// DESCRIPTION
+///     This class controls the trading menu that players interact with when
+///     sending each other money, properties, and cards.
+/// 
+/// </summary>
 public class Controller_Trading : MonoBehaviour
 {
     // ======================================== Unity Data Members ========================================= //
@@ -32,7 +42,26 @@ public class Controller_Trading : MonoBehaviour
     }
 
     // ======================================== Public Methods ============================================= //
-    public void CreateTradingMenu(string name, Sprite icon, List<string> propertiesAndCards, int availibleCash)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreateTradingMenu - creates trading menu.
+    ///     
+    /// SYNOPSIS
+    ///     public void CreateTradingMenu(string a_name, Sprite a_icon, 
+    ///     List<string> a_propertiesAndCards, int a_availibleCash);
+    ///         a_name                  --> name of player being traded with.
+    ///         a_icon                  --> icon of player being traded with.
+    ///         a_propertiesAndCards    --> list of items availible to send.
+    ///         a_availibleCash         --> max amount of cash able to be sent.
+    /// 
+    /// DESCRIPTION
+    ///     This method creates the trading menu that a player would use to 
+    ///     send another player things. It is initialized according the the data
+    ///     passed in by the game controller class.
+    /// 
+    /// </summary>
+    public void CreateTradingMenu(string a_name, Sprite a_icon, List<string> a_propertiesAndCards, int a_availibleCash)
     {
         // Clear cash input
         m_cashInput.text = "";
@@ -42,22 +71,23 @@ public class Controller_Trading : MonoBehaviour
         m_propertyDropdown.ClearOptions();
 
         // Set title and icon
-        m_tradingPlayerTitle.text = "Trading with: " + name;
-        m_tradingPlayerIcon.sprite = icon;
+        m_tradingPlayerTitle.text = "Trading with: " + a_name;
+        m_tradingPlayerIcon.sprite = a_icon;
 
         // Set current cash
-        m_availibleCash = availibleCash;
+        m_availibleCash = a_availibleCash;
 
         // Set current player's name
-        m_playerName = name;
+        m_playerName = a_name;
 
         // Fill the dropdown with property names
-        propertiesAndCards.Insert(0, "Select Property / Card");
-        m_propertyDropdown.AddOptions(propertiesAndCards);
+        a_propertiesAndCards.Insert(0, "Select Property / Card");
+        m_propertyDropdown.AddOptions(a_propertiesAndCards);
 
         // Set window as active
         m_tradingMenu.SetActive(true);
     }
+    /* public void CreateTradingMenu(string a_name, Sprite a_icon, List<string> a_propertiesAndCards, int a_availibleCash) */
 
     // Closes the trading menu
     public void CloseTradingMenu()
@@ -65,9 +95,19 @@ public class Controller_Trading : MonoBehaviour
         m_tradingMenu.SetActive(false);
     }
 
-    // ======================================== Public Methods ============================================= //
+    // ======================================== Private Methods ========================================== //
 
-    // Set the send button method
+    /// <summary>
+    /// 
+    /// NAME
+    ///     SendToGame - returns the trade information back to game controller.
+    /// 
+    /// DESCRIPTION
+    ///     This method determines the items the user is trying to trade to the 
+    ///     other player, and will sned this data back to the game controller to 
+    ///     actually give that other player the items.
+    /// 
+    /// </summary>
     void SendToGame()
     {
         // Obtain the selected property
@@ -78,9 +118,7 @@ public class Controller_Trading : MonoBehaviour
 
         // Don't send to controller, nothing entered
         if (selectedOption == selectedOptionDefault && inputCash == 0)
-        {
             return;
-        }    
 
         // Send to controller if property or card entered
         if (selectedOption != selectedOptionDefault)
@@ -103,31 +141,39 @@ public class Controller_Trading : MonoBehaviour
             m_gameController.TradeMade(m_playerName, selectedOption, inputCash, false, false);
             return;
         }
-
-        // Send to controller if just cash entered
-
-        Debug.Log(selectedOption);
     }
+    /* void SendToGame() */
 
-    // Set the done button method
-    void OnDoneClick()
-    {
-        // Just set the window to inactive
-        m_tradingMenu.SetActive(false);
-    }
+    // User done with menu, close it
+    void OnDoneClick() { m_tradingMenu.SetActive(false); }
 
-    // Check the value of the cash area, make sure it doesn't exceed user's cash
-    void OnCashInput(string inputText)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     OnCashInput - checks validity of the cash textbox.
+    ///     
+    /// SYNOPSIS
+    ///     void OnCashInput(string a_inputText);
+    ///         a_inputText     --> text in the cash box.
+    /// 
+    /// DESCRIPTION
+    ///     This method checks the cash entry text box every time
+    ///     a change is made to it by the user, and will enable
+    ///     or disable the send button according to the validity of
+    ///     the text in the box. 
+    /// 
+    /// </summary>
+    void OnCashInput(string a_inputText)
     {
         // Check if empty
-        if (string.IsNullOrEmpty(inputText))
+        if (string.IsNullOrEmpty(a_inputText))
         {
             m_sendButton.interactable = true;
             return;
         }
         // Attempt to cast to int
         int amount;
-        if (!int.TryParse(inputText, out amount))
+        if (!int.TryParse(a_inputText, out amount))
         {
             m_sendButton.interactable = false;
             return;
@@ -135,12 +181,8 @@ public class Controller_Trading : MonoBehaviour
 
         // Check value validity
         if (amount >= 0 && amount < m_availibleCash)
-        {
             m_sendButton.interactable = true;
-        }
         else
-        {
             m_sendButton.interactable = false;
-        }
     }
 }

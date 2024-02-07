@@ -64,7 +64,7 @@ public class Board
     {
         // Check bounds
         if (a_index < 0 || a_index > MAX_SPACE)
-            throw new ArgumentException("Space index out of range");
+            throw new ArgumentException("Space index out of range: " + a_index);
         
         return m_spaces[a_index];
     }
@@ -951,7 +951,7 @@ public class Board
     ///     BuyHouse - player is buying a house for a property.
     ///     
     /// SYNOPSIS
-    ///     public void BuyHouse(int a_propertyIndex)
+    ///     public void BuyHouse(int a_propertyIndex);
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're buying a house for.
     ///     
@@ -987,7 +987,7 @@ public class Board
     ///     SellHouse - player is selling house on a property.
     ///     
     /// SYNOPSIS
-    ///     public void SellHouse(int a_propertyIndex)
+    ///     public void SellHouse(int a_propertyIndex);
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're buying a house for.
     ///     
@@ -1023,7 +1023,7 @@ public class Board
     ///     MortgageProperty - player is mortgaging a property.
     ///     
     /// SYNOPSIS
-    ///     public void MortgageProperty(int a_propertyIndex)
+    ///     public void MortgageProperty(int a_propertyIndex);
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're mortgaging.
     ///     
@@ -1062,7 +1062,7 @@ public class Board
     ///     UnmortgageProperty - player is mortgaging a property.
     ///     
     /// SYNOPSIS
-    ///     public void UnmortgageProperty(int a_propertyIndex)
+    ///     public void UnmortgageProperty(int a_propertyIndex);
     ///         a_propertyIndex         --> space index of the property that
     ///                                     they're mortgaging.
     ///     
@@ -1100,7 +1100,7 @@ public class Board
     ///     HouseAvailible - is a house availible for a player's property.
     ///     
     /// SYNOPSIS
-    ///     public bool HouseAvailible(Player a_player, ColorProperty a_property)
+    ///     public bool HouseAvailible(Player a_player, ColorProperty a_property);
     ///         a_player                --> player trying to buy a house.
     ///         a_property              --> property getting house on it.
     ///     
@@ -1152,7 +1152,7 @@ public class Board
     ///     SellHouseAvailible - is a house availible to sell.
     ///     
     /// SYNOPSIS
-    ///     public bool SellHouseAvailible(ColorProperty a_property)
+    ///     public bool SellHouseAvailible(ColorProperty a_property);
     ///         a_property              --> property trying to sell house.
     ///     
     /// DESCRIPTION
@@ -1201,7 +1201,7 @@ public class Board
     ///     HotelAvailible - is a hotel availible to sell.
     ///     
     /// SYNOPSIS
-    ///     public bool HotelAvailible(Player a_player, ColorProperty a_property)
+    ///     public bool HotelAvailible(Player a_player, ColorProperty a_property);
     ///         a_player                --> player buying the hotel.
     ///         a_property              --> property getting hotel on it.
     ///     
@@ -1242,7 +1242,7 @@ public class Board
     ///     UnmortgageAvailible - can player unmortgage property
     ///     
     /// SYNOPSIS
-    ///     public bool UnmortgageAvailible(Player a_player, ColorProperty a_property)
+    ///     public bool UnmortgageAvailible(Player a_player, ColorProperty a_property);
     ///         a_player                --> player trying to mortgage.
     ///         a_property              --> property getting unmortgaged.
     ///     
@@ -1440,7 +1440,7 @@ public class Board
     ///     InitializePlayers - creates players based on player data xml file.
     ///     
     /// SYNOPSIS
-    ///     List<ColorProperty> GetColorSet(ColorProperty a_property)
+    ///     List<ColorProperty> GetColorSet(ColorProperty a_property);
     ///         a_property      --> property who's color set being returned.
     ///     
     /// DESCRIPTION
@@ -1504,7 +1504,7 @@ public class Board
     ///     GetSpaceDescription - returns a description of generic space types.
     ///     
     /// SYNOPSIS
-    ///     string GetSpaceDescription(string a_name)
+    ///     string GetSpaceDescription(string a_name);
     ///         a_name      --> space to get description of.
     ///     
     /// DESCRIPTION
@@ -1548,7 +1548,7 @@ public class Board
     ///     CastActionString - returns Action associated with string.
     ///     
     /// SYNOPSIS
-    ///     Actions CastActionString(string a_str)
+    ///     Actions CastActionString(string a_str);
     ///         a_str      --> string to cast.
     ///     
     /// DESCRIPTION

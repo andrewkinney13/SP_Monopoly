@@ -83,43 +83,12 @@ public class ColorProperty : Property
     /// <summary>
     /// 
     /// NAME
-    ///     ActionType - accessor for this property's action when landed on.
-    ///     
-    /// DESCRIPTION
-    ///     This method determines what a player must do when they land on this
-    ///     property, based on various factors of the property itself and the owner. 
-    ///     Order of what is being checked is important.
-    /// 
-    /// RETURNS
-    ///     What a player must do after landing on this property.
-    /// 
-    /// </summary>
-    public override Board.Actions ActionType
-    {
-        get
-        { 
-            if (IsPurchased)
-            {
-                if (Owner.InJail)
-                    return Board.Actions.LandedOn_JailedOwnerProperty;
-                
-                if (IsMortgaged)
-                    return Board.Actions.LandedOn_MortgagedProperty;
-                
-                return Board.Actions.LandedOn_OwnedColorProperty;
-            }
-            return Board.Actions.LandedOn_UnownedProperty;
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// NAME
     ///     Description - accessor for this property's description.
     ///     
     /// DESCRIPTION
     ///     This method compiles a description of the property, based on
-    ///     it's current data. 
+    ///     it's current data. Uses property base class implementation
+    ///     for generic information.
     /// 
     /// RETURNS
     ///     String of details about the property. 
@@ -129,21 +98,8 @@ public class ColorProperty : Property
     {
         get
         {
-            // Owned or not
-            string retString = "Owner: ";
-            if (IsPurchased)
-                retString += Owner.Name;
-            else
-                retString += "No one";
-            
-
-            // Mortgaged or not
-            retString += "\nMortgaged: ";
-            if (IsMortgaged)
-                retString += "Yes";
-            else
-                retString += "No";
-            
+            // Get generic information from base class
+            string retString = base.Description;
 
             // Houses
             if (Houses == 5)

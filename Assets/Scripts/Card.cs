@@ -24,7 +24,7 @@ public class Card
     /// <summary>
     /// 
     /// NAME
-    ///     Card - Stores the data of Community Chest and Chance cards.
+    ///     Card - constructor for Card objects.
     /// 
     /// SYSNOPSIS
     ///     public Card(Controller_Card.Actions a_actionType, string a_description);
@@ -33,10 +33,7 @@ public class Card
     ///         a_descrtiption      --> description of the action.
     ///     
     /// DESCRIPTION
-    ///     Community Chest and Chance cards have some important data associated with them 
-    ///     that this class stores and organizes. Depending on the "action type" of a card
-    ///     (what the card makes the player do), certain data is stored in that card 
-    ///     object for the game to access. 
+    ///     Stores the action type and description of a card based on parameters.
     /// 
     /// </summary>
     public Card(Controller_Card.Actions a_actionType, string a_description)

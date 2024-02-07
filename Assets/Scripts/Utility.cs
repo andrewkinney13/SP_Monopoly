@@ -1,4 +1,13 @@
-
+/// <summary>
+/// 
+/// CLASS
+///     Utility : Property - inherited property class for utility spaces.
+///     
+/// DESCRIPTION
+///     Controls functionality for spaces who are purchasable by players, but are 
+///     utilities.
+/// 
+/// </summary>
 public class Utility : Property
 {
     // ======================================== Private Data Members ======================================= //
@@ -6,12 +15,46 @@ public class Utility : Property
     bool m_diceRolled;
 
     // ======================================== Constructor ================================================ //
-    public Utility(string name, int index, Board.Actions action, int purchasePrice, string description) : 
-        base (name, index, action, purchasePrice, description) { }
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Utility - constructor for utility spaces on the board.
+    /// 
+    /// SYSNOPSIS
+    ///     public Utility(string a_name, int a_index, Board.Actions a_action, 
+    ///     int a_purchasePrice, int a_rentPrice, string a_description)
+    ///     : base (a_name, a_index, a_action, a_purchasePrice, a_description);
+    ///         a_name              --> Name of the space.
+    ///         a_index             --> Index on board of the space.
+    ///         a_action            --> The action associated with landing on this space.
+    ///         a_purchasePrice     --> How much it costs to purchase this property.
+    ///         a_description       --> Description of this space.
+    ///     
+    /// DESCRIPTION
+    ///     Inheriting from Property, which inherits from Space, this constructor 
+    ///     sends everything to the base class constructors.
+    /// 
+    /// </summary>
+    public Utility(string a_name, int a_index, Board.Actions a_action, int a_purchasePrice, string a_description) : 
+        base (a_name, a_index, a_action, a_purchasePrice, a_description) { }
 
     // ======================================== Override Methods =========================================== //
 
-    // What action a player must do, landing on this property
+    /// <summary>
+    /// 
+    /// NAME
+    ///     ActionType - accessor for this property's action when landed on.
+    ///     
+    /// DESCRIPTION
+    ///     This method determines what a player must do when they land on this
+    ///     property, based on various factors of the property itself and the owner. 
+    ///     Order of what is being checked is important.
+    /// 
+    /// RETURNS
+    ///     What a player must do after landing on this property.
+    /// 
+    /// </summary>
     public override Board.Actions ActionType
     {
         get
@@ -19,46 +62,42 @@ public class Utility : Property
             if (IsPurchased && !DiceRolled)
             {
                 if (Owner.InJail)
-                {
                     return Board.Actions.LandedOn_JailedOwnerProperty;
-                }
+
                 if (IsMortgaged)
-                {
                     return Board.Actions.LandedOn_MortgagedProperty;
-                }
+
                 return Board.Actions.DetermineUtilityCost;
             }
             if (IsPurchased && DiceRolled)
-            {
                 return Board.Actions.LandedOn_OwnedUtility;
-            }
+
             return Board.Actions.LandedOn_UnownedProperty;
         }
     }
 
-    // Description
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Description - accessor for this property's description.
+    ///     
+    /// DESCRIPTION
+    ///     This method compiles a description of the property, based on
+    ///     it's current data. Uses property base class implementation
+    ///     for generic information.
+    /// 
+    /// RETURNS
+    ///     String of details about the property. 
+    /// 
+    /// </summary>
     public override string Description
     {
         get
         {
-            string retString = "Owner: ";
-            if (IsPurchased)
-            {
-                retString += Owner.Name;
-            }
-            else
-            {
-                retString += "No one";
-            }
-            retString += "\nMortgaged: ";
-            if (IsMortgaged)
-            {
-                retString += "Yes";
-            }
-            else
-            {
-                retString += "No";
-            }
+            // Get generic information from base class
+            string retString = base.Description;
+
+            // Get Utility information
             retString += "\nIf one Utility is owned, rent is\n" +
                 "4 times amount shown on dice.\n" +
                 "If both Utilities are owned, rent is 10 times the amount shown on dice.\n" +
@@ -67,24 +106,20 @@ public class Utility : Property
         }
     }
 
-    // Returns rent when a user lands on this space
-    public override int RentPrice
-    {
-        get { return RentMultiplier * CurrentDiceRoll; }
-    }
+    // Returns rent cost when a user lands on this space
+    public override int RentPrice { get { return RentMultiplier * CurrentDiceRoll; } }
 
     // ======================================== Properties ================================================= //
 
-    // What is multiplied by dice
+    // Determines the rent multiplier 
     public int RentMultiplier
     {
         get 
         { 
             // Utilities both owned gived 10x, just one owned gived 4x
             if (IsAllied)
-            {
                 return 10;
-            }
+
             return 4;
         }
     }
@@ -103,7 +138,7 @@ public class Utility : Property
         set { m_diceRolled = value; }
     }
 
-    // Checks if the owner owns the other utility
+    // Checks if the owner owns both utilities
     public bool IsAllied
     {
         get
@@ -114,16 +149,12 @@ public class Utility : Property
             {
                 // Add utilities as found
                 if (property is Utility)
-                {
                     utilityCount++;
-                }
             }
 
             // Only return true if 2 utility types found
             if (utilityCount == 2)
-            {
                 return true;
-            }
             return false;
         }
     } 

@@ -39,10 +39,10 @@ public class Controller_Game : MonoBehaviour
     public Controller_DetailsPopup m_playerDetailsController;
     public Controller_PlayerTrack m_playerTrackController;
     public Controller_Camera m_cameraController;
+    public Controller_Trading m_tradingController;
     public Action_RollDice m_diceRollController;
     public Action_Generic m_genericActionController;
     public Action_TwoChoice m_twoChoiceActionController;
-    public Controller_Trading m_tradingController;
 
     // Folder of icons a player can have as their game token
     public List<Sprite> m_icons;
@@ -62,6 +62,9 @@ public class Controller_Game : MonoBehaviour
     // ======================================== Private Data Members ======================================= //
     Board m_board;
     bool m_updateMade = false;
+    const int ACTION_WINDOW_GENERIC = 0;
+    const int ACTION_WINDOW_ROLL_DICE = 1;
+    const int ACTION_WINDOW_TWO_CHOICE = 2;
 
     // ======================================== Start / Update ============================================= //
 
@@ -534,7 +537,7 @@ public class Controller_Game : MonoBehaviour
     }
     /* public void Action_PickedUpCard() */
 
-    // Getting jail card from card
+    // Current player collects a Get out of Jail Free card
     public void Card_GetJailCard()
     {
         // Give player jail card
@@ -549,7 +552,7 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Collecting money from card
+    // Collecting money from Community Chest or Chance card
     public void Card_CollectMoney(int amount)
     {
         // Add cash
@@ -560,7 +563,7 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Paying money from card
+    // Paying money from Community Chest or Chance card
     public void Card_PayMoney(int amount)
     {
         // Subtract cash
@@ -571,7 +574,7 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Making repairs from card
+    // Making repairs on property from from Community Chest or Chance card
     public void Card_MakeRepairs(int amount)
     {
         // Subtract cash
@@ -582,8 +585,28 @@ public class Controller_Game : MonoBehaviour
         UpdateMade();
     }
 
-    // Moving to space from card
-    public void Card_MoveToSpace(string location)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     Action_PickedUpCard - card player picked up is moving them somewhere.
+    ///     
+    ///         a_location      --> name / type of space being moved to
+    ///     
+    /// SYNOPSIS
+    ///     public void Card_MoveToSpace(string a_location);
+    ///         
+    ///     
+    /// DESCRIPTION
+    ///     Current player picks up a community chest or chance card, and
+    ///     is being either moved to an explicitly named space, or the 
+    ///     nearest space. This method determines what exact space their going to, 
+    ///     and moves them there. It also checks for being moved to jail, or passing go.
+    ///     
+    /// EXCEPTION
+    ///     Throws exception if a_location cannot be intepereted as a space to move to.
+    /// 
+    /// </summary>
+    public void Card_MoveToSpace(string a_location)
     {
         // Find space to move to, start with current space (some cards ask find nearest
         int currentSpace = m_board.CurrentPlayer.CurrentSpace;
@@ -595,21 +618,21 @@ public class Controller_Game : MonoBehaviour
         while (spacesSearched <= 40)
         {
             // Perfect match 
-            if (m_board.GetSpace(currentSpace).Name == location)
+            if (m_board.GetSpace(currentSpace).Name == a_location)
             {
                 destinationSpace = currentSpace;
                 break;
             }
 
             // Looking for nearest railroad
-            if (m_board.GetSpace(currentSpace) is Railroad && location == "Railroad")
+            if (m_board.GetSpace(currentSpace) is Railroad && a_location == "Railroad")
             {
                 destinationSpace = currentSpace;
                 break;
             }
 
             // Looking for nearest utility
-            else if (m_board.GetSpace(currentSpace) is Utility && location == "Utility")
+            else if (m_board.GetSpace(currentSpace) is Utility && a_location == "Utility")
             {
                 destinationSpace = currentSpace;
                 break;
@@ -618,17 +641,14 @@ public class Controller_Game : MonoBehaviour
             // Update current space
             currentSpace++;
             if (currentSpace == 40)
-            {
                 currentSpace = 0;
-            }
+            
             spacesSearched++;
         }
 
         // Check that current space is found
         if (destinationSpace == -1)
-        {
             throw new Exception("Couldn't find space to move to :(");
-        }
 
         // Move the player icon
         StartCoroutine(m_playerTrackController.MovePlayer(m_board.CurrentPlayer.PlayerNum, m_board.CurrentPlayer.CurrentSpace, destinationSpace));
@@ -654,95 +674,150 @@ public class Controller_Game : MonoBehaviour
         // Mark update
         UpdateMade();
     }
+    /* public void Card_MoveToSpace(string a_location) */
 
-    // Property manager button methods
-    public void PropertyManager_BuyHouse(int propertyIndex)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     PropertyManager_BuyHouse - player buying a house for a property.
+    ///     
+    /// SYNOPSIS
+    ///     public void PropertyManager_BuyHouse(int a_propertyIndex);
+    ///         a_propertyIndex         --> the index on the board of where the 
+    ///                                     property is.
+    ///     
+    /// DESCRIPTION
+    ///     Current player is buying a house for a property that they own, this method
+    ///     calls the appropriate Board function to do so, and then updates the 
+    ///     Unity scene to show the house / hotel purchased.
+    /// 
+    /// </summary>
+    public void PropertyManager_BuyHouse(int a_propertyIndex)
     {
         // Buy the house
-        m_board.BuyHouse(propertyIndex);
+        m_board.BuyHouse(a_propertyIndex);
 
         // Update cash of the player
         UpdatePanelCash();
 
         // Draw the house/hotel on the board
-        int houseNum = m_board.GetPropertyHouses(propertyIndex);
+        int houseNum = m_board.GetPropertyHouses(a_propertyIndex);
 
         // If hotel, remove all houses first
         if (houseNum == 5)
         {
             for (int i = 0; i < houseNum; i++) 
-            {
-                FindHouseOrHotelIcon(propertyIndex, i + 1).SetActive(false);
-            }
+                FindHouseOrHotelIcon(a_propertyIndex, i + 1).SetActive(false);
         }
-        FindHouseOrHotelIcon(propertyIndex, houseNum).SetActive(true);
+        FindHouseOrHotelIcon(a_propertyIndex, houseNum).SetActive(true);
 
         // Redraw the window
-        OnPropertyClick(propertyIndex);
+        OnPropertyClick(a_propertyIndex);
     }
-    public void PropertyManager_SellHouse(int propertyIndex)
+    /* public void PropertyManager_BuyHouse(int a_propertyIndex) */
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     PropertyManager_SellHouse - player selling a house on a property.
+    ///     
+    /// SYNOPSIS
+    ///     public void PropertyManager_SellHouse(int a_propertyIndex);
+    ///         a_propertyIndex         --> the index on the board of where the 
+    ///                                     property is.
+    ///     
+    /// DESCRIPTION
+    ///     Current player is selling a house on a property that they own, this method
+    ///     calls the appropriate Board function to do so, and then updates the 
+    ///     Unity scene to remove the house / hotel they sold.
+    /// 
+    /// </summary>
+    public void PropertyManager_SellHouse(int a_propertyIndex)
     {
         // If hotel, add back houses
-        int houseNum = m_board.GetPropertyHouses(propertyIndex);
+        int houseNum = m_board.GetPropertyHouses(a_propertyIndex);
         if (houseNum == 5)
         {
-
             for (int i = 0; i < houseNum; i++)
-            {
-                FindHouseOrHotelIcon(propertyIndex, i + 1).SetActive(true);
-            }
+                FindHouseOrHotelIcon(a_propertyIndex, i + 1).SetActive(true);
         }
 
         // Remove the hotel icon
-        FindHouseOrHotelIcon(propertyIndex, houseNum).SetActive(false);
+        FindHouseOrHotelIcon(a_propertyIndex, houseNum).SetActive(false);
         
         // Sell the house/hotel
-        m_board.SellHouse(propertyIndex);
+        m_board.SellHouse(a_propertyIndex);
 
         // Update cash of the player
         UpdatePanelCash();
 
         // Redraw the window
-        OnPropertyClick(propertyIndex);
+        OnPropertyClick(a_propertyIndex);
     }
-    public void PropertyManager_MortgageProperty(int propertyIndex)
+    /* public void PropertyManager_SellHouse(int a_propertyIndex) */
+
+    // Current player is mortgaging a property 
+    public void PropertyManager_MortgageProperty(int a_propertyIndex)
     {
         // Mortgage the property
-        m_board.MortgageProperty(propertyIndex);
+        m_board.MortgageProperty(a_propertyIndex);
 
         // Update cash of the player
         UpdatePanelCash();
 
         // Redraw the window
-        OnPropertyClick(propertyIndex);
+        OnPropertyClick(a_propertyIndex);
     }
-    public void PropertyManager_UnmortgageProperty(int propertyIndex)
+
+    // Current player is buying back a mortgaged property
+    public void PropertyManager_UnmortgageProperty(int a_propertyIndex)
     {
         // Buy back the property
-        m_board.UnmortgageProperty(propertyIndex);
+        m_board.UnmortgageProperty(a_propertyIndex);
 
         // Update cash of the player
         UpdatePanelCash();
 
         // Redraw the window
-        OnPropertyClick(propertyIndex);
+        OnPropertyClick(a_propertyIndex);
     }
+
+    // Current player has closed the property managing window
     public void PropertyManager_StoppedManaging()
     {
         m_propertyManager.ClosePropertyManger();
     }
 
-    // Player traded with someone
-    public void TradeMade(string playerName, string itemName, int cashAmount, bool propertyTraded, bool cardTraded)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     PropertyManager_SellHouse - player selling a house on a property.
+    ///     
+    /// SYNOPSIS
+    ///      public void TradeMade(string a_playerName, string a_itemName, 
+    ///      int a_cashAmount, bool a_propertyTraded, bool a_cardTraded);
+    ///         a_playerName        --> name of the player being traded with. 
+    ///        a_itemName          --> the name of the property / card being traded.
+    ///        a_cashAmount        --> how much cash is being traded.
+    ///        a_propertyTraded    --> whether or not a property is being traded.
+    ///        a_cardTraded        --> whether or not a card is being traded. 
+    ///     
+    /// DESCRIPTION
+    ///     Current player just initiated a trade with another player. This method 
+    ///     determines what they traded, and makes the trade happen. A player can trade 
+    ///     cash, property, or Get out of Jail free cards. 
+    /// 
+    /// </summary>
+    public void TradeMade(string a_playerName, string a_itemName, int a_cashAmount, bool a_propertyTraded, bool a_cardTraded)
     {
         // Find the player being traded with
-        Player tradeToPlayer = m_board.GetPlayerByName(playerName);
+        Player tradeToPlayer = m_board.GetPlayerByName(a_playerName);
 
         // If trading a property, trade it
-        if (propertyTraded)
+        if (a_propertyTraded)
         {
             // Find the property
-            Property tradedProperty = m_board.GetPropertyByName(itemName);
+            Property tradedProperty = m_board.GetPropertyByName(a_itemName);
 
             // Change owners
             tradeToPlayer.Properties.Add(tradedProperty);
@@ -752,9 +827,9 @@ public class Controller_Game : MonoBehaviour
         }
 
         // If trading a card, trade it
-        if (cardTraded) 
+        if (a_cardTraded) 
         {
-            if (itemName == "Community Chest Jail Card")
+            if (a_itemName == "Community Chest Jail Card")
             {
                 tradeToPlayer.CommunityChestJailCards++;
                 m_board.CurrentPlayer.CommunityChestJailCards--;
@@ -767,13 +842,13 @@ public class Controller_Game : MonoBehaviour
         }
 
         // If trading cash, trade it
-        if (cashAmount > 0)
+        if (a_cashAmount > 0)
         {
             // Add cash to trade player's cash
-            tradeToPlayer.Cash += cashAmount;
+            tradeToPlayer.Cash += a_cashAmount;
 
             // Subtract from current player's cash
-            m_board.CurrentPlayer.Cash -= cashAmount;
+            m_board.CurrentPlayer.Cash -= a_cashAmount;
 
             // Update the cash in the panel
             UpdatePanelCash();
@@ -787,41 +862,77 @@ public class Controller_Game : MonoBehaviour
         List<string> propertiesAndCards = m_board.GetPlayerElligibleTradeStrings(m_board.CurrentPlayer);
         m_tradingController.CreateTradingMenu(tradeToPlayer.Name, GetIconSprite(tradeToPlayer.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
     }
+    /* public void TradeMade(string a_playerName, string a_itemName, int a_cashAmount, bool a_propertyTraded, bool a_cardTraded) */
+
 
     // ======================================== Private Methods ============================================ //
 
-    // When user clicks a space
-    void OnSpaceClick(int spaceIndex)
+    // Updates the update made flag
+    void UpdateMade() { m_updateMade = true; }
+
+    // Update's players action status
+    void ActionMade() { m_board.CurrentPlayer.SpaceActionCompleted = true; }
+
+    // Updates cash display
+    void UpdatePanelCash() { m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash.ToString(); }
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     OnSpaceClick - user clicks on a space of the board.
+    ///     
+    /// SYNOPSIS
+    ///     void OnSpaceClick(int a_spaceIndex);
+    ///         a_spaceIndex        --> board index of the space clicked.
+    ///     
+    /// DESCRIPTION
+    ///     User clicked on a space of the board for information about it, 
+    ///     this method will create a popup window to display the relevent info.
+    /// 
+    /// </summary>
+    void OnSpaceClick(int a_spaceIndex)
     {
         // Account for extra chance and community chest
-        if (spaceIndex == 40)
-        {
-            spaceIndex = 2;
-        }
-        if (spaceIndex == 41)
-        {
-            spaceIndex = 8;
-        }
+        if (a_spaceIndex == 40)
+            a_spaceIndex = 2;
+
+        if (a_spaceIndex == 41)
+            a_spaceIndex = 8;
 
         // Get the space info
-        string spaceName = m_board.GetSpace(spaceIndex).Name;
-        string spaceDescription = m_board.GetSpace(spaceIndex).Description;
+        string spaceName = m_board.GetSpace(a_spaceIndex).Name;
+        string spaceDescription = m_board.GetSpace(a_spaceIndex).Description;
 
         // Display it in the space details window, where the user clicked
         m_spaceDetailsController.CreateDetailsWindow(spaceName, spaceDescription);
     }
 
-    // Player clicks on property they own in the properties and cards panel
-    void OnPropertyClick(int spaceIndex)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     OnPropertyClick - user clicks on a property in their inventory.
+    ///     
+    /// SYNOPSIS
+    ///     void OnPropertyClick(int a_spaceIndex);
+    ///         a_spaceIndex        --> board index of the space clicked.
+    ///     
+    /// DESCRIPTION
+    ///     User clicked on a property in their inventory (property view) 
+    ///     to manage. This method will compile data about that property, and
+    ///     send it to the property manager class which will create a window
+    ///     for the player to manage the property.
+    /// 
+    /// </summary>
+    void OnPropertyClick(int a_spaceIndex)
     {
         // Reset the window 
         m_propertyManager.ResetWindow();
 
         // Obtain the property
-        Property property = (Property)m_board.GetSpace(spaceIndex);
+        Property property = (Property)m_board.GetSpace(a_spaceIndex);
 
         // Feed in all parameters if a color property
-        if (m_board.GetSpace(spaceIndex) is ColorProperty)
+        if (m_board.GetSpace(a_spaceIndex) is ColorProperty)
         {
             // Cast to inherited type so we can obtain color property specific values
             ColorProperty colorProperty = (ColorProperty)property;
@@ -845,21 +956,34 @@ public class Controller_Game : MonoBehaviour
             m_propertyManager.CreatePropertyManager(property.Name, property.Description, property.MortgageValue, 0, false, false, false, false, property.IsMortgaged, unmortgageAvailible, 0);
         }
     }
+    /* void OnPropertyClick(int a_spaceIndex) */
 
-    // When user clicks a player
-    void OnPlayerClick(int playerNum)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     OnPlayerClick - user clicked a player icon.
+    ///     
+    /// SYNOPSIS
+    ///     void OnPlayerClick(int a_spaceIndex);
+    ///         a_playerNum        --> index of the player the user clicked on.
+    ///     
+    /// DESCRIPTION
+    ///     User clicked on a player icon of the board for information about
+    ///     that player, this method will create a popup window to display the 
+    ///     relevent info.
+    /// 
+    /// </summary>
+    void OnPlayerClick(int a_playerNum)
     {
         // Get player reference of the person selected
-        Player player = m_board.GetPlayer(playerNum);
+        Player player = m_board.GetPlayer(a_playerNum);
 
         // Display detail window with their info
         m_playerDetailsController.CreateDetailsWindow(player.Name, player.Description);
 
         // Don't display trading menu if selected current player
         if (player == m_board.CurrentPlayer)
-        {
             return;
-        }
 
         // Obtain string list of current player's properties and cards they can trade
         List<string> propertiesAndCards = m_board.GetPlayerElligibleTradeStrings(m_board.CurrentPlayer);
@@ -868,26 +992,18 @@ public class Controller_Game : MonoBehaviour
         m_tradingController.CreateTradingMenu(player.Name, GetIconSprite(player.Icon), propertiesAndCards, m_board.CurrentPlayer.Cash);
     }
 
-    // Updates the update made flag
-    void UpdateMade()
-    {
-        // Mark update made
-        m_updateMade = true;
-    }
-
-    // Update's players action status
-    void ActionMade()
-    {
-        m_board.CurrentPlayer.SpaceActionCompleted = true;
-    }
-
-    // Updates cash display
-    void UpdatePanelCash()
-    {
-        m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash.ToString();
-    }
-
-    // Creates the player panel for the player to do actions during their turn
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreatePlayerPanel - creates the entire right side of the game,
+    ///                         that the user interacts with.
+    ///     
+    /// DESCRIPTION
+    ///     Gathers all the information about the the current player: their name, 
+    ///     cash, icon, curent action, properties... and fills in the player 
+    ///     panel, on the right side of the screen, with all this info.
+    /// 
+    /// </summary>
     void CreatePlayerPanel()
     {
         // Determine action needed this turn
@@ -898,26 +1014,50 @@ public class Controller_Game : MonoBehaviour
         m_panelTitle.text = m_board.CurrentPlayer.Name + "'s Turn";
         m_panelCash.text = "Cash: $" + m_board.CurrentPlayer.Cash;
 
+        // Set the proper action window
+        SetActionWindow(action);
+
+        // Display the properties owned by the player in the properties and cards section
+        ClearPropertyCardView();
+        CreatePropertyCardView();
+    }
+    /* void CreatePlayerPanel() */
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     SetActionWindow - sets the proper action window.
+    ///     
+    /// SYNOPSIS
+    ///     void SetActionWindow(Board.Actions a_action);
+    ///         a_action    --> what action the current player must do.
+    ///     
+    /// DESCRIPTION
+    ///     Based on what action is passed in, this method will use the data of the board
+    ///     and current player to activate the appropriate action window in the
+    ///     player panel.
+    /// 
+    /// </summary>
+    void SetActionWindow(Board.Actions a_action)
+    {
         // Deactivate any other action windows
         foreach (GameObject actionWindow in m_actionWindows)
-        {
             actionWindow.SetActive(false);
-        }
 
-        // Set the proper action window
-        switch (action)
+        // Assign the proper action window
+        switch (a_action)
         {
             // Dice rolling
             case Board.Actions.DetermineOrder:
             case Board.Actions.RollDice:
-                m_actionWindows[1].SetActive(true);
+                m_actionWindows[ACTION_WINDOW_ROLL_DICE].SetActive(true);
                 break;
 
             // Landed on a Utility, haven't rolled to determine cost
             case Board.Actions.DetermineUtilityCost:
                 m_diceRollController.UtilityCostRoll = true;
                 m_diceRollController.ResetWindow();
-                m_actionWindows[1].SetActive(true);
+                m_actionWindows[ACTION_WINDOW_ROLL_DICE].SetActive(true);
                 break;
 
             // Landed on go to jail
@@ -938,17 +1078,12 @@ public class Controller_Game : MonoBehaviour
 
                     // Check if they have a card
                     if (m_board.CurrentPlayer.CommunityChestJailCards == 0 && m_board.CurrentPlayer.ChanceJailCards == 0)
-                    {
                         m_twoChoiceActionController.RightButton.interactable = false;
-                    }
                 }
 
                 // Not in jail, rolled doubles
                 else if (m_board.CurrentPlayer.RolledDoubles)
-                {
-                    m_actionWindows[1].SetActive(true);
-
-                }
+                    m_actionWindows[ACTION_WINDOW_ROLL_DICE].SetActive(true);
 
                 // End their turn
                 else
@@ -965,9 +1100,7 @@ public class Controller_Game : MonoBehaviour
                 // Disable first button if cannot afford
                 Property property = (Property)m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace);
                 if (m_board.CurrentPlayer.Cash < property.PurchasePrice)
-                {
                     m_twoChoiceActionController.LeftButton.interactable = false;
-                }
 
                 m_twoChoiceActionController.LeftButton.onClick.AddListener(() => Action_BuyingProperty(true));
                 m_twoChoiceActionController.RightButton.onClick.AddListener(() => Action_BuyingProperty(false));
@@ -999,7 +1132,7 @@ public class Controller_Game : MonoBehaviour
             case Board.Actions.LandedOn_OwnedColorProperty:
             case Board.Actions.LandedOn_OwnedRailroad:
             case Board.Actions.LandedOn_OwnedUtility:
-                CreateGenericActionWindow(m_board.GetLandedOnOwnedPropertyTitle(), 
+                CreateGenericActionWindow(m_board.GetLandedOnOwnedPropertyTitle(),
                     "Pay: " + (-1 * m_board.GetLandedOnOwnedPropertyRent()), Color.red);
                 m_genericActionController.ActButton.onClick.AddListener(Action_PayingRent);
                 break;
@@ -1013,7 +1146,7 @@ public class Controller_Game : MonoBehaviour
 
             // Landed on a card property
             case Board.Actions.LandedOn_ChanceOrCommunityChest:
-                CreateGenericActionWindow("You landed on " + m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name, 
+                CreateGenericActionWindow("You landed on " + m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name,
                     "Pickup Card", Color.black);
                 m_genericActionController.ActButton.onClick.AddListener(Action_PickedUpCard);
                 break;
@@ -1026,34 +1159,65 @@ public class Controller_Game : MonoBehaviour
 
             // Error if hitting this default case
             default:
-                CreateGenericActionWindow("No Actions Left to Complete", "End Turn", Color.black);
-                m_genericActionController.ActButton.onClick.AddListener(Action_EndTurn);
-                Debug.Log("Determine action did not find action for this move...");
-                break;
+                throw new Exception("No action window found for this action: " + a_action.ToString());
         }
-
-        // Display the properties owned by the player in the properties and cards section
-        ClearPropertyCardView();
-        CreatePropertyCardView();
     }
+    /* void SetActionWindow(Board.Actions a_action) */
 
-    // Creates a generic action window 
-    void CreateGenericActionWindow(string title, string buttonText, Color buttonColor)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreateGenericActionWindow - creates a generic action window.
+    ///     
+    /// SYNOPSIS
+    ///     void CreateGenericActionWindow(string a_title, 
+    ///     string a_buttonText, Color a_buttonColor);
+    ///         a_title         --> title of the window.
+    ///         a_buttonText    --> text of the action button.
+    ///         a_buttonColor   --> color of the action button.
+    ///     
+    ///     
+    /// DESCRIPTION
+    ///     Player needs to perform an action for which there is only one possible 
+    ///     choice for them to make. This method initializes a window and displays it.
+    /// 
+    /// </summary>
+    void CreateGenericActionWindow(string a_title, string a_buttonText, Color a_buttonColor)
     {
         // Set text attributes
-        m_genericActionController.Title = title;
-        m_genericActionController.ActButtonText = buttonText;
-        m_genericActionController.ActButtonColor = buttonColor;
+        m_genericActionController.Title = a_title;
+        m_genericActionController.ActButtonText = a_buttonText;
+        m_genericActionController.ActButtonColor = a_buttonColor;
 
         // Set the window to active 
-        m_actionWindows[0].gameObject.SetActive(true);
+        m_actionWindows[ACTION_WINDOW_GENERIC].gameObject.SetActive(true);
 
         // Clear listeners 
         m_genericActionController.ResetListeners();
     }
 
-    // Creates a two choice action window
-    void CreateTwoChoiceActionWindow(string title, string leftButtonText, Color leftButtonColor, string rightButtonText, Color rightButtonColor)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreateTwoChoiceActionWindow - creates a two action window.
+    ///     
+    /// SYNOPSIS
+    ///     void CreateTwoChoiceActionWindow(string a_title, string a_leftButtonText, 
+    ///     Color a_leftButtonColor, string a_rightButtonText, Color a_rightButtonColor);
+    ///         a_title             --> title of the window.
+    ///         a_leftButtonText    --> text of the left action button.
+    ///         a_leftButtonColor   --> color of the left action button.
+    ///         a_rightButtonText   --> text of the right action button.
+    ///         a_rightButtonColor  --> color of the right action button.
+    ///     
+    /// DESCRIPTION
+    ///     Player has an action to make with two possible choices they can make,
+    ///     this method initializes a window with two buttons to represent 
+    ///     each choice for them, and shows it.
+    /// 
+    /// </summary>
+    void CreateTwoChoiceActionWindow(string a_title, string a_leftButtonText, Color a_leftButtonColor, 
+        string a_rightButtonText, Color a_rightButtonColor)
     {
         // Clear listeners 
         m_twoChoiceActionController.LeftButton.onClick.RemoveAllListeners();
@@ -1064,17 +1228,28 @@ public class Controller_Game : MonoBehaviour
         m_twoChoiceActionController.RightButton.interactable = true;
 
         // Set text
-        m_twoChoiceActionController.Title = title;
-        m_twoChoiceActionController.LeftButtonText = leftButtonText;
-        m_twoChoiceActionController.RightButtonText = rightButtonText;
-        m_twoChoiceActionController.LeftButtonColor = leftButtonColor;
-        m_twoChoiceActionController.RightButtonColor = rightButtonColor;
+        m_twoChoiceActionController.Title = a_title;
+        m_twoChoiceActionController.LeftButtonText = a_leftButtonText;
+        m_twoChoiceActionController.RightButtonText = a_rightButtonText;
+        m_twoChoiceActionController.LeftButtonColor = a_leftButtonColor;
+        m_twoChoiceActionController.RightButtonColor = a_rightButtonColor;
 
         // Set window active
-        m_actionWindows[2].SetActive(true);
+        m_actionWindows[ACTION_WINDOW_TWO_CHOICE].SetActive(true);
     }
+    /* void CreateTwoChoiceActionWindow(string a_title, string a_leftButtonText, Color a_leftButtonColor, 
+        string a_rightButtonText, Color a_rightButtonColor) */
 
-    // Clears all the property and card view contents and resets the size
+    /// <summary>
+    /// 
+    /// NAME
+    ///     ClearPropertyCardView - clears the property window for new player.
+    ///     
+    /// DESCRIPTION
+    ///     This method removes all the images of properties and cards in the
+    ///     property manager window. Usually when a new player is up.
+    /// 
+    /// </summary>
     void ClearPropertyCardView()
     {
         // Obtain all the property views
@@ -1082,21 +1257,32 @@ public class Controller_Game : MonoBehaviour
 
         // Destroy them
         foreach (RawImage propertyView in propertyViews)
-        {
             Destroy(propertyView.gameObject);
-        }
 
         // Obtain all the card views
         Image[] cardImages = m_propertyCardContent.GetComponentsInChildren<Image>();
 
         // Destroy them
         foreach (Image cardImage in cardImages)
-        {
             Destroy(cardImage.gameObject);
-        }
     }
+    /* void ClearPropertyCardView()*/
 
-    // Adds a new property to the properties and cards section
+    /// <summary>
+    /// 
+    /// NAME
+    ///     CreatePropertyCardView - creates the property and card view.
+    ///     
+    /// DESCRIPTION
+    ///     In the player panel, the bottom window labeled "Properties and Cards",
+    ///     displays those items. This method is what creates that display.
+    ///     It uses render textures and sprites of the properties and cards,
+    ///     and also adds button's to the properties for the user to interact with 
+    ///     to open the property manager menu. Render textures use camera views of 
+    ///     each property, which are live and display the actual current property 
+    ///     on the board in real time.
+    /// 
+    /// </summary>
     void CreatePropertyCardView()
     {
         // Set the sizes
@@ -1164,8 +1350,20 @@ public class Controller_Game : MonoBehaviour
             }
         }
     }
+    /* void CreatePropertyCardView() */
 
-    // Initializes the player lanes and icons 
+    /// <summary>
+    /// 
+    /// NAME
+    ///     InitializePlayerIcons - initializes the player icons.
+    ///     
+    /// DESCRIPTION
+    ///     Utilizes the player track controller class to create 
+    ///     lanes which the player icons will follow for the duration of the game.
+    ///     This method also figures out which players get which icon, and 
+    ///     moves all players to the Go space.
+    /// 
+    /// </summary>
     void InitializePlayerIcons()
     {
         m_playerTrackController.CreateLanes();
@@ -1185,8 +1383,19 @@ public class Controller_Game : MonoBehaviour
             StartCoroutine(m_playerTrackController.MovePlayer(playerNum, 0, 0));
         }
     }
-    
-    // Deactivates all houses (for game start)
+    /* void InitializePlayerIcons() */
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     InitializePlayerIcons - initializes the player icons.
+    ///     
+    /// DESCRIPTION
+    ///     Iterates through each color property, and removes all 
+    ///     houses on it. This is required at the start of the game,
+    ///     because the board starts with all houses and hotels enabled.
+    /// 
+    /// </summary>
     void EraseAllHousesAndHotels()
     {
         // Each space
@@ -1194,45 +1403,62 @@ public class Controller_Game : MonoBehaviour
         {
             // Check it's a color property 
             int spaceNum = int.Parse(spaceButton.name);
-            try
-            {
-                // Try casting to color property
-                ColorProperty property = (ColorProperty)m_board.GetSpace(spaceNum);
-            }
-            catch
-            {
-                // Ignore if doesn't work
-                continue;
-            }
 
-            // Each house
-            for (int i = 0; i < 5; i++)
+            // Break if beyond board spaces
+            if (spaceNum > 39)
+                break;
+
+            if (m_board.GetSpace(spaceNum) is ColorProperty)
             {
-                // Deactivate the icon
-                FindHouseOrHotelIcon(spaceNum, i + 1).SetActive(false);
+                // Deactivate each house
+                for (int i = 0; i < 5; i++)
+                    FindHouseOrHotelIcon(spaceNum, i + 1).SetActive(false);
             }
         }
     }
 
-    // Returns house/hotel icon given the property num and house num
-    GameObject FindHouseOrHotelIcon(int propertyNum, int houseNum)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     FindHouseOrHotelIcon - returns reference to specified 
+    ///                             property's house or hotel.
+    ///     
+    /// DESCRIPTION
+    ///     Finds the icon on the board for a specified property's 
+    ///     house or hotel. This takes advantage of the naming convention
+    ///     applied in the Unity scene.
+    /// 
+    /// RETURNS
+    ///     Reference to icon on board of the specific house searched for.
+    /// 
+    /// </summary>
+    GameObject FindHouseOrHotelIcon(int a_propertyNum, int a_houseNum)
     {
         // Determine icon name based on num
-        string houseName = "house" + houseNum;
-        if (houseNum == 5)
-        {
+        string houseName = "house" + a_houseNum;
+        if (a_houseNum == 5)
             houseName = "hotel";
-        }
 
         // Find the parent transform (property object in the scene)
-        Transform propertyTransform = FindSpaceButtonParent(m_spaceButtons[propertyNum]);
+        Transform propertyTransform = FindSpaceButtonParent(m_spaceButtons[a_propertyNum]);
 
         // Find the house object 
         Transform houseTransform = FindChildByName(propertyTransform, houseName);
         return houseTransform.gameObject;
     }
 
-    // Saves the game data for use in the end menu
+    /// <summary>
+    /// 
+    /// NAME
+    ///     SaveEndGameData - saves game data relevent for the final 
+    ///                       game scene.
+    ///     
+    /// DESCRIPTION
+    ///     The game has ended, and before displaying the final end 
+    ///     game scene, this method will save relevent data of the winning
+    ///     player to a text file, for that scene to load and display.
+    /// 
+    /// </summary>
     void SaveEndGameData()
     {
         // Create textfile
@@ -1260,9 +1486,8 @@ public class Controller_Game : MonoBehaviour
         {
             propertiesList += property.Name;
             if (i != winner.Properties.Count - 1)
-            {
                 propertiesList += ", ";
-            }
+
             i++;
         }
         data.Add(propertiesList);
@@ -1270,42 +1495,82 @@ public class Controller_Game : MonoBehaviour
         // Write all the data
         File.WriteAllLines(filePath, data);
     }
+    /* void SaveEndGameData() */
 
     // Returns the property parent object of a given space button
-    Transform FindSpaceButtonParent(Button spaceButton)
+    Transform FindSpaceButtonParent(Button a_spaceButton)
     {
-        // Find the house game object by traversing the hierarchy structure, starting w/ the space button
-        Transform UITranform = spaceButton.transform.parent;
+        Transform UITranform = a_spaceButton.transform.parent;
         return UITranform.parent;
     }
 
-    // Returns the appropriate child from a parent
-    Transform FindChildByName(Transform parent, string childName)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     FindChildByName - returns a child object by name, given parent.
+    ///     
+    /// SYNOPSIS
+    ///     Transform FindChildByName(Transform a_parent, string a_childName);
+    ///         a_parent        --> parent Transform object.
+    ///         a_childName     --> name of the child.
+    ///     
+    /// DESCRIPTION
+    ///     Searches through all the children of a specified parent, 
+    ///     to find where the specified child name matches the actual
+    ///     name of the child object. Returns the child object.
+    /// 
+    /// RETURNS
+    ///     Transform object of child being searched for.
+    ///     
+    /// EXCEPTION
+    ///     Throws exception if the child is not found.
+    /// 
+    /// </summary>
+    Transform FindChildByName(Transform a_parent, string a_childName)
     {
-        Transform[] allChildren = parent.GetComponentsInChildren<Transform>(true);
+        Transform[] allChildren = a_parent.GetComponentsInChildren<Transform>(true);
         foreach (Transform child in allChildren)
         {
-            if (child.name == childName)
+            if (child.name == a_childName)
                 return child;
         }
-        throw new System.Exception("Child not found by name!");
+        throw new Exception("Child not found by name!");
     }
 
-    // Returns the image associated with a partular icon
-    Sprite GetIconSprite(string iconName)
+    // Returns icon sprite with the specified name, throws exception if not found
+    Sprite GetIconSprite(string a_iconName)
     {
         foreach (Sprite icon in m_icons)
         {
-            if (iconName == icon.name)
-            {
+            if (a_iconName == icon.name)
                 return icon;
-            }
         }
-        return null;
+        throw new Exception("Icon not found!");
     }
 
-    // Finds a particular render texture for a given property 
-    RenderTexture FindPropertyTexture(int spaceIndex)
+    /// <summary>
+    /// 
+    /// NAME
+    ///     FindPropertyTexture - returns the render texture associated with 
+    ///                           a particular space.
+    ///     
+    /// SYNOPSIS
+    ///     RenderTexture FindPropertyTexture(int a_spaceIndex);
+    ///         a_spaceIndex        --> space location on the board.
+    ///     
+    /// DESCRIPTION
+    ///     Searches through all the render textures in the game, 
+    ///     finds a match with the space index based on the name
+    ///     convention used in Unity.
+    /// 
+    /// RETURNS
+    ///     Render texture of the specified space.
+    ///     
+    /// EXCEPTION
+    ///     Throws exception if the texture is not found.
+    /// 
+    /// </summary> 
+    RenderTexture FindPropertyTexture(int a_spaceIndex)
     {
         // Use the name of the render texture to find the correct texture for a space index
         foreach (RenderTexture texture in m_propertyRenderTextures)
@@ -1319,13 +1584,12 @@ public class Controller_Game : MonoBehaviour
             int.TryParse(name, out index);
 
             // Return if its the matching texture
-            if (index == spaceIndex)
-            {
+            if (index == a_spaceIndex)
                 return texture;
-            }
         }
 
         // No space found, FREAK OUT!
-        throw new Exception("No texture found for specified property! Index: " + spaceIndex);
+        throw new Exception("No texture found for specified property! Index: " + a_spaceIndex);
     }
+    /* RenderTexture FindPropertyTexture(int a_spaceIndex) */
 }
