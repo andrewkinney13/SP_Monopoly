@@ -248,6 +248,15 @@ public class Controller_Game : MonoBehaviour
         // Update board
         int currentSpace = m_board.CurrentPlayer.CurrentSpace;
         m_board.DiceRolled(a_diceResult, a_wereDoubles);
+
+        // Check if player got caught speeding, if so send them to jail
+        if (m_board.CurrentPlayer.InJail)
+        {
+            CreateGenericActionWindow("You got caught speeding! (rolled doubles 3 times)", "Go to Jail", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoToJail);
+            return;
+        }
+
         int destinationSpace = m_board.CurrentPlayer.CurrentSpace;
 
         // Move the player icon
@@ -1050,6 +1059,7 @@ public class Controller_Game : MonoBehaviour
             // Dice rolling
             case Board.Actions.DetermineOrder:
             case Board.Actions.RollDice:
+                m_diceRollController.ResetWindow();
                 m_actionWindows[ACTION_WINDOW_ROLL_DICE].SetActive(true);
                 break;
 
@@ -1083,7 +1093,10 @@ public class Controller_Game : MonoBehaviour
 
                 // Not in jail, rolled doubles
                 else if (m_board.CurrentPlayer.RolledDoubles)
+                {
+                    m_diceRollController.ResetWindow();
                     m_actionWindows[ACTION_WINDOW_ROLL_DICE].SetActive(true);
+                }
 
                 // End their turn
                 else

@@ -22,6 +22,7 @@ public class Player
     int m_currentSpace;
     int m_diceRollResult;
     int m_orderDeterminingDiceResult;
+    int m_doublesCount;
     bool m_turnInitialized;
     bool m_rolledDice;
     bool m_rolledDoubles;
@@ -60,7 +61,8 @@ public class Player
         InJail = false;
         CommunityChestJailCards = 0;
         ChanceJailCards = 0;
-        m_cash = 1500;
+        Cash = 1500;
+        DoublesCount = 0;
     }
 
     // ======================================== Properties ================================================= //
@@ -175,6 +177,13 @@ public class Player
     {
         get { return m_rolledDoubles; }
         set { m_rolledDoubles = value; }
+    }
+
+    // How many times the player rolled doubles
+    public int DoublesCount
+    {
+        get { return m_doublesCount; }
+        set { m_doublesCount = value; }
     }
 
     // Flag to indicate whether or not player has completed the action for the space they're on

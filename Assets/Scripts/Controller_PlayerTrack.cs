@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 /// <summary>
 /// 
@@ -231,11 +232,7 @@ public class Controller_PlayerTrack : MonoBehaviour
                 playerIcon.rectTransform.anchoredPosition = Vector2.Lerp(initialPosition, destinationPosition, t);
                 elapsedTime += Time.deltaTime;
 
-                // Animate the color of the message text
-                float hue = (m_movingPlayerMessage.color.r + 0.01f) % 1.0f;
-                Color newColor = Color.HSVToRGB(hue, 1f, 1f);
-                m_movingPlayerMessage.color = newColor;
-
+                // Wait until next frame
                 yield return null;
             }
 

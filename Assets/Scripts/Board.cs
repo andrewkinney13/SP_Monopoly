@@ -609,6 +609,7 @@ public class Board
     public void ResetCurrentPlayer()
     {
         CurrentPlayer.DiceRollResult = 0;
+        CurrentPlayer.DoublesCount = 0;
         CurrentPlayer.RolledDice = false;
         CurrentPlayer.RolledDoubles = false;
         CurrentPlayer.TurnCompleted = false;
@@ -707,7 +708,8 @@ public class Board
     ///     value of the dice roll they had. Updates player's flag 
     ///     indicating whether they rolled doubles. Updates player's
     ///     flag indicating whether or not they rolled the dice this
-    ///     turn. 
+    ///     turn. Checks for 3 subsequent dice rolls in a row,
+    ///     which sends the player to jail.
     /// 
     /// </summary>
     public void DiceRolled(int a_diceResult, bool a_wereDoubles)
@@ -722,6 +724,14 @@ public class Board
 
         // Update current players "rolled doubles"
         CurrentPlayer.RolledDoubles = a_wereDoubles;
+        
+        // Append doubles count
+        if (CurrentPlayer.RolledDoubles)
+            CurrentPlayer.DoublesCount++;
+
+        // Check for speeding
+        if (CurrentPlayer.DoublesCount == 3)
+            CurrentPlayer.InJail = true;
 
         // Update the players rolled dice boolean
         CurrentPlayer.RolledDice = true;
