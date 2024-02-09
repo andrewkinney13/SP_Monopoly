@@ -91,8 +91,10 @@ public class Controller_Game : MonoBehaviour
         // Need to set the panel initially 
         m_updateMade = true;
 
-        // Close popup window
+        // Close popup windows
         m_popupController.ClosePopupWindow();
+        m_spaceDetailsController.CloseDetailsWindow();
+        m_playerDetailsController.CloseDetailsWindow();
 
         // Erase all the houses to start
         EraseAllHousesAndHotels();
@@ -134,6 +136,7 @@ public class Controller_Game : MonoBehaviour
 
             // Reset the camera 
             m_cameraController.ResetCamera();
+            OrientCamera();
 
             // Reset scrollbar in the property card view
             m_propertyCardScrollbar.value = 0f;
@@ -143,10 +146,14 @@ public class Controller_Game : MonoBehaviour
 
             // Close the trading menu if it's open
             m_tradingController.CloseTradingMenu();
+
+            // Close details popups
+            m_spaceDetailsController.CloseDetailsWindow();
+            m_playerDetailsController.CloseDetailsWindow();
         }
 
         // Erase the details windows if user clicks or mouse over the player panel
-        if (Input.GetMouseButtonDown(0) || !m_cameraController.MouseInBounds())
+        if (Input.GetMouseButtonDown(0))
         {
             m_spaceDetailsController.CloseDetailsWindow();
             m_playerDetailsController.CloseDetailsWindow();
@@ -992,9 +999,12 @@ public class Controller_Game : MonoBehaviour
         // Display detail window with their info
         m_playerDetailsController.CreateDetailsWindow(player.Name, player.Description);
 
-        // Don't display trading menu if selected current player
-        if (player == m_board.CurrentPlayer)
+        // Don't display trading menu if selected current player or selected player bankrupt
+        if (player == m_board.CurrentPlayer || player.Bankrupt)
             return;
+
+        // Close the property manager if it's open
+        m_propertyManager.ClosePropertyManger();
 
         // Obtain string list of current player's properties and cards they can trade
         List<string> propertiesAndCards = m_board.GetPlayerElligibleTradeStrings(m_board.CurrentPlayer);
@@ -1013,6 +1023,7 @@ public class Controller_Game : MonoBehaviour
     ///     Gathers all the information about the the current player: their name, 
     ///     cash, icon, curent action, properties... and fills in the player 
     ///     panel, on the right side of the screen, with all this info.
+    ///     Rotates camera according to player's position.
     /// 
     /// </summary>
     void CreatePlayerPanel()
@@ -1366,6 +1377,29 @@ public class Controller_Game : MonoBehaviour
         }
     }
     /* void CreatePropertyCardView() */
+
+    /// <summary>
+    /// 
+    /// NAME
+    ///     OrientCamera - orients camera for player.
+    ///     
+    /// DESCRIPTION
+    ///     According to the current player's position on the board, this method
+    ///     will orient the camera so they are right-side up.
+    /// 
+    /// </summary>
+    void OrientCamera()
+    {
+        int currentSpace = m_board.CurrentPlayer.CurrentSpace;
+        if (currentSpace >= 0 && currentSpace <= 9)
+            m_cameraController.SetCameraRotation(0);
+        else if (currentSpace >= 10 && currentSpace <= 19)
+            m_cameraController.SetCameraRotation(270);
+        else if (currentSpace >= 20 && currentSpace <= 29)
+            m_cameraController.SetCameraRotation(180);
+        else
+            m_cameraController.SetCameraRotation(90);
+    }
 
     /// <summary>
     /// 

@@ -85,16 +85,34 @@ public class Controller_Camera : MonoBehaviour
         return false;
     }
 
-    // Resets camera's position and orientation 
+    /// <summary>
+    /// 
+    /// NAME
+    ///     ResetCamera
+    ///     
+    /// DESCRIPTION
+    ///     Resets the camera's size and position within the frame,
+    ///     "recenters" it basically.
+    /// 
+    /// </summary>
     public void ResetCamera()
     {
-        // Reorient the camera pivot
-        int currentRotation = (int)m_cameraPivot.transform.eulerAngles.z;
-        RotateCamera(-1 * (currentRotation));
+        // Save old rotation
+        float oldRotation = m_cameraPivot.transform.rotation.z;
+        m_cameraPivot.transform.rotation = Quaternion.Euler(0, 0, 0);
 
         // Reset size and position within the pivot
         m_camera.orthographicSize = m_MAX_SIZE - 25f;
         m_camera.transform.position = new Vector3(-1000f, 0f, -1f);
+
+        // Reapply old rotation
+        m_cameraPivot.transform.rotation = Quaternion.Euler(0, 0, oldRotation);
+    }
+
+    // Sets the rotation of the camera 
+    public void SetCameraRotation(int a_angle)
+    {
+        m_cameraPivot.transform.rotation = Quaternion.Euler(0, 0, a_angle);
     }
 
     // ======================================== Private Methods ============================================ //
@@ -168,7 +186,7 @@ public class Controller_Camera : MonoBehaviour
             m_lastMousePosition = currentMousePosition;
         }
     }
-    /* public void Move() */
+    /* void Move() */
 
     // Rotate's the camera in the Z direction according to angle
     void RotateCamera(int a_angle)

@@ -4008,7 +4008,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.136}
   m_AnchorMin: {x: 0.74857146, y: 0.07120493}
   m_AnchorMax: {x: 0.9714286, y: 0.45118222}
-  m_AnchoredPosition: {x: -0.50001526, y: -4.5}
+  m_AnchoredPosition: {x: -0.50001526, y: -4.5000153}
   m_SizeDelta: {x: 4.0532, y: 4.7891006}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &183333597
@@ -8137,8 +8137,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1208100228}
   m_HandleRect: {fileID: 1208100227}
   m_Direction: 0
-  m_Value: 0.00000006718586
-  m_Size: 0.08785558
+  m_Value: 0.000000033592933
+  m_Size: 0.087855585
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18779,10 +18779,10 @@ RectTransform:
   - {fileID: 1663933215}
   m_Father: {fileID: 644488137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 286, y: 466.98016}
-  m_SizeDelta: {x: 500, y: 664.2406}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -710, y: 0}
+  m_SizeDelta: {x: 500, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &893454486
 MonoBehaviour:
@@ -20818,8 +20818,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1495417498}
   m_HandleRect: {fileID: 1495417497}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.56518805
+  m_Value: 0.99999976
+  m_Size: 0.565188
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31157,10 +31157,10 @@ MonoBehaviour:
   m_playerDetailsController: {fileID: 2139034118}
   m_playerTrackController: {fileID: 1746390995}
   m_cameraController: {fileID: 65182664}
+  m_tradingController: {fileID: 490150002}
   m_diceRollController: {fileID: 1837992972}
   m_genericActionController: {fileID: 1950664459}
   m_twoChoiceActionController: {fileID: 1778996815}
-  m_tradingController: {fileID: 490150002}
   m_icons:
   - {fileID: 21300000, guid: eb350b8d7e1cab14aacfd147e2a3d4df, type: 3}
   - {fileID: 21300000, guid: 9e829f0710fc36347b8c9abf5fb2e208, type: 3}
@@ -33309,7 +33309,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cf7e02e573d06346a4475a47e0c7808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gameController: {fileID: 1528194578}
   m_title: {fileID: 1824481059}
   m_buyHouseOrHotelButton: {fileID: 952745625}
   m_buyHouseOrHotelButtonText: {fileID: 1292590518}
@@ -33321,6 +33320,7 @@ MonoBehaviour:
   m_description: {fileID: 1557179732}
   m_window: {fileID: 1642876484}
   m_scrollbar: {fileID: 987403575}
+  m_gameController: {fileID: 1528194578}
 --- !u!114 &1642876487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36034,8 +36034,7 @@ MonoBehaviour:
   - {fileID: 388934578}
   m_movingPlayerMessageWindow: {fileID: 1261309705}
   m_movingPlayerMessage: {fileID: 1884763013}
-  m_houseIcon: {fileID: 0}
-  m_hotelIcon: {fileID: 0}
+  m_cameraController: {fileID: 65182664}
 --- !u!1 &1750718139
 GameObject:
   m_ObjectHideFlags: 0
@@ -43574,10 +43573,10 @@ RectTransform:
   - {fileID: 1977391390}
   m_Father: {fileID: 644488137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 859, y: 466.97998}
-  m_SizeDelta: {x: 500, y: 664.24}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -710, y: 0.000022948}
+  m_SizeDelta: {x: 500, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2139034118
 MonoBehaviour:

@@ -28,12 +28,12 @@ public class Controller_DetailsPopup : MonoBehaviour
         if (m_isActive)
         {
             // Get cursor location
-            Vector2 mousePosition = Input.mousePosition;
+            //Vector2 mousePosition = Input.mousePosition;
 
             // Render the space details window
-            RectTransform windowTransform = m_window.GetComponent<RectTransform>();
-            mousePosition.y += windowTransform.rect.height / 2;
-            windowTransform.position = mousePosition;
+            //RectTransform windowTransform = m_window.GetComponent<RectTransform>();
+            //mousePosition.y += 185;
+            //windowTransform.position = mousePosition;
         }
     }
 

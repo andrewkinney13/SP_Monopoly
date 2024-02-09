@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 
 /// <summary>
 /// 
@@ -24,8 +23,7 @@ public class Controller_PlayerTrack : MonoBehaviour
     public List<Button> m_playerIcons;
     public GameObject m_movingPlayerMessageWindow;
     public TMP_Text m_movingPlayerMessage;
-    public Image m_houseIcon;
-    public Image m_hotelIcon;
+    public Controller_Camera m_cameraController;
 
     // ======================================== Private Data Members ======================================= //
     List<List<Vector2>> m_playerLanes = new List<List<Vector2>>();
@@ -254,6 +252,9 @@ public class Controller_PlayerTrack : MonoBehaviour
                 currentRotation.z = 90;
             
             playerIcon.rectTransform.eulerAngles = currentRotation;
+
+            // Orient the camera to match the player's orientation
+            m_cameraController.SetCameraRotation((int)currentRotation.z);
         }
 
         // Uncover action window

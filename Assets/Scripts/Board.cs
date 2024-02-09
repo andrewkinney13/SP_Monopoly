@@ -50,6 +50,7 @@ public class Board
 
     // ======================================== Constructor ================================================ //
     public Board() { }
+    
 
     // ======================================== Properties ================================================= //
 
@@ -473,6 +474,21 @@ public class Board
     {
         InitializeSpaces();
         InitializePlayers();
+    }
+
+    // TESTING ONLY
+    void TestBuy(int playerNum, int propertyNum)
+    {
+
+        m_turnNum = playerNum;
+        CurrentPlayer.CurrentSpace = propertyNum;
+        try
+        {
+            PurchaseProperty();
+        }
+        catch { } 
+        m_turnNum = 0;
+        CurrentPlayer.CurrentSpace = 0;
     }
 
     /// <summary>
