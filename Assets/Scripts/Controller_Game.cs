@@ -585,6 +585,16 @@ public class Controller_Game : MonoBehaviour
         // Subtract cash
         m_board.CurrentPlayer.Cash -= amount;
 
+        // Check bankruptcy 
+        if (m_board.CurrentPlayer.Bankrupt)
+        {
+            // Tell the user
+            CreateGenericActionWindow(m_board.GetBankruptMessage(), "Relinquish Property", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoingBankrupt);
+            return;
+        }
+
+
         // Mark update
         m_board.CurrentPlayer.SpaceActionCompleted = true;
         UpdateMade();
@@ -595,6 +605,15 @@ public class Controller_Game : MonoBehaviour
     {
         // Subtract cash
         m_board.CurrentPlayer.Cash -= amount;
+
+        // Check bankruptcy 
+        if (m_board.CurrentPlayer.Bankrupt)
+        {
+            // Tell the user
+            CreateGenericActionWindow(m_board.GetBankruptMessage(), "Relinquish Property", Color.red);
+            m_genericActionController.ActButton.onClick.AddListener(Action_GoingBankrupt);
+            return;
+        }
 
         // Mark update
         m_board.CurrentPlayer.SpaceActionCompleted = true;
@@ -1159,14 +1178,14 @@ public class Controller_Game : MonoBehaviour
             case Board.Actions.LandedOn_OwnedRailroad:
             case Board.Actions.LandedOn_OwnedUtility:
                 CreateGenericActionWindow(m_board.GetLandedOnOwnedPropertyTitle(),
-                    "Pay: " + (-1 * m_board.GetLandedOnOwnedPropertyRent()), Color.red);
+                    "Pay: $" + m_board.GetLandedOnOwnedPropertyRent(), Color.red);
                 m_genericActionController.ActButton.onClick.AddListener(Action_PayingRent);
                 break;
 
             // Landed on a tax property
             case Board.Actions.LandedOn_Tax:
                 CreateGenericActionWindow("You landed on " + m_board.GetSpace(m_board.CurrentPlayer.CurrentSpace).Name,
-                    "Pay: $" + (-1 * m_board.GetLandedOnTaxCost()), Color.red);
+                    "Pay: $" + m_board.GetLandedOnTaxCost(), Color.red);
                 m_genericActionController.ActButton.onClick.AddListener(Action_PayingTax);
                 break;
 

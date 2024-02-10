@@ -167,7 +167,8 @@ public class Action_RollDice : MonoBehaviour
             m_wereDoubles = true;
 
         // Do not mark doubles as true if this is initializing the player order
-        if (!OrderDetermined)
+        // or rolling for Utility cost
+        if (!OrderDetermined || UtilityCostRoll)
             m_wereDoubles = false;
 
         // Update the window

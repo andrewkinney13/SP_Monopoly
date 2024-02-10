@@ -36,5 +36,5 @@ Pennsylvania Avenue,LandedOn_UnownedProperty,ColorProperty,320,200,28,150,450,10
 Short Line,LandedOn_UnownedProperty,Railroad
 Chance,LandedOn_ChanceOrCommunityChest,Card
 Park Place,LandedOn_UnownedProperty,ColorProperty,350,200,35,175,500,1100,1300,1500,Dark Blue
-Luxury Tax,LandedOn_Tax,Tax,200
+Luxury Tax,LandedOn_Tax,Tax,100
 Boardwalk,LandedOn_UnownedProperty,ColorProperty,400,200,50,200,600,1400,1700,2000,Dark Blue
